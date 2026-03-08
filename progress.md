@@ -18,3 +18,13 @@ Original prompt: Build a complete single-file React Canvas game called Civilizat
 - Final browser state:
   - no console errors
   - one expected in-browser Babel warning remains because the app uses a single-file CDN build
+- Village inspector overhaul:
+  - replaced the scattered right-side HUD with a settlement-focused inspector that answers what is happening, why, and what to do next
+  - added summary strip, alerts, tabs, compact/expanded modes, production queue, grouped building status, comparison rows, sticky actions, and canvas-to-panel tile linkage
+  - added a small real project queue data path with progress and completion effects so production visibility is not fake UI
+  - added deterministic settlement naming plus rename support
+  - added canvas district overlays with hover/select linkage and overlay toggles
+- Latest validation for the inspector overhaul:
+  - served the repo on `http://127.0.0.1:4318`
+  - verified the refactored inspector in Playwright MCP with no app console errors
+  - ran the `develop-web-game` Playwright client against the updated build; output state and screenshot were generated with no error JSON

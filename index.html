@@ -521,6 +521,435 @@
         color: rgba(17, 37, 56, 0.72);
       }
 
+      .village-panel {
+        display: grid;
+        gap: 16px;
+        padding-bottom: 92px;
+      }
+
+      .village-topbar {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+        border-radius: 22px;
+        background: linear-gradient(145deg, rgba(255, 252, 245, 0.95), rgba(233, 225, 205, 0.8));
+        border: 1px solid rgba(17, 37, 56, 0.1);
+      }
+
+      .village-titlebar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: rgba(17, 37, 56, 0.56);
+      }
+
+      .village-title {
+        font-size: 1.72rem;
+        line-height: 1.05;
+      }
+
+      .village-subtitle {
+        margin-top: 5px;
+        font-size: 0.93rem;
+        color: rgba(17, 37, 56, 0.7);
+      }
+
+      .mode-toggle,
+      .tab-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .mode-toggle button,
+      .tab-strip button {
+        border: 1px solid rgba(17, 37, 56, 0.12);
+        background: rgba(17, 37, 56, 0.05);
+        color: var(--ink);
+      }
+
+      .mode-toggle button.is-active,
+      .tab-strip button.is-active {
+        background: linear-gradient(135deg, rgba(47, 127, 157, 0.16), rgba(213, 159, 77, 0.24));
+        border-color: rgba(47, 127, 157, 0.35);
+        box-shadow: 0 8px 20px rgba(47, 127, 157, 0.12);
+      }
+
+      .village-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .summary-card {
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(17, 37, 56, 0.09);
+      }
+
+      .summary-label {
+        font-size: 0.77rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: rgba(17, 37, 56, 0.55);
+      }
+
+      .summary-value {
+        margin-top: 5px;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .summary-subvalue {
+        margin-top: 6px;
+        font-size: 0.86rem;
+        color: rgba(17, 37, 56, 0.72);
+      }
+
+      .delta-pill,
+      .status-chip,
+      .tile-state-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        border: 1px solid rgba(17, 37, 56, 0.12);
+        background: rgba(255, 252, 245, 0.82);
+      }
+
+      .delta-pill.good,
+      .status-chip.good {
+        color: var(--prosper);
+        border-color: rgba(79, 142, 93, 0.3);
+        background: rgba(231, 247, 233, 0.88);
+      }
+
+      .delta-pill.bad,
+      .status-chip.bad {
+        color: var(--crisis);
+        border-color: rgba(166, 61, 51, 0.3);
+        background: rgba(253, 234, 229, 0.92);
+      }
+
+      .delta-pill.warn,
+      .status-chip.warn {
+        color: var(--brass);
+        border-color: rgba(197, 125, 44, 0.3);
+        background: rgba(255, 244, 222, 0.9);
+      }
+
+      .alert-strip {
+        display: grid;
+        gap: 10px;
+      }
+
+      .alert-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(17, 37, 56, 0.09);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .alert-item.critical {
+        border-color: rgba(166, 61, 51, 0.28);
+        background: rgba(253, 237, 232, 0.92);
+      }
+
+      .alert-item.warning {
+        border-color: rgba(197, 125, 44, 0.28);
+        background: rgba(255, 245, 227, 0.92);
+      }
+
+      .alert-icon {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: rgba(17, 37, 56, 0.08);
+        font-weight: 700;
+      }
+
+      .inspector-section {
+        display: grid;
+        gap: 14px;
+      }
+
+      .overview-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+        gap: 14px;
+      }
+
+      .card-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .info-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.84);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .info-card h3,
+      .subsection-title {
+        font-size: 1.02rem;
+      }
+
+      .key-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 10px;
+        font-size: 0.92rem;
+      }
+
+      .resource-split-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .resource-split-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.84);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .split-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .split-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .split-metric {
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(17, 37, 56, 0.04);
+      }
+
+      .metric-caption {
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(17, 37, 56, 0.5);
+      }
+
+      .metric-value {
+        margin-top: 5px;
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .queue-list,
+      .building-group-list,
+      .tile-list,
+      .compare-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .queue-item,
+      .building-row,
+      .tile-row,
+      .compare-row {
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(255, 252, 245, 0.84);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .queue-item.is-current,
+      .building-row.is-highlighted,
+      .tile-row.is-highlighted {
+        border-color: rgba(47, 127, 157, 0.4);
+        box-shadow: inset 0 0 0 1px rgba(47, 127, 157, 0.2);
+        background: rgba(233, 246, 249, 0.95);
+      }
+
+      .queue-item-top,
+      .building-row-top,
+      .tile-row-top,
+      .compare-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .queue-progress {
+        position: relative;
+        margin-top: 10px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(17, 37, 56, 0.08);
+        overflow: hidden;
+      }
+
+      .queue-progress > span {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--sea), var(--gold));
+      }
+
+      .queue-actions,
+      .sticky-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .empty-state {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px dashed rgba(17, 37, 56, 0.18);
+        background: rgba(255, 252, 245, 0.68);
+        color: rgba(17, 37, 56, 0.68);
+      }
+
+      .building-group {
+        display: grid;
+        gap: 10px;
+      }
+
+      .building-group-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .tile-row {
+        cursor: pointer;
+      }
+
+      .tile-row small,
+      .building-row small,
+      .queue-item small {
+        display: block;
+        margin-top: 4px;
+        color: rgba(17, 37, 56, 0.66);
+        line-height: 1.45;
+      }
+
+      .tile-state-band {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .legend-board {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .legend-board .legend-pill {
+        background: rgba(255, 252, 245, 0.92);
+      }
+
+      .sticky-bar {
+        position: sticky;
+        bottom: 10px;
+        z-index: 2;
+        padding: 12px;
+        border-radius: 18px;
+        background: rgba(17, 37, 56, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 18px 30px rgba(17, 37, 56, 0.24);
+      }
+
+      .sticky-bar .sticky-actions button {
+        background: rgba(255, 255, 255, 0.12);
+        color: #f7f1df;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .sticky-bar .sticky-actions button.primary {
+        background: linear-gradient(135deg, rgba(213, 159, 77, 0.92), rgba(47, 127, 157, 0.88));
+        color: #fff9ee;
+      }
+
+      .compare-row strong,
+      .queue-item-top strong,
+      .building-row-top strong,
+      .tile-row-top strong {
+        font-size: 0.95rem;
+      }
+
+      .focus-summary {
+        display: grid;
+        gap: 8px;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tiny-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+      }
+
+      .canvas-hint {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .overlay-toggle {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .overlay-toggle button {
+        border: 1px solid rgba(17, 37, 56, 0.12);
+        background: rgba(255, 252, 245, 0.84);
+      }
+
+      .overlay-toggle button.is-active {
+        background: rgba(47, 127, 157, 0.12);
+        border-color: rgba(47, 127, 157, 0.32);
+      }
+
       @media (max-width: 1080px) {
         .main-grid {
           grid-template-columns: 1fr;
@@ -532,6 +961,12 @@
 
         .status-banner {
           width: 100%;
+        }
+
+        .village-summary-grid,
+        .split-metrics,
+        .overview-grid {
+          grid-template-columns: 1fr;
         }
       }
 
@@ -548,6 +983,21 @@
         .meter-row {
           grid-template-columns: 1fr;
           gap: 8px;
+        }
+
+        .village-titlebar,
+        .queue-item-top,
+        .building-row-top,
+        .tile-row-top,
+        .compare-row,
+        .split-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .village-summary-grid,
+        .card-grid-2 {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -641,6 +1091,86 @@
         { key: "legacyScore", label: "Legacy Trend", color: "#c57d2c" },
       ];
 
+      const VILLAGE_TABS = [
+        { key: "overview", label: "Overview" },
+        { key: "population", label: "Population" },
+        { key: "buildings", label: "Buildings" },
+        { key: "production", label: "Production" },
+        { key: "defense", label: "Defense" },
+        { key: "economy", label: "Trade / Economy" },
+      ];
+
+      const SETTLEMENT_NAME_PARTS = {
+        left: ["River", "Stone", "Sun", "High", "Iron", "Cedar", "Moss", "Dawn", "Bright", "Ember", "North", "Oak"],
+        right: ["reach", "ford", "watch", "hollow", "field", "keep", "mere", "crossing", "spire", "haven", "stead", "vale"],
+      };
+
+      const PROJECT_DEFS = {
+        granary: {
+          label: "Granary Expansion",
+          category: "Food",
+          icon: "granary",
+          cost: 74,
+          effect: "+18 food reserve, +2 health",
+          zoneId: "fields",
+          apply: (state) => ({ food: 18, health: 2 }),
+        },
+        workshop: {
+          label: "Workshop District",
+          category: "Infrastructure",
+          icon: "workshop",
+          cost: 78,
+          effect: "+16 industry, +2 stability",
+          zoneId: "industry",
+          apply: (state) => ({ industry: 16, stability: 2 }),
+        },
+        schoolhouse: {
+          label: "Schoolhouse Charter",
+          category: "Knowledge",
+          icon: "school",
+          cost: 82,
+          effect: "+16 knowledge, +1 happiness",
+          zoneId: "scholar",
+          apply: (state) => ({ knowledge: 16, happiness: 1 }),
+        },
+        guardpost: {
+          label: "Guard Post",
+          category: "Defense",
+          icon: "watchtower",
+          cost: 72,
+          effect: "+6 stability, -4 unrest",
+          zoneId: "civic",
+          apply: (state) => ({ stability: 6, unrest: -4 }),
+        },
+        waterworks: {
+          label: "Waterworks",
+          category: "Health",
+          icon: "waterTower",
+          cost: 92,
+          effect: "+7 health, +3 environment",
+          zoneId: "river",
+          apply: (state) => ({ health: 7, environment: 3 }),
+        },
+        housing: {
+          label: "Housing Quarter",
+          category: "Housing",
+          icon: "house",
+          cost: 84,
+          effect: "+3 happiness, +2 population",
+          zoneId: "homes",
+          apply: (state) => ({ happiness: 3, population: 2 }),
+        },
+        solar: {
+          label: "Solar Array",
+          category: "Economy",
+          icon: "solarField",
+          cost: 108,
+          effect: "+8 knowledge, +5 environment",
+          zoneId: "outskirts",
+          apply: (state) => ({ knowledge: 8, environment: 5 }),
+        },
+      };
+
       const PALETTE = {
         skyTop: "#d7edf7",
         skyBottom: "#90bccd",
@@ -673,6 +1203,49 @@
         if (rounded > 0) return `+${rounded}`;
         if (rounded < 0) return `${rounded}`;
         return "0";
+      }
+
+      function formatPerTurn(value) {
+        return `${formatSigned(value)}/turn`;
+      }
+
+      function pluralize(count, label) {
+        return `${count} ${label}${count === 1 ? "" : "s"}`;
+      }
+
+      function getDeltaTone(value) {
+        if (value > 0.1) return "good";
+        if (value < -0.1) return "bad";
+        return "warn";
+      }
+
+      function getTrendDescriptor(value, positive = "Rising", negative = "Falling", neutral = "Stable") {
+        if (value > 0.1) return { icon: "UP", label: positive, tone: "good" };
+        if (value < -0.1) return { icon: "DOWN", label: negative, tone: "bad" };
+        return { icon: "EVEN", label: neutral, tone: "warn" };
+      }
+
+      function turnsToWhole(value) {
+        if (value <= 0) return null;
+        return Math.max(1, Math.ceil(1 / value));
+      }
+
+      function generateSettlementName(seed) {
+        let currentSeed = seed >>> 0;
+        const pick = (items) => {
+          const next = takeRandom(currentSeed);
+          currentSeed = next.seed;
+          return items[Math.floor(next.value * items.length) % items.length];
+        };
+        return `${pick(SETTLEMENT_NAME_PARTS.left)}${pick(SETTLEMENT_NAME_PARTS.right)}`;
+      }
+
+      function makeProjectItem(key, id) {
+        return { id: `project-${id}`, key, progress: 0 };
+      }
+
+      function makeInitialProjectQueue() {
+        return [makeProjectItem("granary", 1), makeProjectItem("workshop", 2), makeProjectItem("schoolhouse", 3)];
       }
 
       function nextSeed(seed) {
@@ -1242,6 +1815,7 @@
           rngSeed: seed,
           status: "menu",
           assetsReady: false,
+          settlementName: generateSettlementName(seed),
           turn: 0,
           year: 1000,
           food: 88,
@@ -1258,6 +1832,9 @@
           legacyScore: 0,
           policies,
           activeEffects: [],
+          projectQueue: makeInitialProjectQueue(),
+          completedProjects: {},
+          nextQueueId: 4,
           eventLog: [
             {
               id: "boot-1",
@@ -1488,6 +2065,31 @@
           });
         }
 
+        if (next.projectQueue.length) {
+          const projectGain = Math.max(4, round1(industryProduction * (0.2 + policy.industry * 0.03 + next.technologyLevel * 0.01)));
+          const currentProject = { ...next.projectQueue[0], progress: round1(next.projectQueue[0].progress + projectGain) };
+          const projectDef = PROJECT_DEFS[currentProject.key];
+          if (currentProject.progress >= projectDef.cost) {
+            next = applyImmediateEffects(next, projectDef.apply(next));
+            next.projectQueue = next.projectQueue.slice(1);
+            next.completedProjects = {
+              ...next.completedProjects,
+              [currentProject.key]: (next.completedProjects[currentProject.key] || 0) + 1,
+            };
+            logEntries.unshift({
+              id: `project-${next.turn}-${currentProject.id}`,
+              year: next.year,
+              turn: next.turn,
+              title: `Project Completed: ${projectDef.label}`,
+              detail: `${projectDef.effect}. The village wrapped construction and shifted its labor onward.`,
+              icon: projectDef.icon,
+              tag: "Completed",
+            });
+          } else {
+            next.projectQueue = [currentProject, ...next.projectQueue.slice(1)];
+          }
+        }
+
         next.technologyLevel = clamp(
           1 +
             Math.floor(next.knowledge / 35) +
@@ -1625,6 +2227,16 @@
             if (totalPolicyPoints(nextPolicies) > POLICY_POINT_CAP) return state;
             return { ...state, policies: nextPolicies };
           }
+          case "QUEUE_PROJECT": {
+            if (!PROJECT_DEFS[action.key] || state.projectQueue.length >= 4) return state;
+            return {
+              ...state,
+              projectQueue: [...state.projectQueue, makeProjectItem(action.key, state.nextQueueId)],
+              nextQueueId: state.nextQueueId + 1,
+            };
+          }
+          case "RENAME_SETTLEMENT":
+            return action.name ? { ...state, settlementName: action.name.trim().slice(0, 32) } : state;
           default:
             return state;
         }
@@ -1640,6 +2252,442 @@
         ).then((entries) => Object.fromEntries(entries));
       }
 
+      function calculateTurnPreview(state) {
+        const policy = state.policies;
+        const stageIndex = Math.max(0, stageIndexFromLabel(state.developmentStage));
+        const effectMods = getEffectModifiers(state.activeEffects);
+        const healthFactor = 0.65 + state.health / 200;
+        const environmentFactor = 0.68 + state.environment / 180;
+        const stabilityFactor = 0.68 + state.stability / 200;
+        const happinessFactor = 0.65 + state.happiness / 200;
+        const pollutionPenalty = 1 - Math.max(0, 58 - state.environment) / 180;
+
+        const foodProduction =
+          state.population *
+          (0.55 + 0.12 * policy.agriculture + 0.03 * state.technologyLevel) *
+          healthFactor *
+          environmentFactor *
+          effectMods.foodMultiplier;
+        const industryProduction =
+          state.population *
+          (0.35 + 0.12 * policy.industry) *
+          stabilityFactor *
+          pollutionPenalty *
+          effectMods.industryMultiplier *
+          (1 - policy.environment * 0.03);
+        const knowledgeProduction =
+          state.population *
+          (0.18 + 0.1 * policy.education + 0.12 * policy.research) *
+          happinessFactor *
+          (1 + state.technologyLevel * 0.02) *
+          effectMods.knowledgeMultiplier;
+        const industryMaintenance =
+          policy.health * 3.2 + policy.welfare * 2.8 + policy.research * 4 + policy.environment * 1.8;
+        const foodMaintenance = policy.welfare * 2 + policy.research * 1.4;
+        const foodDemand = state.population * (1 + stageIndex * 0.02) * effectMods.foodDemandMultiplier;
+
+        const foodNet = round1(foodProduction - foodDemand - foodMaintenance);
+        const industryNet = round1(industryProduction - industryMaintenance);
+        const knowledgeNet = round1(knowledgeProduction);
+
+        const shortage = Math.max(0, foodDemand + foodMaintenance - (state.food + foodProduction));
+        const projectedFood = clamp(state.food + foodNet, 0, 300);
+        const growthPressure =
+          (projectedFood / Math.max(1, state.population) - 1.2) * 1.7 +
+          (state.health - 55) / 22 +
+          (state.happiness - 52) / 28 -
+          state.unrest / 40 +
+          effectMods.populationDelta;
+        const projectGain = state.projectQueue.length
+          ? Math.max(4, round1(industryProduction * (0.2 + policy.industry * 0.03 + state.technologyLevel * 0.01)))
+          : 0;
+
+        return {
+          foodProduction: round1(foodProduction),
+          industryProduction: round1(industryProduction),
+          knowledgeProduction: round1(knowledgeProduction),
+          industryMaintenance: round1(industryMaintenance),
+          foodMaintenance: round1(foodMaintenance),
+          foodDemand: round1(foodDemand),
+          foodNet,
+          industryNet,
+          knowledgeNet,
+          shortage,
+          projectedFood,
+          growthPressure: round1(growthPressure),
+          projectGain,
+        };
+      }
+
+      function getStatusChip(status) {
+        if (status === "good") return { tone: "good", label: "OK Active" };
+        if (status === "bad") return { tone: "bad", label: "Alert Critical" };
+        return { tone: "warn", label: "Watch Closely" };
+      }
+
+      function buildTileZones(state, village) {
+        const waterHealthy = state.environment >= 38;
+        const outskirtsOpen = stageIndexFromLabel(state.developmentStage) >= 1;
+        return [
+          {
+            id: "fields",
+            label: "Field Belt",
+            rect: { x: 28, y: 320, w: 312, h: 126 },
+            state: "worked",
+            yieldLabel: `${formatPerTurn(village.preview.foodProduction)} food output`,
+            detail: village.preview.foodNet >= 0 ? "Worked farms are covering demand." : "Fields are falling behind food demand.",
+          },
+          {
+            id: "river",
+            label: "River Strip",
+            rect: { x: 0, y: 356, w: 392, h: 136 },
+            state: waterHealthy ? "owned" : "blocked",
+            yieldLabel: waterHealthy ? "Fresh water and trade access" : "Water quality is dragging the district down",
+            detail: waterHealthy ? "Owned and supporting health." : "Pollution is weakening this tile.",
+          },
+          {
+            id: "homes",
+            label: "Residential Ring",
+            rect: { x: 228, y: 288, w: 260, h: 138 },
+            state: village.housingShortage ? "worked" : "owned",
+            yieldLabel: `${village.housingUsed}/${village.housingCap} housing`,
+            detail: village.housingShortage ? "Growth is blocked by tight housing." : "Homes are stable for the current population.",
+          },
+          {
+            id: "hub",
+            label: "Civic Core",
+            rect: { x: 412, y: 244, w: 276, h: 176 },
+            state: "selected",
+            yieldLabel: `Stage hub: ${state.developmentStage}`,
+            detail: "This is the settlement center and the anchor for the inspector.",
+          },
+          {
+            id: "scholar",
+            label: "Scholar Quarter",
+            rect: { x: 430, y: 316, w: 210, h: 92 },
+            state: village.knowledgeQuarterBlocked ? "workable" : "worked",
+            yieldLabel: `${formatPerTurn(village.preview.knowledgeProduction)} knowledge`,
+            detail: village.knowledgeQuarterBlocked ? "This district wants more education or research focus." : "Schools and labs are functioning.",
+          },
+          {
+            id: "industry",
+            label: "Workshop Ward",
+            rect: { x: 620, y: 292, w: 268, h: 118 },
+            state: village.industryStrained ? "worked" : "owned",
+            yieldLabel: `${formatPerTurn(village.preview.industryProduction)} industry`,
+            detail: village.industryStrained ? "Upkeep or unrest is reducing useful output." : "Production lines are feeding the queue.",
+          },
+          {
+            id: "civic",
+            label: "Commons",
+            rect: { x: 150, y: 402, w: 420, h: 98 },
+            state: village.idleWorkers > 1 ? "workable" : "worked",
+            yieldLabel: `${pluralize(village.assignments.caretakers + village.assignments.guards, "crew")} on civic duty`,
+            detail: village.idleWorkers > 1 ? "The commons can absorb more useful labor." : "Care and guard labor are already committed.",
+          },
+          {
+            id: "outskirts",
+            label: "Outer Ring",
+            rect: { x: 18, y: 196, w: 280, h: 108 },
+            state: outskirtsOpen ? "workable" : "blocked",
+            yieldLabel: outskirtsOpen ? "In workable radius" : "Outside current settlement reach",
+            detail: outskirtsOpen ? "This ring can support more projects as the village grows." : "Advance the village stage to exploit this area.",
+          },
+        ];
+      }
+
+      function getVillageModel(state) {
+        const preview = calculateTurnPreview(state);
+        const stageIndex = Math.max(0, stageIndexFromLabel(state.developmentStage));
+        const currentStage = STAGES[stageIndex] || STAGES[0];
+        const nextStage = STAGES[Math.min(stageIndex + 1, STAGES.length - 1)];
+        const homeCount = Math.max(2, Math.round(state.population / 18));
+        const farmCount = Math.max(2, state.policies.agriculture + Math.round(state.food / 95));
+        const industryCount = Math.max(1, state.policies.industry + Math.round(state.industry / 100));
+        const knowledgeCount = Math.max(1, state.policies.education + state.policies.research + Math.round(state.knowledge / 110));
+        const civicCount = Math.max(1, state.policies.health + state.policies.welfare);
+        const workforce = Math.max(6, Math.round(state.population * 0.58));
+        const weights = {
+          farmers: 2 + state.policies.agriculture,
+          makers: 2 + state.policies.industry,
+          scholars: 1 + state.policies.education + state.policies.research,
+          caretakers: 1 + state.policies.health + state.policies.welfare,
+          guards: Math.max(0, state.policies.security),
+        };
+        const weightTotal = Object.values(weights).reduce((sum, value) => sum + value, 0);
+        const assignments = Object.fromEntries(
+          Object.entries(weights).map(([key, value]) => [key, Math.floor((workforce * value) / weightTotal)])
+        );
+        const assigned = Object.values(assignments).reduce((sum, value) => sum + value, 0);
+        const idleWorkers = Math.max(0, workforce - assigned);
+        const housingCap = currentStage.pop + 22 + stageIndex * 10 + (state.completedProjects.housing || 0) * 10;
+        const housingUsed = state.population;
+        const housingShortage = housingUsed >= housingCap;
+        const garrison = assignments.guards + (state.completedProjects.guardpost || 0) * 2;
+        const defenseScore = Math.round(state.stability * 0.45 + state.policies.security * 10 + garrison * 2 - state.unrest * 0.28);
+        const currentProject = state.projectQueue[0] ? { ...state.projectQueue[0], def: PROJECT_DEFS[state.projectQueue[0].key] } : null;
+        const projectTurnsRemaining = currentProject && preview.projectGain > 0
+          ? Math.max(1, Math.ceil((currentProject.def.cost - currentProject.progress) / preview.projectGain))
+          : null;
+        const growthTurns = preview.growthPressure > 0 ? turnsToWhole(preview.growthPressure) : null;
+
+        const alerts = [];
+        if (preview.foodNet < 0 || state.food < 25) {
+          alerts.push({
+            key: "food",
+            severity: preview.foodNet < -6 || state.food < 10 ? "critical" : "warning",
+            icon: "!",
+            title: preview.foodNet < 0 ? "Food deficit" : "Granaries running thin",
+            detail: preview.foodNet < 0
+              ? `Food is trending ${formatSigned(preview.foodNet)} per turn. Growth will stall or reverse.`
+              : `Only ${Math.round(state.food)} food remains in storage.`,
+            action: "Shift policy toward Agriculture or queue Granary Expansion.",
+          });
+        }
+        if (housingShortage) {
+          alerts.push({
+            key: "housing",
+            severity: "warning",
+            icon: "HOME",
+            title: "Housing shortage",
+            detail: `Population is at ${housingUsed}/${housingCap} housing. Growth is blocked.`,
+            action: "Queue Housing Quarter or reduce short-term migration pressure.",
+          });
+        }
+        if (idleWorkers > 2) {
+          alerts.push({
+            key: "idle",
+            severity: "warning",
+            icon: "IDLE",
+            title: "Idle workers",
+            detail: `${idleWorkers} workers are unassigned relative to current district demand.`,
+            action: "Increase a policy focus or start a civic project.",
+          });
+        }
+        if (state.unrest > 55 || state.stability < 42) {
+          alerts.push({
+            key: "unrest",
+            severity: "critical",
+            icon: "WARN",
+            title: "Instability",
+            detail: `Unrest is ${Math.round(state.unrest)} and stability is ${Math.round(state.stability)}.`,
+            action: "Increase Security or Welfare before production collapses further.",
+          });
+        }
+        if (defenseScore < 36) {
+          alerts.push({
+            key: "defense",
+            severity: "warning",
+            icon: "DEF",
+            title: "Weak defense",
+            detail: garrison > 0 ? `Guard presence is thin at ${garrison}.` : "No meaningful garrison is present.",
+            action: "Raise Security or queue a Guard Post.",
+          });
+        }
+        if (!state.projectQueue.length) {
+          alerts.push({
+            key: "queue",
+            severity: "warning",
+            icon: "+",
+            title: "No production queued",
+            detail: "Construction capacity exists, but the settlement has no active project.",
+            action: "Queue a project from the sticky action bar.",
+          });
+        }
+
+        const bottlenecks = [];
+        if (preview.foodNet < 0) bottlenecks.push(`Food trend ${formatSigned(preview.foodNet)} per turn`);
+        if (housingShortage) bottlenecks.push(`Housing full at ${housingUsed}/${housingCap}`);
+        if (state.environment < 38) bottlenecks.push(`Environment only ${Math.round(state.environment)}`);
+        if (state.unrest > 45) bottlenecks.push(`Unrest elevated at ${Math.round(state.unrest)}`);
+        if (preview.industryNet < 0) bottlenecks.push(`Industry upkeep exceeds output by ${Math.abs(preview.industryNet)}`);
+
+        const buildings = {
+          food: [
+            {
+              key: "farms",
+              name: "Farmsteads",
+              icon: "farmPlot",
+              count: farmCount,
+              status: preview.foodNet >= 0 ? "good" : "bad",
+              detail: preview.foodNet >= 0 ? "Active: fields are covering current demand." : "Strained: food demand exceeds field output.",
+            },
+            {
+              key: "granary",
+              name: "Granary",
+              icon: "granary",
+              count: 1 + (state.completedProjects.granary || 0),
+              status: state.food >= 30 ? "good" : "warn",
+              detail: state.food >= 30 ? "Active: reserve stores are stable." : "Low reserve: food stockpile is nearly exhausted.",
+            },
+            {
+              key: "waterworks",
+              name: "Waterworks",
+              icon: "waterTower",
+              count: state.completedProjects.waterworks || 0,
+              status: (state.completedProjects.waterworks || 0) > 0 ? "good" : "warn",
+              detail: (state.completedProjects.waterworks || 0) > 0 ? "Active: health support is in place." : "Not built yet: water support remains basic.",
+            },
+          ],
+          housing: [
+            {
+              key: "homes",
+              name: homeCount > 5 ? "Residential Blocks" : homeCount > 3 ? "Houses" : "Huts",
+              icon: state.population > 135 ? "apartmentBlock" : state.population > 58 ? "house" : "hut",
+              count: homeCount,
+              status: housingShortage ? "bad" : "good",
+              detail: housingShortage ? "Growth blocked — housing full." : "Occupied but stable.",
+            },
+            {
+              key: "housingQuarter",
+              name: "Housing Quarter",
+              icon: "house",
+              count: state.completedProjects.housing || 0,
+              status: (state.completedProjects.housing || 0) > 0 ? "good" : "warn",
+              detail: (state.completedProjects.housing || 0) > 0 ? "Expanded housing capacity is online." : "No recent housing expansion.",
+            },
+          ],
+          economy: [
+            {
+              key: "workshops",
+              name: industryCount >= 3 ? "Factory Line" : "Workshops",
+              icon: industryCount >= 3 ? "factory" : "workshop",
+              count: industryCount,
+              status: preview.industryNet > 0 ? "good" : "warn",
+              detail: preview.industryNet > 0 ? "Active: industry is feeding construction." : "Tight: upkeep is eating into output.",
+            },
+            {
+              key: "solar",
+              name: "Solar Field",
+              icon: "solarField",
+              count: state.completedProjects.solar || (state.technologyLevel >= 8 ? 1 : 0),
+              status: state.technologyLevel >= 8 ? "good" : "warn",
+              detail: state.technologyLevel >= 8 ? "Operational: long-horizon efficiency is improving." : "Unavailable until late development.",
+            },
+          ],
+          knowledge: [
+            {
+              key: "schools",
+              name: state.technologyLevel >= 6 ? "Laboratories" : "Schools",
+              icon: state.technologyLevel >= 6 ? "lab" : "school",
+              count: knowledgeCount,
+              status: state.policies.education + state.policies.research >= 2 ? "good" : "warn",
+              detail: state.policies.education + state.policies.research >= 2 ? "Active: staffed and productive." : "Underfocused: knowledge quarter wants more support.",
+            },
+            {
+              key: "library",
+              name: state.technologyLevel >= 7 ? "Observatory" : "Library",
+              icon: state.technologyLevel >= 7 ? "observatory" : "library",
+              count: state.technologyLevel >= 3 ? 1 : 0,
+              status: state.technologyLevel >= 3 ? "good" : "warn",
+              detail: state.technologyLevel >= 3 ? "Open and compounding knowledge output." : "Not yet unlocked by development.",
+            },
+          ],
+          civic: [
+            {
+              key: "care",
+              name: state.health >= 72 ? "Hospital Network" : "Clinic",
+              icon: state.health >= 72 ? "hospital" : "clinic",
+              count: civicCount,
+              status: state.health >= 50 ? "good" : "warn",
+              detail: state.health >= 50 ? "Active: care system is holding." : "Strained: public health is slipping.",
+            },
+            {
+              key: "commons",
+              name: "Commons & Parks",
+              icon: "park",
+              count: Math.max(1, state.policies.welfare),
+              status: state.happiness >= 50 ? "good" : "warn",
+              detail: state.happiness >= 50 ? "Active: morale spaces are helping." : "Thin support: happiness remains weak.",
+            },
+          ],
+          defense: [
+            {
+              key: "watch",
+              name: "Civic Watch",
+              icon: "watchtower",
+              count: Math.max(0, garrison),
+              status: defenseScore >= 36 ? "good" : "bad",
+              detail: defenseScore >= 36 ? "Staffed and steady." : garrison > 0 ? "Understaffed." : "No garrison.",
+            },
+          ],
+        };
+
+        const compare = [
+          {
+            key: "population",
+            label: "Population",
+            current: Math.round(state.population),
+            previous: Math.round(Math.max(0, state.population - state.lastBreakdown.populationDelta)),
+            peak: Math.round(Math.max(...state.history.population)),
+          },
+          {
+            key: "food",
+            label: "Food Stockpile",
+            current: Math.round(state.food),
+            previous: Math.round(state.food - state.lastBreakdown.foodDelta),
+            peak: Math.round(Math.max(...state.history.food)),
+          },
+          {
+            key: "knowledge",
+            label: "Knowledge",
+            current: Math.round(state.knowledge),
+            previous: Math.round(state.knowledge - state.lastBreakdown.knowledgeDelta),
+            peak: Math.round(Math.max(...state.history.knowledge)),
+          },
+          {
+            key: "legacy",
+            label: "Legacy",
+            current: Math.round(state.legacyScore),
+            previous: Math.round(state.history.legacyScore[state.history.legacyScore.length - 2] || 0),
+            peak: Math.round(Math.max(...state.history.legacyScore)),
+          },
+        ];
+
+        const village = {
+          name: state.settlementName,
+          preview,
+          stageIndex,
+          currentStage,
+          nextStage,
+          homeCount,
+          farmCount,
+          industryCount,
+          knowledgeCount,
+          civicCount,
+          workforce,
+          assignments,
+          idleWorkers,
+          housingCap,
+          housingUsed,
+          housingShortage,
+          garrison,
+          defenseScore,
+          knowledgeQuarterBlocked: state.policies.education + state.policies.research < 2,
+          industryStrained: preview.industryNet < 0 || state.unrest > 50,
+          projectTurnsRemaining,
+          growthTurns,
+          currentProject,
+          alerts,
+          bottlenecks,
+          buildings,
+          compare,
+        };
+
+        village.tileZones = buildTileZones(state, village);
+        village.primaryRecommendation = alerts[0]?.action ||
+          (currentProject
+            ? `Keep ${currentProject.def.label} moving for ${projectTurnsRemaining} more ${projectTurnsRemaining === 1 ? "turn" : "turns"}.`
+            : `Queue ${preview.foodNet < 0 ? "Granary Expansion" : preview.industryNet < 0 ? "Workshop District" : "Schoolhouse Charter"} next.`);
+        village.whatsHappening = alerts[0]?.title || (currentProject ? `${currentProject.def.label} is underway.` : "The settlement is stable.");
+        village.whyHappening =
+          alerts[0]?.detail ||
+          (currentProject
+            ? `${currentProject.def.label} is consuming the settlement's available construction capacity.`
+            : "No acute blocker is present, so the village is coasting on current policy settings.");
+        return village;
+      }
+
       function getWorldSnapshot(state) {
         const stage = STAGES.find((entry) => entry.label === state.developmentStage) || STAGES[0];
         const homes = Math.max(2, Math.round(state.population / 18));
@@ -1647,6 +2695,7 @@
         const industrialSites = Math.max(1, state.policies.industry + Math.round(state.industry / 100));
         const civicSites = Math.max(1, state.policies.education + state.policies.health + Math.round(state.knowledge / 120));
         return {
+          settlementName: state.settlementName,
           mode: state.status,
           turn: state.turn,
           year: state.year,
@@ -1667,6 +2716,10 @@
           activeEffects: state.activeEffects.map((effect) => ({
             name: effect.name,
             turnsLeft: effect.turnsLeft,
+          })),
+          projectQueue: state.projectQueue.map((item) => ({
+            key: item.key,
+            progress: item.progress,
           })),
           world: {
             origin: "Canvas origin is top-left; x grows right, y grows down.",
@@ -1800,28 +2853,177 @@
         );
       }
 
-      function ResourcePanel({ state, assets }) {
+      function VillageSummaryStrip({ state, village }) {
+        const growthTrend = getTrendDescriptor(village.preview.growthPressure, "Growing", "Shrinking", "Flat");
+        const foodTrend = getTrendDescriptor(village.preview.foodNet, "Surplus", "Deficit", "Balanced");
+        const industryTrend = getTrendDescriptor(village.preview.industryNet, "Building", "Stalled", "Balanced");
+        const stabilityTrend = getTrendDescriptor(state.stability - state.unrest / 2, "Steady", "Volatile", "Mixed");
+        const cards = [
+          {
+            label: "Population",
+            value: Math.round(state.population),
+            subvalue: village.growthTurns ? `+1 in ${village.growthTurns} turns` : village.housingShortage ? "Growth blocked — housing full" : "Population stable",
+            trend: growthTrend,
+          },
+          {
+            label: "Food",
+            value: Math.round(state.food),
+            subvalue: `${formatPerTurn(village.preview.foodNet)} net`,
+            trend: foodTrend,
+          },
+          {
+            label: "Production",
+            value: Math.round(state.industry),
+            subvalue: `${formatPerTurn(village.preview.industryNet)} net`,
+            trend: industryTrend,
+          },
+          {
+            label: "Stability",
+            value: Math.round(state.stability),
+            subvalue: `Unrest ${Math.round(state.unrest)} · ${stabilityTrend.label}`,
+            trend: stabilityTrend,
+          },
+        ];
+
         return (
-          <section className="panel">
-            <div className="panel-header">
+          <div className="village-topbar">
+            <div className="village-titlebar">
               <div>
-                <h2>Resource Ledger</h2>
-                <p>Core stocks define whether growth becomes civilization or a cautionary note.</p>
+                <div className="eyebrow">Settlement Inspector · Stage {state.developmentStage}</div>
+                <h2 className="village-title">{state.settlementName}</h2>
+                <div className="village-subtitle">
+                  Turn {state.turn} · Year {state.year} · Tech {state.technologyLevel} · Next stage target {village.nextStage.label}
+                </div>
+              </div>
+              <div className="focus-summary">
+                <span className={`status-chip ${getStatusBanner(state).tone === "crisis" ? "bad" : getStatusBanner(state).tone === "prosper" ? "good" : "warn"}`}>
+                  {getStatusBanner(state).tone === "crisis" ? "ALERT" : getStatusBanner(state).tone === "prosper" ? "GOOD" : "INFO"}
+                  <span>{getStatusBanner(state).title}</span>
+                </span>
+                <div className="minor-copy">{state.statusText}</div>
               </div>
             </div>
-            <div className="resource-grid">
-              {RESOURCE_META.map((item) => {
-                const deltaKey = `${item.key}Delta`;
-                const delta = state.lastBreakdown[deltaKey] || 0;
+            <div className="village-summary-grid">
+              {cards.map((card) => (
+                <div className="summary-card" key={card.label}>
+                  <div className="summary-label">{card.label}</div>
+                  <div className="summary-value">{card.value}</div>
+                  <div className="summary-subvalue">{card.subvalue}</div>
+                  <div className={`delta-pill ${card.trend.tone}`} style={{ marginTop: "8px" }}>
+                    <span>{card.trend.icon}</span>
+                    <span>{card.trend.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      function VillageAlertStrip({ alerts }) {
+        if (!alerts.length) {
+          return (
+            <div className="alert-strip">
+                <div className="alert-item">
+                  <div className="alert-icon">OK</div>
+                  <div>
+                    <strong>No urgent alerts</strong>
+                  <div className="minor-copy">The settlement has no immediate crisis. That is as close to peace as this game gets.</div>
+                </div>
+                <span className="status-chip good">Stable</span>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="alert-strip">
+            {alerts.map((alert) => (
+              <div key={alert.key} className={`alert-item ${alert.severity}`}>
+                <div className="alert-icon">{alert.icon}</div>
+                <div>
+                  <strong>{alert.title}</strong>
+                  <div className="minor-copy">{alert.detail}</div>
+                </div>
+                <span className={`status-chip ${alert.severity === "critical" ? "bad" : "warn"}`}>{alert.action}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      function ResourcePanel({ state, assets, village }) {
+        const rows = [
+          {
+            key: "food",
+            label: "Food",
+            icon: "iconFood",
+            stock: state.food,
+            yield: village.preview.foodProduction,
+            upkeep: village.preview.foodDemand + village.preview.foodMaintenance,
+            net: village.preview.foodNet,
+          },
+          {
+            key: "industry",
+            label: "Industry",
+            icon: "iconIndustry",
+            stock: state.industry,
+            yield: village.preview.industryProduction,
+            upkeep: village.preview.industryMaintenance,
+            net: village.preview.industryNet,
+          },
+          {
+            key: "knowledge",
+            label: "Knowledge",
+            icon: "iconKnowledge",
+            stock: state.knowledge,
+            yield: village.preview.knowledgeProduction,
+            upkeep: 0,
+            net: village.preview.knowledgeNet,
+          },
+        ];
+
+        return (
+          <section className="inspector-section">
+            <div className="panel-header">
+              <div>
+                <h3>Overview</h3>
+                <p>Stored stockpiles, per-turn output, and upkeep are split so motion is obvious instead of implied.</p>
+              </div>
+            </div>
+            <div className="resource-split-grid">
+              {rows.map((row) => {
+                const trend = getTrendDescriptor(row.net, "Surplus", "Deficit", "Stable");
                 return (
-                  <article className="resource-card" key={item.key}>
-                    <img src={assets[item.icon]?.uri} alt={item.label} />
-                    <div>
-                      <h4>{item.label}</h4>
-                      <div className="resource-value">{Math.round(state[item.key])}</div>
-                      <div className={`delta ${delta > 0 ? "good" : delta < 0 ? "bad" : ""}`}>Last turn {formatSigned(delta)}</div>
+                  <div className="resource-split-card" key={row.key}>
+                    <div className="split-header">
+                      <div className="meter-name">
+                        <img className="icon-badge" src={assets[row.icon]?.uri} alt={row.label} />
+                        <div>
+                          <strong>{row.label}</strong>
+                          <div className="minor-copy">{row.label}: {Math.round(row.stock)} ({formatPerTurn(row.net)})</div>
+                        </div>
+                      </div>
+                      <span className={`delta-pill ${trend.tone}`}>
+                        <span>{trend.icon}</span>
+                        <span>{trend.label}</span>
+                      </span>
                     </div>
-                  </article>
+                    <div className="split-metrics">
+                      <div className="split-metric">
+                        <div className="metric-caption">Stored</div>
+                        <div className="metric-value">{Math.round(row.stock)}</div>
+                      </div>
+                      <div className="split-metric">
+                        <div className="metric-caption">Yield</div>
+                        <div className="metric-value">{formatSigned(row.yield)}</div>
+                      </div>
+                      <div className="split-metric">
+                        <div className="metric-caption">{row.key === "knowledge" ? "Gain" : "Upkeep"}</div>
+                        <div className="metric-value">{row.key === "knowledge" ? formatSigned(row.net) : `-${Math.round(row.upkeep)}`}</div>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
@@ -1829,16 +3031,48 @@
         );
       }
 
-      function StatsPanel({ state, assets }) {
-        const stageIdx = stageIndexFromLabel(state.developmentStage);
-        const nextStage = STAGES[Math.min(stageIdx + 1, STAGES.length - 1)];
-        const currentStage = STAGES[stageIdx] || STAGES[0];
+      function StatsPanel({ state, assets, village }) {
+        const currentStage = village.currentStage;
+        const nextStage = village.nextStage;
+        const defenseTone = village.defenseScore >= 55 ? "good" : village.defenseScore >= 36 ? "warn" : "bad";
         return (
-          <section className="panel">
+          <section className="inspector-section">
             <div className="panel-header">
               <div>
-                <h2>Civic Metrics</h2>
-                <p>These are the quiet variables that decide whether a good harvest becomes a durable society.</p>
+                <h3>Population & Civic Load</h3>
+                <p>Healthy villages explain growth, capacity, staffing, and risk in one place.</p>
+              </div>
+            </div>
+            <div className="card-grid-2">
+              <div className="info-card">
+                <h3>Growth Outlook</h3>
+                <div className="key-line">
+                  <span>Population growth</span>
+                  <strong>{village.growthTurns ? `+1 in ${village.growthTurns} turns` : village.housingShortage ? "Blocked" : "Flat"}</strong>
+                </div>
+                <div className="key-line">
+                  <span>Housing</span>
+                  <span className={`status-chip ${village.housingShortage ? "bad" : "good"}`}>
+                    {village.housingShortage ? "FULL" : "CAPACITY"}
+                  </span>
+                </div>
+                <div className="minor-copy" style={{ marginTop: "8px" }}>
+                  {village.housingUsed}/{village.housingCap} housing used. {village.housingShortage ? "Growth is blocked by homes, not by demand." : "The village still has room to absorb more people."}
+                </div>
+              </div>
+              <div className="info-card">
+                <h3>Defense Readiness</h3>
+                <div className="key-line">
+                  <span>Defense score</span>
+                  <strong>{village.defenseScore}</strong>
+                </div>
+                <div className="key-line">
+                  <span>Garrison</span>
+                  <span className={`status-chip ${defenseTone}`}>{village.garrison > 0 ? `${village.garrison} guard` : "No guard"}</span>
+                </div>
+                <div className="minor-copy" style={{ marginTop: "8px" }}>
+                  {village.defenseScore >= 55 ? "The village can absorb trouble without immediately dissolving." : village.defenseScore >= 36 ? "Defense exists, but it is not exactly reassuring." : "Security is visibly thin."}
+                </div>
               </div>
             </div>
             <div className="meter-grid">
@@ -1864,7 +3098,7 @@
             <div className="legend-row">
               <div className="legend-pill">
                 <span className="legend-swatch" style={{ background: "#d59f4d" }} />
-                {currentStage.label} requirements met
+                {currentStage.label} online
               </div>
               <div className="legend-pill">
                 <span className="legend-swatch" style={{ background: "#4f8e5d" }} />
@@ -1879,11 +3113,11 @@
         const spent = totalPolicyPoints(state.policies);
         const remaining = POLICY_POINT_CAP - spent;
         return (
-          <section className="panel">
+          <section className="inspector-section">
             <div className="panel-header">
               <div>
-                <h2>Policy Cabinet</h2>
-                <p>Each policy level is a permanent nudge each turn. The tradeoff is the point, not an accident.</p>
+                <h3>Policy Drivers</h3>
+                <p>These sliders explain why the village is trending the way it is. They are not decorative guilt.</p>
               </div>
               <div className="points-pill">Free Points: {remaining}</div>
             </div>
@@ -1919,6 +3153,385 @@
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        );
+      }
+
+      function ProductionPanel({ state, village, assets, dispatch, onFocusZone }) {
+        const queue = state.projectQueue.map((item, index) => {
+          const def = PROJECT_DEFS[item.key];
+          const remaining = Math.max(0, def.cost - item.progress);
+          const turns = village.preview.projectGain > 0 ? Math.max(1, Math.ceil(remaining / village.preview.projectGain)) : null;
+          return { ...item, def, remaining, turns, progressPct: Math.min(100, (item.progress / def.cost) * 100), current: index === 0 };
+        });
+
+        return (
+          <section className="inspector-section">
+            <div className="panel-header">
+              <div>
+                <h3>Production Queue</h3>
+                <p>Current project, progress, and turns remaining are explicit. No inferential archaeology required.</p>
+              </div>
+            </div>
+            {!queue.length ? (
+              <div className="empty-state">
+                <strong>No production selected.</strong>
+                <div className="minor-copy" style={{ marginTop: "8px" }}>
+                  The settlement has no active project. Queue a granary, workshop, guard post, or schoolhouse from the action bar below.
+                </div>
+              </div>
+            ) : (
+              <div className="queue-list">
+                {queue.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`queue-item ${item.current ? "is-current" : ""}`}
+                    onMouseEnter={() => onFocusZone(item.def.zoneId)}
+                    onMouseLeave={() => onFocusZone(null)}
+                  >
+                    <div className="queue-item-top">
+                      <div className="meter-name">
+                        <img className="icon-badge" src={assets[item.def.icon]?.uri} alt={item.def.label} />
+                        <div>
+                          <strong>{item.def.label}</strong>
+                          <small>{item.current ? "Current project" : "Queued next"} · {item.def.effect}</small>
+                        </div>
+                      </div>
+                      <span className={`status-chip ${item.current ? "good" : "warn"}`}>
+                        {item.current ? "Active" : "Queued"}
+                      </span>
+                    </div>
+                    <div className="queue-progress">
+                      <span style={{ width: `${item.progressPct}%` }} />
+                    </div>
+                    <div className="key-line">
+                      <span>{Math.round(item.progress)}/{item.def.cost} production</span>
+                      <strong>{item.turns ? `${item.turns} turns left` : "Stalled"}</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="queue-actions">
+              {Object.entries(PROJECT_DEFS).map(([key, def]) => (
+                <button key={key} className="btn-secondary" disabled={state.projectQueue.length >= 4} onClick={() => dispatch({ type: "QUEUE_PROJECT", key })}>
+                  Queue {def.label}
+                </button>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function BuildingGroupsPanel({ village, assets, hoveredZoneId, setHoveredZoneId, selectedZoneId, setSelectedZoneId, visibleGroups }) {
+        const groups = (visibleGroups || [
+          { key: "food", label: "Food", zoneId: "fields" },
+          { key: "housing", label: "Housing", zoneId: "homes" },
+          { key: "economy", label: "Economy", zoneId: "industry" },
+          { key: "knowledge", label: "Knowledge", zoneId: "scholar" },
+          { key: "civic", label: "Infrastructure", zoneId: "civic" },
+          { key: "defense", label: "Defense", zoneId: "civic" },
+        ]);
+
+        return (
+          <section className="inspector-section">
+            <div className="panel-header">
+              <div>
+                <h3>Buildings by Function</h3>
+                <p>Entries expose operational state and inline bottlenecks instead of making you cross-reference the whole panel.</p>
+              </div>
+            </div>
+            <div className="building-group-list">
+              {groups.map((group) => (
+                <div className="building-group" key={group.key}>
+                  <div className="building-group-header">
+                    <strong>{group.label}</strong>
+                    <span className="minor-copy">{pluralize(village.buildings[group.key].reduce((sum, item) => sum + item.count, 0), "asset")}</span>
+                  </div>
+                  {(village.buildings[group.key] || []).length ? (
+                    (village.buildings[group.key] || []).map((entry) => {
+                      const chip = getStatusChip(entry.status);
+                      const active = hoveredZoneId === group.zoneId || selectedZoneId === group.zoneId;
+                      return (
+                        <div
+                          key={entry.key}
+                          className={`building-row ${active ? "is-highlighted" : ""}`}
+                          onMouseEnter={() => setHoveredZoneId(group.zoneId)}
+                          onMouseLeave={() => setHoveredZoneId(null)}
+                          onClick={() => setSelectedZoneId(group.zoneId)}
+                        >
+                          <div className="building-row-top">
+                            <div className="meter-name">
+                              <img className="icon-badge" src={assets[entry.icon]?.uri} alt={entry.name} />
+                              <div>
+                                <strong>{entry.name}</strong>
+                                <small>{entry.detail}</small>
+                              </div>
+                            </div>
+                            <div className="pill-row">
+                              <span className={`status-chip ${chip.tone}`}>{chip.label}</span>
+                              <span className="status-chip">Count {entry.count}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="empty-state">No buildings in this category yet.</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function TileLinkPanel({ village, hoveredZoneId, setHoveredZoneId, selectedZoneId, setSelectedZoneId }) {
+        const toneForState = (state) => {
+          if (state === "worked" || state === "selected") return "good";
+          if (state === "blocked") return "bad";
+          return "warn";
+        };
+
+        return (
+          <section className="inspector-section">
+            <div className="panel-header">
+              <div>
+                <h3>Work Area & Tile Links</h3>
+                <p>Hover the panel to light the map. Hover the map to light the matching row. The relationship is supposed to be obvious now.</p>
+              </div>
+            </div>
+            <div className="tile-list">
+              {village.tileZones.map((tile) => (
+                <div
+                  key={tile.id}
+                  className={`tile-row ${hoveredZoneId === tile.id || selectedZoneId === tile.id ? "is-highlighted" : ""}`}
+                  onMouseEnter={() => setHoveredZoneId(tile.id)}
+                  onMouseLeave={() => setHoveredZoneId(null)}
+                  onClick={() => setSelectedZoneId(tile.id)}
+                >
+                  <div className="tile-row-top">
+                    <div>
+                      <strong>{tile.label}</strong>
+                      <small>{tile.detail}</small>
+                    </div>
+                    <div className="tile-state-band">
+                      <span className={`tile-state-chip ${toneForState(tile.state)}`}>{tile.state}</span>
+                    </div>
+                  </div>
+                  <div className="minor-copy" style={{ marginTop: "8px" }}>{tile.yieldLabel}</div>
+                </div>
+              ))}
+            </div>
+            <div className="legend-board">
+              <div className="legend-pill">Worked</div>
+              <div className="legend-pill">Owned</div>
+              <div className="legend-pill">Workable Radius</div>
+              <div className="legend-pill">Blocked</div>
+              <div className="legend-pill">Selected</div>
+            </div>
+          </section>
+        );
+      }
+
+      function ComparisonPanel({ village }) {
+        return (
+          <section className="inspector-section">
+            <div className="panel-header">
+              <div>
+                <h3>Settlement Comparison</h3>
+                <p>This game has one settlement, so comparison is current versus previous turn and peak rather than village-versus-village.</p>
+              </div>
+            </div>
+            <div className="compare-list">
+              {village.compare.map((row) => (
+                <div className="compare-row" key={row.key}>
+                  <strong>{row.label}</strong>
+                  <span>Now {row.current}</span>
+                  <span>Prev {row.previous}</span>
+                  <span>Peak {row.peak}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function VillageInspector({
+        state,
+        village,
+        assets,
+        dispatch,
+        inspectorMode,
+        setInspectorMode,
+        activeTab,
+        setActiveTab,
+        hoveredZoneId,
+        setHoveredZoneId,
+        selectedZoneId,
+        setSelectedZoneId,
+        overlayMode,
+        setOverlayMode,
+      }) {
+        const renderTab = () => {
+          if (activeTab === "overview") {
+            return (
+              <div className="overview-grid">
+                <div className="inspector-section">
+                  <ResourcePanel state={state} assets={assets} village={village} />
+                  <div className="info-card">
+                    <h3>What is happening right now?</h3>
+                    <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whatsHappening}</div>
+                    <h3 style={{ marginTop: "12px" }}>Why?</h3>
+                    <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whyHappening}</div>
+                    <h3 style={{ marginTop: "12px" }}>What next?</h3>
+                    <div className="minor-copy" style={{ marginTop: "8px" }}>{village.primaryRecommendation}</div>
+                  </div>
+                  <TileLinkPanel
+                    village={village}
+                    hoveredZoneId={hoveredZoneId}
+                    setHoveredZoneId={setHoveredZoneId}
+                    selectedZoneId={selectedZoneId}
+                    setSelectedZoneId={setSelectedZoneId}
+                  />
+                </div>
+                <div className="inspector-section">
+                  <ProductionPanel state={state} village={village} assets={assets} dispatch={dispatch} onFocusZone={setHoveredZoneId} />
+                  <StatsPanel state={state} village={village} assets={assets} />
+                </div>
+              </div>
+            );
+          }
+          if (activeTab === "population") {
+            return (
+              <div className="inspector-section">
+                <StatsPanel state={state} village={village} assets={assets} />
+                <div className="card-grid-2">
+                  {Object.entries(village.assignments).map(([key, value]) => (
+                    <div className="info-card" key={key}>
+                      <h3>{key[0].toUpperCase() + key.slice(1)}</h3>
+                      <div className="resource-value">{value}</div>
+                      <div className="minor-copy">{key === "farmers" ? "Food work" : key === "makers" ? "Production work" : key === "scholars" ? "Knowledge work" : key === "caretakers" ? "Health and welfare" : "Security and watch"}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="info-card">
+                  <h3>Idle Workers</h3>
+                  <div className="resource-value">{village.idleWorkers}</div>
+                  <div className="minor-copy">Idle labor is surfaced directly because it is otherwise easy to miss and usually means bad planning.</div>
+                </div>
+              </div>
+            );
+          }
+          if (activeTab === "buildings") {
+            return (
+              <BuildingGroupsPanel
+                village={village}
+                assets={assets}
+                hoveredZoneId={hoveredZoneId}
+                setHoveredZoneId={setHoveredZoneId}
+                selectedZoneId={selectedZoneId}
+                setSelectedZoneId={setSelectedZoneId}
+              />
+            );
+          }
+          if (activeTab === "production") {
+            return <ProductionPanel state={state} village={village} assets={assets} dispatch={dispatch} onFocusZone={setHoveredZoneId} />;
+          }
+          if (activeTab === "defense") {
+            return (
+              <div className="inspector-section">
+                <StatsPanel state={state} village={village} assets={assets} />
+                <BuildingGroupsPanel
+                  village={village}
+                  assets={assets}
+                  hoveredZoneId={hoveredZoneId}
+                  setHoveredZoneId={setHoveredZoneId}
+                  selectedZoneId={selectedZoneId}
+                  setSelectedZoneId={setSelectedZoneId}
+                  visibleGroups={[{ key: "defense", label: "Defense", zoneId: "civic" }]}
+                />
+              </div>
+            );
+          }
+          return (
+            <div className="inspector-section">
+              <ResourcePanel state={state} assets={assets} village={village} />
+              <ComparisonPanel village={village} />
+              <PolicyPanel state={state} dispatch={dispatch} />
+            </div>
+          );
+        };
+
+        return (
+          <section className="panel village-panel" aria-label="Village Inspector">
+            <VillageSummaryStrip state={state} village={village} />
+            <VillageAlertStrip alerts={village.alerts} />
+            <div className="village-titlebar">
+              <div className="mode-toggle" role="tablist" aria-label="Village inspector density">
+                <button className={inspectorMode === "compact" ? "is-active" : ""} onClick={() => setInspectorMode("compact")}>
+                  Compact HUD
+                </button>
+                <button className={inspectorMode === "expanded" ? "is-active" : ""} onClick={() => setInspectorMode("expanded")}>
+                  Expanded Inspector
+                </button>
+              </div>
+              <div className="overlay-toggle" aria-label="Settlement overlay toggle">
+                {["none", "work", "influence"].map((mode) => (
+                  <button key={mode} className={overlayMode === mode ? "is-active" : ""} onClick={() => setOverlayMode(mode)}>
+                    {mode === "none" ? "Overlay Off" : mode === "work" ? "Worked Tiles" : "Influence Area"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {inspectorMode === "expanded" ? (
+              <>
+                <div className="tab-strip" role="tablist" aria-label="Village sections">
+                  {VILLAGE_TABS.map((tab) => (
+                    <button key={tab.key} className={activeTab === tab.key ? "is-active" : ""} onClick={() => setActiveTab(tab.key)}>
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                {renderTab()}
+              </>
+            ) : (
+              <div className="inspector-section">
+                <div className="info-card">
+                  <h3>Quick Decision View</h3>
+                  <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whatsHappening}</div>
+                  <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whyHappening}</div>
+                  <div className="minor-copy" style={{ marginTop: "8px" }}>{village.primaryRecommendation}</div>
+                </div>
+                <ProductionPanel state={state} village={village} assets={assets} dispatch={dispatch} onFocusZone={setHoveredZoneId} />
+              </div>
+            )}
+            <div className="sticky-bar">
+              <div className="sticky-actions">
+                <button className="primary" onClick={() => setActiveTab("production")}>Manage Production</button>
+                <button onClick={() => setActiveTab("population")}>Assign Workers</button>
+                <button disabled={state.projectQueue.length >= 4} onClick={() => dispatch({ type: "QUEUE_PROJECT", key: "guardpost" })}>
+                  Construct Guard Post
+                </button>
+                <button onClick={() => setActiveTab("defense")}>Inspect Defenses</button>
+                <button
+                  onClick={() => {
+                    const nextName = window.prompt("Rename settlement", state.settlementName);
+                    if (nextName) dispatch({ type: "RENAME_SETTLEMENT", name: nextName });
+                  }}
+                >
+                  Rename
+                </button>
+                <button
+                  onClick={() => {
+                    const canvas = document.querySelector("canvas");
+                    if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }}
+                >
+                  Center Camera
+                </button>
+              </div>
             </div>
           </section>
         );
@@ -1990,7 +3603,16 @@
         ctx.restore();
       }
 
-      function CanvasWorld({ state, assets }) {
+      function findZoneAtPoint(zones, x, y) {
+        return zones.find((zone) => (
+          x >= zone.rect.x &&
+          x <= zone.rect.x + zone.rect.w &&
+          y >= zone.rect.y &&
+          y <= zone.rect.y + zone.rect.h
+        )) || null;
+      }
+
+      function CanvasWorld({ state, assets, village, hoveredZoneId, setHoveredZoneId, selectedZoneId, setSelectedZoneId, overlayMode, setOverlayMode }) {
         const canvasRef = useRef(null);
 
         useEffect(() => {
@@ -2123,22 +3745,91 @@
             }
             ctx.stroke();
           }
-        }, [state, assets]);
+          if (overlayMode !== "none") {
+            village.tileZones.forEach((zone) => {
+              const isHighlighted = hoveredZoneId === zone.id || selectedZoneId === zone.id || zone.state === "selected";
+              const fill =
+                zone.state === "blocked"
+                  ? "rgba(166,61,51,0.14)"
+                  : zone.state === "worked"
+                  ? "rgba(79,142,93,0.14)"
+                  : zone.state === "selected"
+                  ? "rgba(213,159,77,0.16)"
+                  : "rgba(47,127,157,0.12)";
+              ctx.save();
+              ctx.fillStyle = fill;
+              ctx.strokeStyle = isHighlighted ? "rgba(17,37,56,0.85)" : "rgba(17,37,56,0.34)";
+              ctx.lineWidth = isHighlighted ? 3 : 1.5;
+              ctx.setLineDash(overlayMode === "influence" && zone.state === "workable" ? [8, 6] : []);
+              ctx.beginPath();
+              ctx.roundRect(zone.rect.x, zone.rect.y, zone.rect.w, zone.rect.h, 12);
+              ctx.fill();
+              ctx.stroke();
+              ctx.fillStyle = "rgba(17,37,56,0.88)";
+              ctx.font = `${isHighlighted ? "700" : "600"} 14px "Space Grotesk", sans-serif`;
+              ctx.fillText(zone.label, zone.rect.x + 10, zone.rect.y + 20);
+              ctx.restore();
+            });
+          }
+        }, [state, assets, village, hoveredZoneId, selectedZoneId, overlayMode]);
+
+        function readCanvasPoint(event) {
+          const canvas = canvasRef.current;
+          if (!canvas) return null;
+          const bounds = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / bounds.width;
+          const scaleY = canvas.height / bounds.height;
+          return {
+            x: (event.clientX - bounds.left) * scaleX,
+            y: (event.clientY - bounds.top) * scaleY,
+          };
+        }
 
         return (
           <section className="panel world-panel">
             <div className="panel-header">
               <div>
-                <h2>World Canvas</h2>
-                <p>The map reflects the real simulation state: density, smoke, ecology, prosperity, and technological unlocks all come from the reducer.</p>
+                <h2>Settlement Map</h2>
+                <p>The map now links directly to the inspector. Hover or select districts to trace cause and effect between land and panel rows.</p>
+              </div>
+              <div className="overlay-toggle">
+                {["none", "work", "influence"].map((mode) => (
+                  <button key={mode} className={overlayMode === mode ? "is-active" : ""} onClick={() => setOverlayMode(mode)}>
+                    {mode === "none" ? "Overlay Off" : mode === "work" ? "Worked / Owned" : "Influence Radius"}
+                  </button>
+                ))}
               </div>
             </div>
             <div className="world-wrap">
-              <canvas ref={canvasRef} width="960" height="540" />
+              <canvas
+                ref={canvasRef}
+                width="960"
+                height="540"
+                onMouseMove={(event) => {
+                  const point = readCanvasPoint(event);
+                  if (!point) return;
+                  const zone = findZoneAtPoint(village.tileZones, point.x, point.y);
+                  setHoveredZoneId(zone?.id || null);
+                }}
+                onMouseLeave={() => setHoveredZoneId(null)}
+                onClick={(event) => {
+                  const point = readCanvasPoint(event);
+                  if (!point) return;
+                  const zone = findZoneAtPoint(village.tileZones, point.x, point.y);
+                  setSelectedZoneId(zone?.id || null);
+                }}
+              />
               <div className="world-overlay">
-                <div className="world-chip">Hub: {state.developmentStage}</div>
-                <div className="world-chip">Effects: {state.activeEffects.length ? state.activeEffects.map((effect) => effect.name).join(", ") : "None"}</div>
+                <div className="world-chip">Hub: {state.settlementName} · {state.developmentStage}</div>
+                <div className="world-chip">
+                  Focus: {selectedZoneId ? village.tileZones.find((zone) => zone.id === selectedZoneId)?.label || "None" : "None"}
+                </div>
               </div>
+            </div>
+            <div className="canvas-hint">
+              <div className="legend-pill">Hover district rows to pulse map zones</div>
+              <div className="legend-pill">Click map zones to pin selection</div>
+              <div className="legend-pill">Worked / owned / workable / blocked states use text, borders, and fill patterns</div>
             </div>
             <div className="legend-row">
               <div className="legend-pill">
@@ -2157,6 +3848,11 @@
       function App() {
         const [state, dispatch] = useReducer(reducer, undefined, () => createInitialState());
         const [assets, setAssets] = useState({});
+        const [inspectorMode, setInspectorMode] = useState("expanded");
+        const [activeVillageTab, setActiveVillageTab] = useState("overview");
+        const [overlayMode, setOverlayMode] = useState("work");
+        const [hoveredZoneId, setHoveredZoneId] = useState(null);
+        const [selectedZoneId, setSelectedZoneId] = useState("hub");
         const latestStateRef = useRef(state);
         const virtualAccumulatorRef = useRef(0);
         const shellRef = useRef(null);
@@ -2164,6 +3860,14 @@
         useEffect(() => {
           latestStateRef.current = state;
         }, [state]);
+
+        useEffect(() => {
+          if (state.turn === 0) {
+            setActiveVillageTab("overview");
+            setSelectedZoneId("hub");
+            setHoveredZoneId(null);
+          }
+        }, [state.turn, state.settlementName]);
 
         useEffect(() => {
           let cancelled = false;
@@ -2223,6 +3927,7 @@
 
         const ready = state.assetsReady && Object.keys(assets).length > 0;
         const snapshot = getWorldSnapshot(state);
+        const village = getVillageModel(state);
 
         if (!ready) {
           return (
@@ -2240,14 +3945,37 @@
             <GameHeader state={state} />
             <div className="main-grid">
               <div className="left-column">
-                <CanvasWorld state={state} assets={assets} />
+                <CanvasWorld
+                  state={state}
+                  assets={assets}
+                  village={village}
+                  hoveredZoneId={hoveredZoneId}
+                  setHoveredZoneId={setHoveredZoneId}
+                  selectedZoneId={selectedZoneId}
+                  setSelectedZoneId={setSelectedZoneId}
+                  overlayMode={overlayMode}
+                  setOverlayMode={setOverlayMode}
+                />
                 <ControlPanel state={state} dispatch={dispatch} />
-                <ResourcePanel state={state} assets={assets} />
                 <ProgressVisualization state={state} />
               </div>
               <div className="right-column">
-                <StatsPanel state={state} assets={assets} />
-                <PolicyPanel state={state} dispatch={dispatch} />
+                <VillageInspector
+                  state={state}
+                  village={village}
+                  assets={assets}
+                  dispatch={dispatch}
+                  inspectorMode={inspectorMode}
+                  setInspectorMode={setInspectorMode}
+                  activeTab={activeVillageTab}
+                  setActiveTab={setActiveVillageTab}
+                  hoveredZoneId={hoveredZoneId}
+                  setHoveredZoneId={setHoveredZoneId}
+                  selectedZoneId={selectedZoneId}
+                  setSelectedZoneId={setSelectedZoneId}
+                  overlayMode={overlayMode}
+                  setOverlayMode={setOverlayMode}
+                />
                 <EventLog entries={state.eventLog} assets={assets} />
                 <section className="panel">
                   <div className="panel-header">
