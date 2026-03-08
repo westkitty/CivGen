@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Civilization Simulator Lite</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23112538' d='M10 56V24l7-6 7 6v32zM26 56V18l8-7 8 7v38zM44 56V24l7-6 7 6v32z'/%3E%3Cpath fill='%23d59f4d' d='M9 22l8-7 8 7M25 17l9-8 9 8M43 22l8-7 8 7'/%3E%3Cpath fill='%23f0eadb' d='M14 34h6v8h-6zm16-6h7v8h-7zm17 7h6v8h-6z'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #112538;
+        --paper: #f0eadb;
+        --sand: #dcc9a3;
+        --gold: #d59f4d;
+        --brass: #c57d2c;
+        --sea: #2f7f9d;
+        --forest: #42734f;
+        --wine: #7f3f35;
+        --brick: #b85e43;
+        --slate: #466071;
+        --crisis: #a63d33;
+        --prosper: #4f8e5d;
+        --panel: rgba(245, 238, 223, 0.88);
+        --panel-edge: rgba(17, 37, 56, 0.18);
+        --shadow: 0 16px 40px rgba(17, 37, 56, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        color: var(--ink);
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255, 245, 214, 0.95), rgba(240, 234, 219, 0.84) 22%, rgba(212, 206, 183, 0.55) 60%, transparent 70%),
+          linear-gradient(160deg, #dbe3df 0%, #c2d0cb 35%, #91b0b2 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.18;
+        background-image:
+          linear-gradient(rgba(17, 37, 56, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(17, 37, 56, 0.06) 1px, transparent 1px);
+        background-size: 28px 28px;
+        mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      .app-shell {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .header-card,
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--panel-edge);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .header-card {
+        position: relative;
+        overflow: hidden;
+        padding: 22px 24px 18px;
+        border-radius: 28px;
+        background:
+          linear-gradient(120deg, rgba(255, 249, 233, 0.96), rgba(238, 226, 192, 0.88) 40%, rgba(225, 216, 203, 0.78) 100%);
+      }
+
+      .header-card::after {
+        content: "";
+        position: absolute;
+        inset: auto -80px -110px auto;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(213, 159, 77, 0.28), rgba(213, 159, 77, 0));
+      }
+
+      .title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        font-family: "Bree Serif", Georgia, serif;
+        letter-spacing: 0.02em;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1;
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        max-width: 860px;
+        font-size: 0.98rem;
+        line-height: 1.5;
+        color: rgba(17, 37, 56, 0.82);
+      }
+
+      .status-banner {
+        min-width: 240px;
+        padding: 12px 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(17, 37, 56, 0.12);
+        background: rgba(255, 252, 245, 0.72);
+      }
+
+      .status-banner strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .status-banner.prosper {
+        color: var(--prosper);
+        border-color: rgba(79, 142, 93, 0.35);
+        background: rgba(230, 247, 232, 0.8);
+      }
+
+      .status-banner.crisis {
+        color: var(--crisis);
+        border-color: rgba(166, 61, 51, 0.35);
+        background: rgba(253, 233, 226, 0.88);
+      }
+
+      .meta-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .meta-pill {
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(17, 37, 56, 0.07);
+        font-size: 0.92rem;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .meta-pill strong {
+        color: var(--sea);
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.95fr);
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .left-column,
+      .right-column {
+        display: grid;
+        gap: 18px;
+      }
+
+      .panel {
+        border-radius: 24px;
+        padding: 18px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .panel-header p,
+      .minor-copy {
+        margin: 0;
+        color: rgba(17, 37, 56, 0.72);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .world-panel {
+        padding: 18px;
+        background:
+          linear-gradient(180deg, rgba(255, 253, 245, 0.92), rgba(226, 233, 226, 0.76));
+      }
+
+      .world-wrap {
+        position: relative;
+      }
+
+      canvas {
+        width: 100%;
+        display: block;
+        border-radius: 22px;
+        border: 1px solid rgba(17, 37, 56, 0.12);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        background: linear-gradient(180deg, #d1e1e5, #96b0a3 45%, #7d9a71 46%, #5f7b5e 100%);
+      }
+
+      .world-overlay {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 16px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .world-chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(11, 30, 45, 0.68);
+        color: #f7f1df;
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+
+      .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 14px;
+        padding: 12px 15px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--sea), #3f93a4);
+        color: #f6fbfc;
+        box-shadow: 0 12px 22px rgba(47, 127, 157, 0.22);
+      }
+
+      .btn-secondary {
+        background: rgba(17, 37, 56, 0.08);
+        color: var(--ink);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, var(--wine), var(--brick));
+        color: #fff7f0;
+      }
+
+      .btn-accent {
+        background: linear-gradient(135deg, #e0b064, var(--gold));
+        color: #342411;
+      }
+
+      .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .resource-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+        border-radius: 20px;
+        background: rgba(255, 252, 245, 0.8);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .resource-card img,
+      .icon-badge {
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+        flex: 0 0 auto;
+      }
+
+      .resource-card h4 {
+        font-size: 0.98rem;
+      }
+
+      .resource-value {
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      .delta {
+        font-size: 0.86rem;
+        margin-top: 4px;
+      }
+
+      .delta.good {
+        color: var(--prosper);
+      }
+
+      .delta.bad {
+        color: var(--crisis);
+      }
+
+      .meter-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .meter-row {
+        display: grid;
+        grid-template-columns: minmax(112px, 132px) 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .meter-name {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 700;
+      }
+
+      .meter-bar {
+        position: relative;
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(17, 37, 56, 0.08);
+      }
+
+      .meter-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: inherit;
+      }
+
+      .policy-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .policy-row {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.84);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .policy-topline,
+      .policy-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .policy-label {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .policy-controls {
+        margin-top: 10px;
+      }
+
+      .policy-controls button {
+        min-width: 38px;
+        height: 38px;
+        padding: 0;
+        border-radius: 12px;
+      }
+
+      .policy-level {
+        min-width: 48px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+
+      .points-pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(17, 37, 56, 0.08);
+        font-weight: 700;
+      }
+
+      .history-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .spark-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.8);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .spark-card svg {
+        width: 100%;
+        height: 84px;
+        display: block;
+      }
+
+      .event-list {
+        display: grid;
+        gap: 12px;
+        max-height: 540px;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      .event-item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.8);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .event-item h4 {
+        font-size: 0.98rem;
+      }
+
+      .event-meta {
+        font-size: 0.82rem;
+        color: rgba(17, 37, 56, 0.64);
+        margin-top: 2px;
+      }
+
+      .event-body {
+        margin-top: 5px;
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .event-tag {
+        display: inline-flex;
+        margin-top: 6px;
+        padding: 6px 8px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: rgba(17, 37, 56, 0.08);
+      }
+
+      .legend-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .legend-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(255, 252, 245, 0.8);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+        font-size: 0.84rem;
+      }
+
+      .legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        font-size: 0.84rem;
+        color: rgba(17, 37, 56, 0.72);
+      }
+
+      @media (max-width: 1080px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .title-row {
+          flex-direction: column;
+        }
+
+        .status-banner {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app-shell {
+          padding: 14px;
+        }
+
+        .resource-grid,
+        .history-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .meter-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" data-presets="react">
+      const { useEffect, useReducer, useRef, useState } = React;
+
+      const TURN_INTERVAL_MS = 1000;
+      const YEAR_STEP = 5;
+      const MAX_HISTORY = 24;
+      const POLICY_POINT_CAP = 14;
+
+      const STAGES = [
+        { key: "tribe", label: "Tribe", pop: 8, industry: 6, tech: 1, score: 6, hub: "hubTribalCamp" },
+        { key: "village", label: "Village", pop: 18, industry: 16, tech: 2, score: 14, hub: "hubVillageCenter" },
+        { key: "town", label: "Town", pop: 32, industry: 28, tech: 3, score: 28, hub: "hubTownMarket" },
+        { key: "cityState", label: "City-State", pop: 52, industry: 48, tech: 4, score: 48, hub: "hubCityStateForum" },
+        { key: "kingdom", label: "Kingdom", pop: 80, industry: 72, tech: 5, score: 72, hub: "hubKingdomKeep" },
+        { key: "industrialState", label: "Industrial State", pop: 115, industry: 118, tech: 6, score: 110, hub: "hubIndustrialCore" },
+        { key: "modernNation", label: "Modern Nation", pop: 150, industry: 150, tech: 8, score: 168, hub: "hubModernSkyline" },
+        { key: "spacefaringSociety", label: "Spacefaring Society", pop: 180, industry: 190, tech: 10, score: 245, hub: "hubLaunchComplex" },
+      ];
+
+      const POLICY_DEFS = {
+        agriculture: {
+          label: "Agriculture",
+          summary: "More food; slight ecological wear at high output.",
+          detail: "Food output rises sharply. High levels graze the land harder.",
+        },
+        industry: {
+          label: "Industry",
+          summary: "More industry; pollution and morale pressure.",
+          detail: "Infrastructure surges, but smoke, noise, and waste rise with it.",
+        },
+        education: {
+          label: "Education",
+          summary: "More knowledge and modest morale gain.",
+          detail: "Schools stabilize growth and sharpen long-term planning.",
+        },
+        health: {
+          label: "Health",
+          summary: "Resilience boost; costs industrial capacity.",
+          detail: "Public care protects population against famine and disease cascades.",
+        },
+        environment: {
+          label: "Environment",
+          summary: "Ecology recovers; short-term industry slows.",
+          detail: "Cleaner land lowers disaster risk and supports food output.",
+        },
+        security: {
+          label: "Security",
+          summary: "Lower unrest; excessive force depresses morale.",
+          detail: "Order improves, but heavy policing is not a popularity contest.",
+        },
+        welfare: {
+          label: "Welfare",
+          summary: "Happiness and stability support; costs food and industry.",
+          detail: "The people prefer not starving and not being ignored. Strange but true.",
+        },
+        research: {
+          label: "Research",
+          summary: "Faster technology growth; costs food and industry.",
+          detail: "A sharper future built on present sacrifice.",
+        },
+      };
+
+      const RESOURCE_META = [
+        { key: "food", label: "Food", max: 300, icon: "iconFood", color: "#6d8f3a" },
+        { key: "industry", label: "Industry", max: 300, icon: "iconIndustry", color: "#8b5b3b" },
+        { key: "knowledge", label: "Knowledge", max: 300, icon: "iconKnowledge", color: "#5577b7" },
+        { key: "population", label: "Population", max: 500, icon: "iconPopulation", color: "#8660ad" },
+      ];
+
+      const METRIC_META = [
+        { key: "happiness", label: "Happiness", icon: "iconHappiness", color: "#d59f4d" },
+        { key: "health", label: "Health", icon: "iconHealth", color: "#4f8e5d" },
+        { key: "environment", label: "Environment", icon: "iconEnvironment", color: "#2f7f9d" },
+        { key: "stability", label: "Stability", icon: "iconStability", color: "#466071" },
+        { key: "unrest", label: "Unrest", icon: "iconUnrest", color: "#a63d33" },
+      ];
+
+      const HISTORY_META = [
+        { key: "food", label: "Food Trend", color: "#5d8739" },
+        { key: "population", label: "Population Trend", color: "#8b66b0" },
+        { key: "knowledge", label: "Knowledge Trend", color: "#4f78c2" },
+        { key: "legacyScore", label: "Legacy Trend", color: "#c57d2c" },
+      ];
+
+      const PALETTE = {
+        skyTop: "#d7edf7",
+        skyBottom: "#90bccd",
+        landA: "#8ea86c",
+        landB: "#5d764f",
+        waterA: "#7cc3d8",
+        waterB: "#2f7f9d",
+        shadow: "#173246",
+        cream: "#f5eddb",
+        brass: "#d59f4d",
+        brick: "#b85e43",
+        roof: "#7f3f35",
+        slate: "#466071",
+        forest: "#42734f",
+        moss: "#7ba46e",
+        smoke: "#68737d",
+        crisis: "#a63d33",
+      };
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function round1(value) {
+        return Math.round(value * 10) / 10;
+      }
+
+      function formatSigned(value) {
+        const rounded = Math.round(value * 10) / 10;
+        if (rounded > 0) return `+${rounded}`;
+        if (rounded < 0) return `${rounded}`;
+        return "0";
+      }
+
+      function nextSeed(seed) {
+        return (seed * 1664525 + 1013904223) >>> 0;
+      }
+
+      function takeRandom(seed) {
+        const updated = nextSeed(seed);
+        return { seed: updated, value: updated / 4294967296 };
+      }
+
+      function encodeSvg(svg) {
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      }
+
+      function createSvgImage(svg) {
+        return new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = encodeSvg(svg);
+        });
+      }
+
+      function artDefs() {
+        return `
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${PALETTE.skyTop}" />
+              <stop offset="100%" stop-color="${PALETTE.skyBottom}" />
+            </linearGradient>
+            <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="rgba(23,50,70,0.32)" />
+            </filter>
+          </defs>
+        `;
+      }
+
+      function makeIconSvg({ outer, inner, accent, symbol, badge }) {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+            <defs>
+              <linearGradient id="outerGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="${outer}" />
+                <stop offset="100%" stop-color="${inner}" />
+              </linearGradient>
+              <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(17,37,56,0.28)" />
+              </filter>
+            </defs>
+            <g filter="url(#iconShadow)">
+              <path d="M48 4l18 8 16 16 10 20-5 24-17 15-22 5-20-7-15-15-8-21 7-22 14-16z" fill="url(#outerGrad)" stroke="${accent}" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M48 15l12 5 11 11 6 16-3 17-12 11-15 4-15-5-10-10-6-15 4-16 10-11z" fill="rgba(255,255,255,0.18)"/>
+            </g>
+            ${symbol}
+            ${badge || ""}
+          </svg>
+        `;
+      }
+
+      function makeBadgeSvg({ outer, inner, accent, symbol }) {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+            <defs>
+              <linearGradient id="badgeGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="${outer}" />
+                <stop offset="100%" stop-color="${inner}" />
+              </linearGradient>
+              <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(17,37,56,0.25)" />
+              </filter>
+            </defs>
+            <g filter="url(#badgeShadow)">
+              <path d="M48 6l20 9 16 18 4 21-7 19-15 13-18 4-18-5-15-14-7-18 4-21 15-18z" fill="url(#badgeGrad)" stroke="${accent}" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M20 78l10-2 6 14-18-6z" fill="${accent}" opacity="0.9"/>
+              <path d="M76 78l-10-2-6 14 18-6z" fill="${accent}" opacity="0.9"/>
+            </g>
+            ${symbol}
+          </svg>
+        `;
+      }
+
+      function makeStructureSvg({ body, details, baseColor = "#5e7651", width = 180, height = 140 }) {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
+            ${artDefs()}
+            <ellipse cx="${width / 2}" cy="${height - 10}" rx="${width * 0.34}" ry="10" fill="rgba(23,50,70,0.18)" />
+            <path d="M15 ${height - 18}c20-10 38-14 60-12 18 2 32 11 50 11 16 0 26-6 40-6 9 0 16 2 22 5v12H15z" fill="${baseColor}" opacity="0.92"/>
+            <g filter="url(#shadow)">
+              ${body}
+            </g>
+            ${details}
+          </svg>
+        `;
+      }
+
+      function makeTerrainSvg({ groundA, groundB, surface, detail, width = 180, height = 120 }) {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
+            ${artDefs()}
+            <path d="M0 52c19-9 34-14 52-10 16 4 28 17 46 17 16 0 26-10 40-13 18-4 28 3 42 11v49H0z" fill="${groundA}" />
+            <path d="M0 72c16-11 34-9 49-3 14 5 26 13 42 13 16 0 31-7 46-8 18-1 28 7 43 13v33H0z" fill="${groundB}" opacity="0.88" />
+            ${surface}
+            ${detail}
+          </svg>
+        `;
+      }
+
+      function makeSmokeSvg() {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">
+            <defs>
+              <radialGradient id="smokeGrad" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#9aa3a9" stop-opacity="0.92" />
+                <stop offset="100%" stop-color="#5d6771" stop-opacity="0.08" />
+              </radialGradient>
+            </defs>
+            <path d="M47 94c-10 0-18-7-18-17 0-4 1-7 3-10-7-3-11-9-11-17 0-9 6-16 14-18-1-3-1-5-1-8 0-12 9-21 20-21 8 0 15 5 18 11 3-2 6-3 10-3 12 0 22 10 22 23 0 10-5 18-14 21 1 2 2 5 2 8 0 17-12 31-27 31z" fill="url(#smokeGrad)" />
+          </svg>
+        `;
+      }
+
+      function makeStormSvg() {
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 110">
+            <defs>
+              <linearGradient id="stormBody" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6f7985" />
+                <stop offset="100%" stop-color="#3e4a56" />
+              </linearGradient>
+            </defs>
+            <path d="M40 84c-18 0-32-13-32-29 0-12 8-22 20-27 2-17 18-31 38-31 14 0 27 8 34 20 4-2 8-3 13-3 16 0 29 13 29 29 0 17-13 31-29 31z" fill="url(#stormBody)" />
+            <path d="M63 105l12-28h-12l17-28-4 20h12z" fill="#e5c34b" stroke="#fff7c1" stroke-width="2" stroke-linejoin="round" />
+          </svg>
+        `;
+      }
+
+      // Asset registry: every visible world/icon/event element resolves to a distinct SVG sprite.
+      function buildAssetSvgs() {
+        const icons = {
+          iconFood: makeIconSvg({
+            outer: "#6d8f3a",
+            inner: "#aac464",
+            accent: "#f8f3dc",
+            symbol: `<path d="M49 24c10 0 18 9 18 20 0 17-18 28-19 28S29 61 29 44c0-11 8-20 20-20zm0 7c-6 0-11 6-11 13 0 8 7 15 11 18 4-3 11-10 11-18 0-7-5-13-11-13z" fill="#f8f3dc"/><path d="M48 20c-5 5-6 9-5 14 4 0 8-2 11-6 2-4 2-7 1-11-3 1-5 2-7 3z" fill="#38531c"/><path d="M36 56c8 6 18 9 24 9 8 0 14-2 23-8" stroke="#38531c" stroke-width="4" stroke-linecap="round" fill="none"/>`,
+          }),
+          iconIndustry: makeIconSvg({
+            outer: "#8c5437",
+            inner: "#cb9360",
+            accent: "#f9ecd8",
+            symbol: `<path d="M28 63l11-11v11h10V40l13 9v14h7V31l11 8v24h4v7H24v-7z" fill="#f9ecd8"/><path d="M33 48l7-15 9 6 7-12 12 8 8-10" stroke="#4d2d1b" stroke-width="4" fill="none"/><circle cx="64" cy="64" r="11" fill="#4d2d1b"/><path d="M64 54v20M54 64h20M57 57l14 14M71 57L57 71" stroke="#f9ecd8" stroke-width="3" stroke-linecap="round"/>`,
+          }),
+          iconKnowledge: makeIconSvg({
+            outer: "#4f78c2",
+            inner: "#93b4ee",
+            accent: "#edf4ff",
+            symbol: `<path d="M27 30l21-8 21 8v33l-21 11-21-11z" fill="#edf4ff"/><path d="M48 22v52" stroke="#4f78c2" stroke-width="4"/><path d="M27 30l21 10 21-10" stroke="#4f78c2" stroke-width="4" fill="none"/><path d="M37 48h22M37 56h22" stroke="#4f78c2" stroke-width="3" stroke-linecap="round"/><path d="M67 24l8-8" stroke="#edf4ff" stroke-width="4" stroke-linecap="round"/><circle cx="76" cy="16" r="6" fill="#edf4ff"/>`,
+          }),
+          iconPopulation: makeIconSvg({
+            outer: "#8660ad",
+            inner: "#b995d6",
+            accent: "#faf1ff",
+            symbol: `<circle cx="35" cy="36" r="10" fill="#faf1ff"/><circle cx="62" cy="32" r="12" fill="#faf1ff"/><circle cx="51" cy="54" r="10" fill="#faf1ff"/><path d="M22 70c2-10 9-15 18-15s16 5 18 15" fill="#faf1ff"/><path d="M47 71c2-12 11-18 21-18s18 6 20 18" fill="#faf1ff"/><path d="M35 66c1-7 6-10 12-10" stroke="#634083" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          iconHappiness: makeIconSvg({
+            outer: "#d59f4d",
+            inner: "#f0c97d",
+            accent: "#fff6de",
+            symbol: `<circle cx="48" cy="48" r="21" fill="#fff6de"/><circle cx="40" cy="42" r="3.5" fill="#8b5b20"/><circle cx="56" cy="42" r="3.5" fill="#8b5b20"/><path d="M37 53c3 6 8 9 11 9 4 0 9-3 12-9" stroke="#8b5b20" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M70 26l5-9 5 7 9 1-6 7 2 9-8-4-8 5 1-9-7-6z" fill="#fff6de"/>`,
+          }),
+          iconHealth: makeIconSvg({
+            outer: "#4f8e5d",
+            inner: "#88c293",
+            accent: "#f0fff3",
+            symbol: `<path d="M43 25h10v14h14v10H53v14H43V49H29V39h14z" fill="#f0fff3"/><path d="M30 69c9-8 18-12 28-12 8 0 15 2 21 7" stroke="#2d5a36" stroke-width="4" fill="none"/><path d="M25 61c3-12 12-20 23-20 12 0 23 8 27 21" stroke="#f0fff3" stroke-width="4" fill="none"/>`,
+          }),
+          iconEnvironment: makeIconSvg({
+            outer: "#2f7f9d",
+            inner: "#63b3b2",
+            accent: "#f3fff9",
+            symbol: `<path d="M49 18c14 7 22 17 22 31 0 15-10 26-23 26S25 64 25 48c0-14 9-23 24-30z" fill="#f3fff9"/><path d="M49 23v44" stroke="#2d6b43" stroke-width="4"/><path d="M49 40c-7-5-12-6-20-5M49 49c7-5 13-6 21-4" stroke="#2d6b43" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M22 62c7 6 15 9 26 9 9 0 18-2 27-8" stroke="#f3fff9" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          iconStability: makeIconSvg({
+            outer: "#466071",
+            inner: "#7e97a6",
+            accent: "#f5fbff",
+            symbol: `<path d="M48 20l22 10v17c0 14-9 26-22 30-14-4-22-16-22-30V30z" fill="#f5fbff"/><path d="M48 28v40" stroke="#466071" stroke-width="4"/><path d="M34 45h28M38 54h20" stroke="#466071" stroke-width="4" stroke-linecap="round"/><path d="M54 22l14-8" stroke="#f5fbff" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          iconUnrest: makeIconSvg({
+            outer: "#a63d33",
+            inner: "#dd7869",
+            accent: "#fff1eb",
+            symbol: `<path d="M31 69l11-37 10 16 10-18 7 18 7-6 1 27z" fill="#fff1eb"/><path d="M27 74h44" stroke="#6f241d" stroke-width="4" stroke-linecap="round"/><path d="M58 25l5-10 6 8 11 1-8 7 2 10-9-4-9 5 2-10-8-7z" fill="#fff1eb"/>`,
+          }),
+          iconLegacy: makeIconSvg({
+            outer: "#b17d31",
+            inner: "#e7bf73",
+            accent: "#fff7de",
+            symbol: `<path d="M48 18l9 18 20 3-14 14 4 21-19-10-19 10 4-21-14-14 20-3z" fill="#fff7de"/><path d="M48 25v34" stroke="#8c6125" stroke-width="4"/><path d="M39 53c3 3 6 5 9 5 4 0 7-1 10-5" stroke="#8c6125" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+        };
+
+        const events = {
+          eventDrought: makeBadgeSvg({
+            outer: "#a66f39",
+            inner: "#e1b96d",
+            accent: "#fff2d8",
+            symbol: `<path d="M40 26c9 0 16 7 16 16 0 12-13 20-14 20s-14-8-14-20c0-9 7-16 12-16z" fill="#fff2d8"/><path d="M58 24c9 0 16 7 16 16 0 12-13 20-14 20s-14-8-14-20c0-9 7-16 12-16z" fill="#f5d59c"/><path d="M48 58l7-12" stroke="#7f4b22" stroke-width="4" stroke-linecap="round"/><path d="M26 70c13-8 31-10 45-6" stroke="#7f4b22" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          eventHarvest: makeBadgeSvg({
+            outer: "#4e7e33",
+            inner: "#a6cb64",
+            accent: "#faffea",
+            symbol: `<path d="M34 66c0-18 7-31 19-40 3 11 2 21-3 30-3 6-8 9-16 10z" fill="#faffea"/><path d="M49 24c8 8 12 18 12 28 0 10-5 18-13 22-4-11-4-21 0-31 2-7 7-14 14-19z" fill="#e2f8b8"/><path d="M29 72c13-3 24-3 39 0" stroke="#30531e" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          eventPlague: makeBadgeSvg({
+            outer: "#587060",
+            inner: "#95b697",
+            accent: "#f1fff4",
+            symbol: `<path d="M48 23l14 10v14c0 12-6 21-14 26-8-5-14-14-14-26V33z" fill="#f1fff4"/><path d="M48 36v22M37 47h22" stroke="#587060" stroke-width="5" stroke-linecap="round"/><path d="M26 66c7-6 14-8 22-8 10 0 18 2 24 7" stroke="#587060" stroke-width="4" fill="none"/>`,
+          }),
+          eventBreakthrough: makeBadgeSvg({
+            outer: "#4367a9",
+            inner: "#91b6f5",
+            accent: "#f4f8ff",
+            symbol: `<path d="M48 21c11 0 19 8 19 19 0 7-3 11-7 16-4 4-5 6-5 11H41c0-5-1-7-5-11-4-5-7-9-7-16 0-11 8-19 19-19z" fill="#f4f8ff"/><path d="M40 67h16M41 74h14" stroke="#4367a9" stroke-width="4" stroke-linecap="round"/><path d="M48 25v13M35 33l8 7M61 33l-8 7" stroke="#4367a9" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          eventMigration: makeBadgeSvg({
+            outer: "#6b5b95",
+            inner: "#b39fd6",
+            accent: "#f8f3ff",
+            symbol: `<circle cx="34" cy="39" r="9" fill="#f8f3ff"/><circle cx="58" cy="36" r="11" fill="#f8f3ff"/><path d="M21 71c2-9 8-14 16-14 7 0 13 4 16 13" fill="#f8f3ff"/><path d="M44 71c3-11 11-16 21-16 8 0 15 4 18 15" fill="#e9dcff"/><path d="M28 24l-12 8 12 8" stroke="#f8f3ff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+          }),
+          eventUnrest: makeBadgeSvg({
+            outer: "#933126",
+            inner: "#de786a",
+            accent: "#fff3ef",
+            symbol: `<path d="M35 69l7-22 11 13 9-22 12 31z" fill="#fff3ef"/><path d="M23 76c11-6 23-8 39-6 4 0 8 1 12 2" stroke="#6c1f17" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M51 22l5-10 6 8 11 1-8 7 2 10-9-4-9 5 2-10-8-7z" fill="#fff3ef"/>`,
+          }),
+          eventTrade: makeBadgeSvg({
+            outer: "#8e6330",
+            inner: "#e5b66b",
+            accent: "#fff7e3",
+            symbol: `<path d="M24 50h48l-6 18H30z" fill="#fff7e3"/><path d="M28 50l9-20h22l9 20" fill="#f4deb2"/><path d="M38 30l7-8 7 8" stroke="#8e6330" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M48 39v26" stroke="#8e6330" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          eventAccident: makeBadgeSvg({
+            outer: "#5f6573",
+            inner: "#a8b0bb",
+            accent: "#fff9e5",
+            symbol: `<path d="M49 19l28 50H21z" fill="#fff9e5" stroke="#5f6573" stroke-width="4" stroke-linejoin="round"/><path d="M49 34v18" stroke="#5f6573" stroke-width="5" stroke-linecap="round"/><circle cx="49" cy="60" r="4" fill="#5f6573"/><path d="M30 74c12-5 25-6 39-1" stroke="#5f6573" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+        };
+
+        const structures = {
+          hubTribalCamp: makeStructureSvg({
+            baseColor: "#62794d",
+            body: `<path d="M50 98l18-40 18 40z" fill="#7f4f29"/><path d="M92 100l20-48 20 48z" fill="#8e5b2d"/><path d="M30 102l14-32 15 32z" fill="#986333"/><path d="M68 56l-13 27h26z" fill="#d9b06a"/><path d="M111 51l-14 33h28z" fill="#e0b870"/><path d="M44 69l-8 18h16z" fill="#e0b870"/><path d="M64 49l4-17 4 17z" fill="#fff0b8"/>`,
+            details: `<path d="M44 113c9-5 18-8 29-8 10 0 21 3 33 9" stroke="#39512f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="69" cy="39" r="5" fill="#ffdb7b"/>`,
+          }),
+          hubVillageCenter: makeStructureSvg({
+            body: `<path d="M34 100V64l18-13 18 13v36z" fill="#dbc7a8"/><path d="M28 66l24-18 24 18" fill="#a7593d"/><path d="M76 103V58l16-11 16 11v45z" fill="#d8c6a9"/><path d="M71 60l21-15 21 15" fill="#8b4b35"/><path d="M104 100V70l16-12 16 12v30z" fill="#ceb692"/><path d="M96 72l24-18 24 18" fill="#7b3b33"/><path d="M48 77h8v23h-8z" fill="#7b4d31"/><path d="M90 79h8v24h-8z" fill="#6d4532"/>`,
+            details: `<path d="M44 72h8M56 72h8M84 69h9M96 69h8M114 81h9M126 81h8" stroke="#6e8292" stroke-width="4" stroke-linecap="round"/><path d="M82 44h8v13h-8z" fill="#d59f4d"/><path d="M80 44l6-10 6 10" fill="#d59f4d"/>`,
+          }),
+          hubTownMarket: makeStructureSvg({
+            body: `<path d="M26 102V65l18-14 18 14v37z" fill="#e0cfb8"/><path d="M20 66l24-18 24 18" fill="#a64f3f"/><path d="M66 104V56l22-17 22 17v48z" fill="#e2d5c0"/><path d="M58 58l30-22 30 22" fill="#7f3f35"/><path d="M118 102V67l15-11 15 11v35z" fill="#d6c1a1"/><path d="M112 68l21-15 21 15" fill="#4f6a7a"/><path d="M72 71h32v17H72z" fill="#d59f4d"/><path d="M70 70l10-9 10 9 10-9 10 9" fill="#f7e7b8"/>`,
+            details: `<path d="M36 78h8M48 78h8M79 86h7M92 86h7M126 80h7" stroke="#728998" stroke-width="4" stroke-linecap="round"/><path d="M80 33h8v22h-8z" fill="#4f6a7a"/><path d="M76 33l8-11 8 11" fill="#d59f4d"/>`,
+          }),
+          hubCityStateForum: makeStructureSvg({
+            body: `<path d="M42 104V63h76v41z" fill="#e8ddc7"/><path d="M36 64l12-17h64l12 17z" fill="#6c8795"/><path d="M52 63v41M66 63v41M80 63v41M94 63v41M108 63v41" stroke="#c8b696" stroke-width="4"/><path d="M69 103V78h22v25z" fill="#7b4d31"/><path d="M24 107l10-33 10 33z" fill="#e6d8be"/><path d="M118 107l10-33 10 33z" fill="#e6d8be"/>`,
+            details: `<path d="M57 46h46" stroke="#d59f4d" stroke-width="5" stroke-linecap="round"/><circle cx="54" cy="46" r="5" fill="#d59f4d"/><circle cx="106" cy="46" r="5" fill="#d59f4d"/><path d="M28 69h12M122 69h12" stroke="#6c8795" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          hubKingdomKeep: makeStructureSvg({
+            body: `<path d="M44 108V60h72v48z" fill="#cdbda7"/><path d="M54 60V42h16v18M90 60V42h16v18" fill="#b0a18d"/><path d="M38 61l13-16h58l13 16" fill="#7f3f35"/><path d="M74 108V80h12v28z" fill="#664730"/><path d="M34 105V66l12-8 12 8v39z" fill="#b7a68f"/><path d="M120 105V66l12-8 12 8v39z" fill="#b7a68f"/><path d="M36 60l10-13 10 13M122 60l10-13 10 13" fill="#5d6b7d"/>`,
+            details: `<path d="M56 72h8M68 72h8M92 72h8M104 72h8M40 78h6M128 78h6" stroke="#5d6b7d" stroke-width="4" stroke-linecap="round"/><path d="M80 37v-12" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><path d="M80 24l9 6-9 6" fill="#d59f4d"/>`,
+          }),
+          hubIndustrialCore: makeStructureSvg({
+            baseColor: "#576761",
+            body: `<path d="M26 109V76l18-12v16l16-10v39z" fill="#8a8f98"/><path d="M58 109V63l22-16v62z" fill="#b3b7bf"/><path d="M82 109V69l18-12v18l16-8v42z" fill="#989ea8"/><path d="M118 109V56l18-14v67z" fill="#727d88"/><path d="M36 61h12v22H36zM68 44h10v22H68zM126 37h10v26h-10z" fill="#5c6670"/><path d="M64 44l5-10h8l5 10zM122 36l6-12h8l6 12" fill="#b85e43"/><path d="M30 93h14M48 86h8M88 84h10M106 79h8M122 74h8" stroke="#f2d299" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M52 34c8 3 13 9 14 17" stroke="#e7be5b" stroke-width="4" fill="none"/><path d="M130 21c8 4 13 10 14 18" stroke="#e7be5b" stroke-width="4" fill="none"/>`,
+          }),
+          hubModernSkyline: makeStructureSvg({
+            baseColor: "#65816a",
+            body: `<path d="M28 109V66l18-10v53z" fill="#6f8290"/><path d="M48 109V52l22-15v72z" fill="#90a6b8"/><path d="M73 109V60l16-9v58z" fill="#587486"/><path d="M91 109V42l22-14v81z" fill="#6a8594"/><path d="M116 109V57l16-10v62z" fill="#86a0af"/><path d="M135 109V70l12-8v47z" fill="#5d7384"/><path d="M54 49h10v-9H54zM97 38h10v-14H97z" fill="#d59f4d"/><path d="M50 72h10M50 82h10M96 67h10M96 77h10M121 76h7M136 83h5" stroke="#dceaf4" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M104 27v-12" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><circle cx="104" cy="12" r="5" fill="#d59f4d"/><path d="M24 96c13-8 27-11 42-11 17 0 31 5 46 5 17 0 28-4 44-12" stroke="#dceaf4" stroke-width="3" fill="none" opacity="0.35"/>`,
+          }),
+          hubLaunchComplex: makeStructureSvg({
+            baseColor: "#5c776a",
+            body: `<path d="M46 109V64l16-10v55z" fill="#d7dce0"/><path d="M64 109V49l18-12v72z" fill="#e6ebef"/><path d="M84 109V60l18-11v60z" fill="#b9c3ca"/><path d="M104 109V72l14-8v45z" fill="#909ea9"/><path d="M124 109V42l10-28h11l10 28v67z" fill="#d9dee2"/><path d="M133 14l-5 11h11z" fill="#b85e43"/><path d="M129 46h20M129 56h20M54 74h7M70 63h7M90 75h7" stroke="#6f8290" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M132 10c10 4 17 11 22 21" stroke="#e7be5b" stroke-width="4" fill="none"/><path d="M129 17c6 2 11 6 15 12" stroke="#d59f4d" stroke-width="4" fill="none"/><path d="M39 94c15-7 30-10 48-9 14 0 24 3 39 3 10 0 22-2 34-7" stroke="#dceaf4" stroke-width="3" fill="none" opacity="0.4"/>`,
+          }),
+          hut: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M27 76l17-28h32l17 28v10H27z" fill="#d4b07a"/><path d="M20 54l24-19 24 19" fill="#8d5b2e"/><path d="M48 66h14v20H48z" fill="#724630"/><path d="M39 62h6M69 62h6" stroke="#fff0c8" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M39 46c7 1 13 4 17 9 4-5 10-8 17-9" stroke="#c99655" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          house: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M26 84V54l18-14 18 14v30z" fill="#e8d9c1"/><path d="M20 56l24-18 24 18" fill="#b85e43"/><path d="M48 66h10v18H48z" fill="#7b4d31"/><path d="M34 61h7M54 61h7" stroke="#7aa7c0" stroke-width="4" stroke-linecap="round"/><path d="M64 84V58l12-8 12 8v26z" fill="#d7c3a6"/><path d="M60 59l16-12 16 12" fill="#6c8795"/>`,
+            details: `<path d="M77 42v10" stroke="#8d5b2e" stroke-width="4" stroke-linecap="round"/><path d="M74 42h8" stroke="#f6e0a4" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          apartmentBlock: makeStructureSvg({
+            width: 120,
+            height: 110,
+            baseColor: "#667e70",
+            body: `<path d="M26 96V34l26-14v76z" fill="#8095a6"/><path d="M54 96V24l28-16v88z" fill="#97adbd"/><path d="M84 96V42l16-10v64z" fill="#668294"/><path d="M34 46h9M34 58h9M34 70h9M62 35h10M62 47h10M62 59h10M62 71h10M88 55h7M88 67h7" stroke="#dceaf4" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M66 8v10" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><circle cx="66" cy="6" r="4" fill="#d59f4d"/>`,
+          }),
+          farmPlot: makeTerrainSvg({
+            groundA: "#8ea86c",
+            groundB: "#617a43",
+            surface: `<path d="M20 75c25-12 44-11 62-2 18 9 28 8 42 1 12-6 24-5 36 3v20H20z" fill="#6e8b46"/><path d="M32 52c10 10 19 21 25 35M54 48c8 12 15 24 20 38M76 47c7 12 13 25 17 38M98 50c5 11 9 22 12 35M118 54c3 10 6 19 9 29" stroke="#cdb36f" stroke-width="4" stroke-linecap="round"/>`,
+            detail: `<path d="M126 44l4-10 4 10h9l-7 6 2 10-8-5-8 5 2-10-8-6z" fill="#f6ebc3"/>`,
+          }),
+          granary: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M30 84V48l14-8 14 8v36z" fill="#d9c5a3"/><path d="M28 47l16-10 16 10" fill="#8d5b2e"/><path d="M65 86V42l12-10 12 10v44z" fill="#d8c39a"/><path d="M63 42h28" stroke="#8d5b2e" stroke-width="5" stroke-linecap="round"/><path d="M76 38v48" stroke="#8d5b2e" stroke-width="4"/><path d="M40 60h8" stroke="#fff0c8" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M72 26c5-7 12-11 21-12" stroke="#d59f4d" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          workshop: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M24 84V50l18-12v14l16-9v41z" fill="#b9b6af"/><path d="M58 84V44l20-12v52z" fill="#d2cec7"/><path d="M82 84V55l14-10v39z" fill="#91979e"/><path d="M30 36h12v16H30zM64 27h10v17H64z" fill="#6f7780"/><path d="M36 70h8M64 58h8M86 66h6" stroke="#f2d299" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<circle cx="91" cy="30" r="10" fill="#4d5a66"/><path d="M91 21v18M82 30h18M85 24l12 12M97 24L85 36" stroke="#f4f1e5" stroke-width="3" stroke-linecap="round"/>`,
+          }),
+          factory: makeStructureSvg({
+            width: 130,
+            height: 110,
+            baseColor: "#627466",
+            body: `<path d="M18 92V63l20-12v16l18-10v35z" fill="#7f8992"/><path d="M58 92V54l21-14v52z" fill="#a1a8b0"/><path d="M81 92V61l16-10v41z" fill="#8d979f"/><path d="M99 92V39l12-9v62z" fill="#68737c"/><path d="M27 44h10v19H27zM65 31h10v23H65zM101 20h10v19h-10z" fill="#596068"/><path d="M24 43l5-9h6l5 9M62 30l5-9h6l5 9M98 19l5-9h6l5 9" fill="#b85e43"/>`,
+            details: `<path d="M29 24c8 2 14 7 17 15M68 11c8 3 14 8 17 17M104 1c8 2 14 8 17 17" stroke="#d9dbdf" stroke-width="4" fill="none" opacity="0.7"/><path d="M33 72h9M63 66h10M86 70h8" stroke="#f2d299" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          school: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M24 84V48h56v36z" fill="#e4d5bc"/><path d="M18 48l34-17 34 17" fill="#a64f3f"/><path d="M36 62h8M48 62h8M60 62h8M72 62h8" stroke="#7aa7c0" stroke-width="4" stroke-linecap="round"/><path d="M48 66h10v18H48z" fill="#7b4d31"/><path d="M86 84V56l12-8 12 8v28z" fill="#d6c1a1"/>`,
+            details: `<path d="M52 20v14" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><path d="M46 22h12" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><path d="M92 42h12" stroke="#4f78c2" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          library: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M25 86V50h60v36z" fill="#e6dbc7"/><path d="M20 50l35-18 35 18" fill="#6c8795"/><path d="M33 50v36M44 50v36M55 50v36M66 50v36M77 50v36" stroke="#c8b696" stroke-width="4"/><path d="M48 67h14v19H48z" fill="#7b4d31"/><path d="M88 86V59l12-9 12 9v27z" fill="#9fb2be"/>`,
+            details: `<path d="M95 35h11M95 42h11" stroke="#4f78c2" stroke-width="4" stroke-linecap="round"/><path d="M49 24c6 0 11 4 13 10" stroke="#d59f4d" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          clinic: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M23 85V47l18-12 18 12v38z" fill="#e7dfd2"/><path d="M58 85V54l18-11 18 11v31z" fill="#d9dfe3"/><path d="M30 50l11-8 11 8M64 56l12-8 12 8" fill="#6f8290"/><path d="M39 59h6v14h-6zM35 63h14v6H35z" fill="#4f8e5d"/><path d="M73 60h6v14h-6zM69 64h14v6H69z" fill="#4f8e5d"/>`,
+            details: `<path d="M96 35c5 2 9 6 11 12" stroke="#d59f4d" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          hospital: makeStructureSvg({
+            width: 130,
+            height: 108,
+            body: `<path d="M20 92V49l22-14v57z" fill="#e2ded8"/><path d="M44 92V39l24-15v68z" fill="#edf1f4"/><path d="M70 92V52l19-11v51z" fill="#d0d9df"/><path d="M92 92V46l18-12v58z" fill="#c0cad2"/><path d="M26 58h10M50 48h12M50 60h12M96 56h8" stroke="#7aa7c0" stroke-width="4" stroke-linecap="round"/><path d="M56 32h8v18h-8zM51 37h18v8H51z" fill="#4f8e5d"/>`,
+            details: `<path d="M92 30h14l7 8v7l-7 8H92l-7-8v-7z" fill="#d59f4d"/><path d="M99 34v14M92 41h14" stroke="#fff4d4" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          park: makeTerrainSvg({
+            groundA: "#7aa26e",
+            groundB: "#5e824f",
+            surface: `<path d="M28 84c16-10 35-10 51-2 15 8 24 8 37 1 12-7 23-7 35 2v12H28z" fill="#7eb36c"/><path d="M52 47c0-10 7-18 17-18 9 0 17 8 17 18 0 7-4 12-10 15H62c-6-3-10-8-10-15z" fill="#42734f"/><path d="M68 62v18" stroke="#6d4a2f" stroke-width="4"/><path d="M100 40c0-8 6-14 14-14 7 0 13 6 13 14 0 6-3 10-8 12H108c-5-2-8-6-8-12z" fill="#7ba46e"/><path d="M114 52v16" stroke="#6d4a2f" stroke-width="4"/>`,
+            detail: `<path d="M33 75l8-8 8 8 8-8 8 8 8-8 8 8" stroke="#f7e6b8" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          waterTower: makeStructureSvg({
+            width: 120,
+            height: 110,
+            body: `<path d="M48 96l-8-44h8M72 96l8-44h-8M60 96V49" stroke="#6c8795" stroke-width="5" stroke-linecap="round"/><path d="M38 44h44v18H38z" fill="#7aa7c0"/><path d="M33 44c4-12 12-20 27-20 14 0 23 8 27 20" fill="#9ac4d7"/><path d="M45 61h30" stroke="#f0fbff" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M60 15v10" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="12" r="4" fill="#d59f4d"/>`,
+          }),
+          lab: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M28 84V50l18-12 18 12v34z" fill="#d7dee5"/><path d="M64 84V56l16-10 16 10v28z" fill="#b8c4cf"/><path d="M22 51l24-17 24 17" fill="#6c8795"/><path d="M74 45c0-8 6-14 14-14s14 6 14 14-6 14-14 14-14-6-14-14z" fill="#9bd8eb"/><path d="M38 60h8M50 60h8M76 45h24" stroke="#f0fbff" stroke-width="4" stroke-linecap="round"/>`,
+            details: `<path d="M98 26c6 1 11 4 15 9" stroke="#d59f4d" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          observatory: makeStructureSvg({
+            width: 120,
+            height: 100,
+            body: `<path d="M32 86V58l18-12 18 12v28z" fill="#d5d0ca"/><path d="M24 58l26-18 26 18" fill="#5d6b7d"/><path d="M66 86c0-14 10-25 24-25 7 0 14 3 18 8v17z" fill="#c6d1d8"/><path d="M74 55c0-11 9-20 20-20s20 9 20 20-9 20-20 20-20-9-20-20z" fill="#93b4c7"/><path d="M86 55l18-8" stroke="#f0fbff" stroke-width="5" stroke-linecap="round"/>`,
+            details: `<path d="M90 25l6-10" stroke="#d59f4d" stroke-width="4" stroke-linecap="round"/><circle cx="98" cy="12" r="4" fill="#d59f4d"/>`,
+          }),
+          watchtower: makeStructureSvg({
+            width: 120,
+            height: 110,
+            body: `<path d="M34 98l14-48h7L43 98zM77 98L65 50h7l14 48z" fill="#6d4a2f"/><path d="M42 48h40v18H42z" fill="#8d5b2e"/><path d="M38 48l10-10h28l10 10" fill="#5d6b7d"/><path d="M60 38V19" stroke="#6d4a2f" stroke-width="4" stroke-linecap="round"/><path d="M60 22l14 7-14 7" fill="#d59f4d"/>`,
+            details: `<path d="M47 61h30" stroke="#f7e7b8" stroke-width="4" stroke-linecap="round"/><path d="M49 72h26" stroke="#f7e7b8" stroke-width="4" stroke-linecap="round"/>`,
+          }),
+          solarField: makeTerrainSvg({
+            groundA: "#7a9962",
+            groundB: "#567243",
+            surface: `<path d="M26 78c18-11 34-11 50-4 15 7 24 8 37 2 12-6 23-6 34 2v18H26z" fill="#698a4b"/><path d="M44 46l18 5-6 15-18-5zM68 52l18 5-6 15-18-5zM92 58l18 5-6 15-18-5z" fill="#5a7f99"/><path d="M51 66v12M75 72v11M99 78v8" stroke="#d8e7f0" stroke-width="4" stroke-linecap="round"/>`,
+            detail: `<path d="M115 34c6 2 11 7 13 13" stroke="#d59f4d" stroke-width="4" fill="none"/><circle cx="121" cy="28" r="7" fill="#f3d774"/>`,
+          }),
+          fertileField: makeTerrainSvg({
+            groundA: "#8fb55a",
+            groundB: "#61863f",
+            surface: `<path d="M24 74c26-13 49-13 70-1 18 10 28 9 40 0 11-8 22-8 34 0v18H24z" fill="#73a348"/><path d="M37 52c8 7 14 15 19 24M57 47c7 8 12 17 17 28M77 46c6 9 10 19 13 29M96 48c5 8 8 17 10 28M116 51c4 7 7 15 9 24" stroke="#e5d889" stroke-width="4" stroke-linecap="round"/>`,
+            detail: `<path d="M127 38c6 0 12 4 14 10 2 5 1 10-2 14-2 2-4 4-8 5l-6-14 2-15z" fill="#f3f0bb"/>`,
+          }),
+          normalField: makeTerrainSvg({
+            groundA: "#819a58",
+            groundB: "#5d7240",
+            surface: `<path d="M24 76c23-11 44-11 63-2 17 8 28 8 41 1 11-6 21-6 31 0v17H24z" fill="#6e8947"/><path d="M40 56c10 7 17 15 22 25M63 53c8 8 13 17 17 28M87 54c7 8 11 17 14 28M110 58c5 7 8 14 11 23" stroke="#cdb36f" stroke-width="4" stroke-linecap="round"/>`,
+            detail: `<path d="M126 45l6-7 5 7 9 2-7 6 2 8-9-4-9 4 2-8-7-6z" fill="#ead58e"/>`,
+          }),
+          witheredField: makeTerrainSvg({
+            groundA: "#997c52",
+            groundB: "#6f5736",
+            surface: `<path d="M24 77c23-10 42-11 59-3 16 8 27 8 39 1 12-6 21-5 32 1v17H24z" fill="#7d633d"/><path d="M42 56c6 9 9 17 10 26M61 54c5 8 8 17 9 27M80 55c4 8 7 17 8 28M102 57c4 8 6 16 6 25" stroke="#d1c28d" stroke-width="4" stroke-linecap="round"/><path d="M126 45c5 4 7 9 7 14 0 4-1 8-4 11-2 3-5 5-9 6l-3-14 9-17z" fill="#e3d7af" opacity="0.8"/>`,
+            detail: `<path d="M27 90c18-7 37-8 55-5 20 3 31 5 44 1" stroke="#5b4328" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          healthyForest: makeTerrainSvg({
+            groundA: "#7ea06b",
+            groundB: "#547747",
+            surface: `<path d="M32 84c18-10 37-11 55-2 18 8 27 8 39 1 12-7 21-7 31 0v13H32z" fill="#62894b"/><path d="M44 58c0-8 6-14 14-14 7 0 13 6 13 14 0 5-2 9-6 11H50c-4-2-6-6-6-11z" fill="#42734f"/><path d="M59 69v15" stroke="#6d4a2f" stroke-width="4"/><path d="M85 48c0-9 7-16 16-16 8 0 15 7 15 16 0 6-3 11-7 13H92c-4-2-7-7-7-13z" fill="#7ba46e"/><path d="M101 61v16" stroke="#6d4a2f" stroke-width="4"/><path d="M117 59c0-7 5-12 12-12 6 0 11 5 11 12 0 5-2 8-5 10h-12c-4-2-6-5-6-10z" fill="#567d4f"/><path d="M129 69v14" stroke="#6d4a2f" stroke-width="4"/>`,
+            detail: `<path d="M34 74l7-7 7 7 7-7 7 7" stroke="#f6ebc3" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          damagedForest: makeTerrainSvg({
+            groundA: "#8b8a65",
+            groundB: "#65593f",
+            surface: `<path d="M32 84c18-10 37-11 55-2 18 8 27 8 39 1 12-7 21-7 31 0v13H32z" fill="#7b744f"/><path d="M46 60c0-8 6-14 13-14 8 0 13 6 13 14 0 5-2 9-6 11H52c-4-2-6-6-6-11z" fill="#6d6f49"/><path d="M59 71v13" stroke="#6d4a2f" stroke-width="4"/><path d="M94 55c0-8 6-14 14-14 7 0 14 6 14 14 0 4-2 8-6 10H100c-4-2-6-6-6-10z" fill="#8b714e"/><path d="M108 65v16" stroke="#6d4a2f" stroke-width="4"/><path d="M129 72l7-15 6 13" stroke="#6d4a2f" stroke-width="4" stroke-linecap="round"/>`,
+            detail: `<path d="M37 86c18-5 32-5 47 0 10 3 24 3 42-1" stroke="#58422b" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+          }),
+          pollutedGround: makeTerrainSvg({
+            groundA: "#70786f",
+            groundB: "#4a4f50",
+            surface: `<path d="M24 78c22-11 43-12 60-4 16 8 28 8 42 1 11-6 20-6 30 0v17H24z" fill="#5c625d"/><path d="M41 67c6-5 13-7 20-7 6 0 12 1 18 4 6 2 11 3 16 3 7 0 14-2 22-7l4 7c-8 5-15 7-23 7-6 0-12-1-18-4-6-2-12-3-18-3-7 0-13 2-19 6z" fill="#868c87"/><path d="M98 57l11-6 9 10-7 9-12 1-7-8z" fill="#a63d33" opacity="0.72"/>`,
+            detail: `<path d="M128 42c4 2 7 6 8 11 1 4 0 8-3 12-2 3-5 5-8 6l-5-10 8-19z" fill="#8a8f92"/>`,
+          }),
+          riverStrip: makeTerrainSvg({
+            groundA: "#82a66d",
+            groundB: "#5f7b52",
+            surface: `<path d="M12 73c20-8 35-14 52-11 15 2 25 11 38 12 15 1 26-8 38-9 15-1 28 8 40 17v22H12z" fill="#6e8d56"/><path d="M0 49c18 13 32 17 48 16 15 0 27-5 42-5 16 0 28 6 43 6 16 0 28-7 47-18v28c-18 10-31 13-47 13-16 0-29-5-43-5s-27 4-43 4S18 84 0 72z" fill="#63b6d0"/><path d="M0 55c18 10 31 14 47 14 16 0 29-5 43-5s27 4 43 4 29-4 47-14" stroke="#d7f3fa" stroke-width="4" fill="none" opacity="0.7"/>`,
+            detail: `<path d="M140 40l7-7 6 7 9 2-7 6 2 8-9-4-9 4 2-8-7-6z" fill="#f0fbff"/>`,
+          }),
+          smokePlume: makeSmokeSvg(),
+          stormCloud: makeStormSvg(),
+          citizen: `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+              <circle cx="22" cy="11" r="7" fill="#f4d8b8"/>
+              <path d="M13 38c1-9 6-15 9-15s8 6 9 15" fill="#466071"/>
+              <path d="M19 19l6 0 3 6-6 4-8-4z" fill="#d59f4d"/>
+            </svg>
+          `,
+        };
+
+        return { ...icons, ...events, ...structures };
+      }
+
+      const EVENT_DEFS = {
+        drought: {
+          label: "Drought",
+          icon: "eventDrought",
+          describe: (state) => "Rain failed. Fields wither and food output drops for two turns.",
+          weight: (state) => 0.35 + Math.max(0, 55 - state.environment) / 30 + state.policies.industry * 0.05,
+          apply: (state) => ({
+            immediate: { food: -18 - state.policies.agriculture * 2, happiness: -4, environment: -3 },
+            effect: { name: "Drought", turnsLeft: 2, icon: "eventDrought", modifiers: { foodMultiplier: 0.82 } },
+          }),
+        },
+        harvestBoom: {
+          label: "Harvest Boom",
+          icon: "eventHarvest",
+          describe: () => "A generous season swells the granaries.",
+          weight: (state) => 0.22 + state.policies.agriculture * 0.12 + Math.max(0, state.environment - 45) / 40,
+          apply: (state) => ({
+            immediate: { food: 24 + state.policies.agriculture * 4, happiness: 3, health: 2 },
+          }),
+        },
+        diseaseOutbreak: {
+          label: "Disease Outbreak",
+          icon: "eventPlague",
+          describe: () => "Illness spreads through crowded districts. Recovery takes time.",
+          weight: (state) => 0.16 + Math.max(0, 55 - state.health) / 30 + Math.max(0, state.population - 70) / 90,
+          apply: () => ({
+            immediate: { health: -11, happiness: -5, stability: -4 },
+            effect: { name: "Recovery Strain", turnsLeft: 2, icon: "eventPlague", modifiers: { populationDelta: -2, foodMultiplier: 0.92 } },
+          }),
+        },
+        scientificBreakthrough: {
+          label: "Scientific Breakthrough",
+          icon: "eventBreakthrough",
+          describe: () => "A discovery sharpens research and production methods.",
+          weight: (state) => 0.16 + state.policies.education * 0.08 + state.policies.research * 0.18 + state.knowledge / 220,
+          apply: () => ({
+            immediate: { knowledge: 24, happiness: 2 },
+            effect: { name: "Research Surge", turnsLeft: 3, icon: "eventBreakthrough", modifiers: { knowledgeMultiplier: 1.22, industryMultiplier: 1.05 } },
+          }),
+        },
+        migrationWave: {
+          label: "Migration Wave",
+          icon: "eventMigration",
+          describe: () => "New families arrive, raising population and pressure on stores.",
+          weight: (state) => 0.18 + Math.max(0, state.happiness - 45) / 45 + Math.max(0, state.stability - 50) / 60,
+          apply: () => ({
+            immediate: { population: 7, happiness: 2, food: -8 },
+            effect: { name: "Settlement Boom", turnsLeft: 2, icon: "eventMigration", modifiers: { foodDemandMultiplier: 1.08 } },
+          }),
+        },
+        civilUnrest: {
+          label: "Civil Unrest",
+          icon: "eventUnrest",
+          describe: () => "Crowds turn hostile. Workshops slow and authority wobbles.",
+          weight: (state) => 0.12 + state.unrest / 34 + Math.max(0, 45 - state.happiness) / 30,
+          apply: () => ({
+            immediate: { stability: -11, happiness: -8, industry: -10, unrest: 8 },
+            effect: { name: "Sabotage", turnsLeft: 2, icon: "eventUnrest", modifiers: { industryMultiplier: 0.84 } },
+          }),
+        },
+        tradeOpportunity: {
+          label: "Trade Opportunity",
+          icon: "eventTrade",
+          describe: () => "Foreign merchants arrive with supplies and contracts.",
+          weight: (state) => 0.18 + Math.max(0, state.industry - 40) / 85 + Math.max(0, state.stability - 50) / 75,
+          apply: () => ({
+            immediate: { industry: 20, food: 12, happiness: 3 },
+          }),
+        },
+        industrialAccident: {
+          label: "Industrial Accident",
+          icon: "eventAccident",
+          describe: () => "A mechanical failure scars the land and rattles the public.",
+          weight: (state) => 0.11 + state.policies.industry * 0.12 + Math.max(0, 45 - state.environment) / 35,
+          apply: () => ({
+            immediate: { industry: -16, health: -5, environment: -8, happiness: -4 },
+            effect: { name: "Cleanup Effort", turnsLeft: 2, icon: "eventAccident", modifiers: { industryMultiplier: 0.9 } },
+          }),
+        },
+      };
+
+      function stageIndexFromLabel(label) {
+        return STAGES.findIndex((stage) => stage.label === label);
+      }
+
+      function computeStage(resources) {
+        let current = STAGES[0];
+        for (const stage of STAGES) {
+          if (
+            resources.population >= stage.pop &&
+            resources.industry >= stage.industry &&
+            resources.technologyLevel >= stage.tech
+          ) {
+            current = stage;
+          }
+        }
+        return current;
+      }
+
+      function historyPush(history, value) {
+        return [...history, round1(value)].slice(-MAX_HISTORY);
+      }
+
+      function createInitialState(seed = (Date.now() >>> 0) || 7) {
+        const policies = {
+          agriculture: 2,
+          industry: 2,
+          education: 1,
+          health: 1,
+          environment: 1,
+          security: 1,
+          welfare: 1,
+          research: 1,
+        };
+
+        return {
+          rngSeed: seed,
+          status: "menu",
+          assetsReady: false,
+          turn: 0,
+          year: 1000,
+          food: 88,
+          industry: 54,
+          knowledge: 32,
+          population: 24,
+          happiness: 62,
+          health: 64,
+          environment: 60,
+          stability: 64,
+          unrest: 18,
+          technologyLevel: 1,
+          developmentStage: "Tribe",
+          legacyScore: 0,
+          policies,
+          activeEffects: [],
+          eventLog: [
+            {
+              id: "boot-1",
+              year: 1000,
+              turn: 0,
+              title: "Founding Settlement",
+              detail: "A modest society stands ready. Feed it, steady it, and try not to ruin the future immediately.",
+              icon: "iconLegacy",
+              tag: "System",
+            },
+          ],
+          history: {
+            food: [88],
+            population: [24],
+            knowledge: [32],
+            legacyScore: [0],
+          },
+          lastBreakdown: {
+            foodDelta: 0,
+            industryDelta: 0,
+            knowledgeDelta: 0,
+            populationDelta: 0,
+          },
+          victoryText: "",
+          statusText: "Set your priorities and begin the first age.",
+        };
+      }
+
+      function totalPolicyPoints(policies) {
+        return Object.values(policies).reduce((sum, value) => sum + value, 0);
+      }
+
+      function getEffectModifiers(activeEffects) {
+        return activeEffects.reduce(
+          (acc, effect) => {
+            const mods = effect.modifiers || {};
+            if (mods.foodMultiplier) acc.foodMultiplier *= mods.foodMultiplier;
+            if (mods.industryMultiplier) acc.industryMultiplier *= mods.industryMultiplier;
+            if (mods.knowledgeMultiplier) acc.knowledgeMultiplier *= mods.knowledgeMultiplier;
+            if (mods.foodDemandMultiplier) acc.foodDemandMultiplier *= mods.foodDemandMultiplier;
+            if (mods.populationDelta) acc.populationDelta += mods.populationDelta;
+            return acc;
+          },
+          {
+            foodMultiplier: 1,
+            industryMultiplier: 1,
+            knowledgeMultiplier: 1,
+            foodDemandMultiplier: 1,
+            populationDelta: 0,
+          }
+        );
+      }
+
+      function chooseEvent(state, seed) {
+        const weightEntries = Object.entries(EVENT_DEFS).map(([key, def]) => ({
+          key,
+          weight: Math.max(0, def.weight(state)),
+        }));
+        const totalWeight = weightEntries.reduce((sum, entry) => sum + entry.weight, 0);
+        const calmWeight = 2.8;
+        const { seed: afterRoll, value } = takeRandom(seed);
+        let cursor = value * (totalWeight + calmWeight);
+        if (cursor < calmWeight) {
+          return { seed: afterRoll, eventKey: null };
+        }
+        cursor -= calmWeight;
+        for (const entry of weightEntries) {
+          cursor -= entry.weight;
+          if (cursor <= 0) {
+            return { seed: afterRoll, eventKey: entry.key };
+          }
+        }
+        return { seed: afterRoll, eventKey: weightEntries[weightEntries.length - 1]?.key || null };
+      }
+
+      function applyImmediateEffects(state, effects) {
+        const updated = { ...state };
+        for (const [key, delta] of Object.entries(effects || {})) {
+          if (key === "population") {
+            updated.population = clamp(Math.round(updated.population + delta), 0, 500);
+          } else if (key === "food") {
+            updated.food = clamp(updated.food + delta, 0, 300);
+          } else if (key === "industry") {
+            updated.industry = clamp(updated.industry + delta, 0, 300);
+          } else if (key === "knowledge") {
+            updated.knowledge = clamp(updated.knowledge + delta, 0, 300);
+          } else if (["happiness", "health", "environment", "stability", "unrest"].includes(key)) {
+            updated[key] = clamp(updated[key] + delta, 0, 100);
+          }
+        }
+        return updated;
+      }
+
+      // Deterministic turn pipeline: update resources, apply civic drift, resolve one event, then check progression.
+      function simulateTurn(currentState) {
+        if (currentState.status === "won" || currentState.status === "lost") {
+          return currentState;
+        }
+
+        const policy = currentState.policies;
+        const previousStage = currentState.developmentStage;
+        let next = {
+          ...currentState,
+          turn: currentState.turn + 1,
+          year: currentState.year + YEAR_STEP,
+        };
+        const logEntries = [];
+
+        const effectMods = getEffectModifiers(currentState.activeEffects);
+        next.activeEffects = currentState.activeEffects
+          .map((effect) => ({ ...effect, turnsLeft: effect.turnsLeft - 1 }))
+          .filter((effect) => effect.turnsLeft > 0);
+
+        const stageIndex = Math.max(0, stageIndexFromLabel(currentState.developmentStage));
+        const healthFactor = 0.65 + currentState.health / 200;
+        const environmentFactor = 0.68 + currentState.environment / 180;
+        const stabilityFactor = 0.68 + currentState.stability / 200;
+        const happinessFactor = 0.65 + currentState.happiness / 200;
+        const pollutionPenalty = 1 - Math.max(0, 58 - currentState.environment) / 180;
+
+        const foodProduction =
+          currentState.population *
+          (0.55 + 0.12 * policy.agriculture + 0.03 * currentState.technologyLevel) *
+          healthFactor *
+          environmentFactor *
+          effectMods.foodMultiplier;
+        const industryProduction =
+          currentState.population *
+          (0.35 + 0.12 * policy.industry) *
+          stabilityFactor *
+          pollutionPenalty *
+          effectMods.industryMultiplier *
+          (1 - policy.environment * 0.03);
+        const knowledgeProduction =
+          currentState.population *
+          (0.18 + 0.1 * policy.education + 0.12 * policy.research) *
+          happinessFactor *
+          (1 + currentState.technologyLevel * 0.02) *
+          effectMods.knowledgeMultiplier;
+
+        const industryMaintenance =
+          policy.health * 3.2 + policy.welfare * 2.8 + policy.research * 4 + policy.environment * 1.8;
+        const foodMaintenance = policy.welfare * 2 + policy.research * 1.4;
+        const foodDemand =
+          currentState.population * (1 + stageIndex * 0.02) * effectMods.foodDemandMultiplier;
+
+        const newFood = clamp(currentState.food + foodProduction - foodDemand - foodMaintenance, 0, 300);
+        const newIndustry = clamp(currentState.industry + industryProduction - industryMaintenance, 0, 300);
+        const newKnowledge = clamp(currentState.knowledge + knowledgeProduction, 0, 300);
+
+        const foodDelta = newFood - currentState.food;
+        const industryDelta = newIndustry - currentState.industry;
+        const knowledgeDelta = newKnowledge - currentState.knowledge;
+        const shortage = Math.max(0, foodDemand + foodMaintenance - (currentState.food + foodProduction));
+        const surplusRatio = (newFood + 1) / Math.max(1, currentState.population);
+
+        next.food = round1(newFood);
+        next.industry = round1(newIndustry);
+        next.knowledge = round1(newKnowledge);
+
+        const happinessDelta =
+          policy.welfare * 1.8 +
+          policy.education * 0.7 -
+          policy.security * 0.6 -
+          policy.industry * 0.4 +
+          (foodDelta > 5 ? 1.3 : 0) -
+          shortage * 0.22;
+        const healthDelta =
+          policy.health * 2.2 +
+          (foodDelta > 0 ? 0.8 : 0) -
+          policy.industry * 0.55 -
+          shortage * 0.35 -
+          Math.max(0, 42 - currentState.environment) / 26;
+        const environmentDelta =
+          policy.environment * 2.4 -
+          policy.industry * 1.65 -
+          policy.agriculture * 0.45 +
+          (policy.research >= 2 ? 0.45 : 0);
+        const unrestDelta =
+          1.2 +
+          Math.max(0, 48 - currentState.happiness) / 18 +
+          Math.max(0, 55 - currentState.stability) / 20 +
+          Math.max(0, 50 - currentState.environment) / 28 -
+          policy.security * 1.6 -
+          policy.welfare * 0.8 +
+          shortage * 0.26;
+
+        next.happiness = clamp(round1(currentState.happiness + happinessDelta), 0, 100);
+        next.health = clamp(round1(currentState.health + healthDelta), 0, 100);
+        next.environment = clamp(round1(currentState.environment + environmentDelta), 0, 100);
+        next.unrest = clamp(round1(currentState.unrest + unrestDelta), 0, 100);
+
+        const stabilityDelta =
+          policy.security * 1.4 +
+          policy.welfare * 0.5 +
+          next.happiness / 70 -
+          next.unrest / 36 -
+          shortage * 0.28;
+        next.stability = clamp(round1(currentState.stability + stabilityDelta), 0, 100);
+
+        const populationPressure =
+          (surplusRatio - 1.2) * 1.7 +
+          (next.health - 55) / 22 +
+          (next.happiness - 52) / 28 -
+          next.unrest / 40 +
+          effectMods.populationDelta;
+        const populationDelta = clamp(Math.round(populationPressure), -10, 8);
+        next.population = clamp(currentState.population + populationDelta, 0, 500);
+
+        let rngSeed = currentState.rngSeed;
+        const eventChoice = chooseEvent(next, rngSeed);
+        rngSeed = eventChoice.seed;
+        if (eventChoice.eventKey) {
+          const definition = EVENT_DEFS[eventChoice.eventKey];
+          const resolution = definition.apply(next);
+          next = applyImmediateEffects(next, resolution.immediate);
+          if (resolution.effect) {
+            next.activeEffects = [...next.activeEffects, resolution.effect];
+          }
+          logEntries.unshift({
+            id: `event-${next.turn}-${eventChoice.eventKey}`,
+            year: next.year,
+            turn: next.turn,
+            title: definition.label,
+            detail: definition.describe(next),
+            icon: definition.icon,
+            tag: resolution.effect ? `${resolution.effect.turnsLeft} turns` : "Immediate",
+          });
+        }
+
+        next.technologyLevel = clamp(
+          1 +
+            Math.floor(next.knowledge / 35) +
+            Math.floor((policy.research + policy.education) / 4),
+          1,
+          10
+        );
+
+        const stage = computeStage(next);
+        next.developmentStage = stage.label;
+        if (stage.label !== previousStage) {
+          logEntries.unshift({
+            id: `stage-${next.turn}-${stage.key}`,
+            year: next.year,
+            turn: next.turn,
+            title: `Stage Reached: ${stage.label}`,
+            detail: `Population, industry, and technology crossed into a new era.`,
+            icon: "iconLegacy",
+            tag: "Milestone",
+          });
+        }
+
+        const prosperityBonus =
+          (next.happiness + next.health + next.stability + Math.max(0, next.environment - 30)) / 8;
+        next.legacyScore = Math.round(
+          currentState.legacyScore +
+            next.population * 0.35 +
+            next.technologyLevel * 2 +
+            prosperityBonus +
+            stage.score
+        );
+
+        next.history = {
+          food: historyPush(currentState.history.food, next.food),
+          population: historyPush(currentState.history.population, next.population),
+          knowledge: historyPush(currentState.history.knowledge, next.knowledge),
+          legacyScore: historyPush(currentState.history.legacyScore, next.legacyScore),
+        };
+
+        next.lastBreakdown = {
+          foodDelta: round1(next.food - currentState.food),
+          industryDelta: round1(next.industry - currentState.industry),
+          knowledgeDelta: round1(next.knowledge - currentState.knowledge),
+          populationDelta: next.population - currentState.population,
+        };
+
+        if (
+          next.developmentStage === "Spacefaring Society" &&
+          next.population >= 180 &&
+          next.stability >= 40 &&
+          next.environment >= 25
+        ) {
+          next.status = "won";
+          next.victoryText =
+            "Your civilization reached a spacefaring future without collapsing its institutions or habitat.";
+          logEntries.unshift({
+            id: `victory-${next.turn}`,
+            year: next.year,
+            turn: next.turn,
+            title: "Victory",
+            detail: next.victoryText,
+            icon: "iconLegacy",
+            tag: "Success",
+          });
+        } else if (next.population <= 0 || next.health <= 0 || next.stability <= 0) {
+          next.status = "lost";
+          next.victoryText =
+            next.population <= 0
+              ? "The people are gone. Management turned into archaeology."
+              : next.health <= 0
+              ? "The civilization collapsed under public health failure."
+              : "Authority dissolved and the state disintegrated.";
+          logEntries.unshift({
+            id: `loss-${next.turn}`,
+            year: next.year,
+            turn: next.turn,
+            title: "Collapse",
+            detail: next.victoryText,
+            icon: "iconUnrest",
+            tag: "Failure",
+          });
+        } else if (next.status === "menu") {
+          next.status = "paused";
+        }
+
+        const activeEffectNames = next.activeEffects.map((effect) => `${effect.name} (${effect.turnsLeft})`);
+        next.statusText =
+          next.status === "won"
+            ? next.victoryText
+            : next.status === "lost"
+            ? next.victoryText
+            : activeEffectNames.length
+            ? `Active effects: ${activeEffectNames.join(", ")}`
+            : next.unrest > 60
+            ? "Tension is climbing. Security, welfare, or actual competence would help."
+            : next.environment < 35
+            ? "The land is under strain. Industry is outrunning restraint."
+            : next.population > 120 && next.food < 70
+            ? "Growth is outrunning supply. Granaries first, speeches later."
+            : "The machinery of civilization continues to complain, but mostly function.";
+
+        next.eventLog = [...logEntries, ...currentState.eventLog].slice(0, 18);
+        next.rngSeed = rngSeed;
+        return next;
+      }
+
+      function reducer(state, action) {
+        switch (action.type) {
+          case "ASSETS_READY":
+            return { ...state, assetsReady: true };
+          case "START_GAME":
+            return state.status === "menu" ? { ...state, status: "running" } : state;
+          case "PAUSE_GAME":
+            return state.status === "running" ? { ...state, status: "paused" } : state;
+          case "RESUME_GAME":
+            return state.status === "paused" ? { ...state, status: "running" } : state;
+          case "STEP_TURN": {
+            const stepped = simulateTurn({
+              ...state,
+              status: state.status === "running" ? "running" : "paused",
+            });
+            return stepped.status === "running" ? stepped : { ...stepped, status: stepped.status };
+          }
+          case "RESET_GAME": {
+            const reset = createInitialState(action.seed);
+            reset.assetsReady = state.assetsReady;
+            return reset;
+          }
+          case "SET_POLICY": {
+            if (state.status === "won" || state.status === "lost") return state;
+            const current = state.policies[action.key];
+            const nextLevel = clamp(current + action.delta, 0, 3);
+            if (nextLevel === current) return state;
+            const nextPolicies = { ...state.policies, [action.key]: nextLevel };
+            if (totalPolicyPoints(nextPolicies) > POLICY_POINT_CAP) return state;
+            return { ...state, policies: nextPolicies };
+          }
+          default:
+            return state;
+        }
+      }
+
+      function loadAssetPack() {
+        const svgMap = buildAssetSvgs();
+        return Promise.all(
+          Object.entries(svgMap).map(async ([key, svg]) => {
+            const image = await createSvgImage(svg);
+            return [key, { svg, uri: encodeSvg(svg), image }];
+          })
+        ).then((entries) => Object.fromEntries(entries));
+      }
+
+      function getWorldSnapshot(state) {
+        const stage = STAGES.find((entry) => entry.label === state.developmentStage) || STAGES[0];
+        const homes = Math.max(2, Math.round(state.population / 18));
+        const farms = Math.max(2, state.policies.agriculture + Math.round(state.food / 90));
+        const industrialSites = Math.max(1, state.policies.industry + Math.round(state.industry / 100));
+        const civicSites = Math.max(1, state.policies.education + state.policies.health + Math.round(state.knowledge / 120));
+        return {
+          mode: state.status,
+          turn: state.turn,
+          year: state.year,
+          stage: state.developmentStage,
+          technologyLevel: state.technologyLevel,
+          resources: {
+            food: state.food,
+            industry: state.industry,
+            knowledge: state.knowledge,
+            population: state.population,
+            happiness: state.happiness,
+            health: state.health,
+            environment: state.environment,
+            stability: state.stability,
+            unrest: state.unrest,
+            legacyScore: state.legacyScore,
+          },
+          activeEffects: state.activeEffects.map((effect) => ({
+            name: effect.name,
+            turnsLeft: effect.turnsLeft,
+          })),
+          world: {
+            origin: "Canvas origin is top-left; x grows right, y grows down.",
+            hub: stage.hub,
+            homes,
+            farms,
+            industrialSites,
+            civicSites,
+            unrestSignals: state.unrest > 55 ? 2 : 0,
+            smokeSignals: state.policies.industry + Math.max(0, 50 - state.environment) / 25,
+          },
+        };
+      }
+
+      function getStatusBanner(state) {
+        if (state.status === "won") {
+          return { tone: "prosper", title: "Victory", body: state.victoryText };
+        }
+        if (state.status === "lost") {
+          return { tone: "crisis", title: "Collapse", body: state.victoryText };
+        }
+        if (state.unrest > 60 || state.stability < 40 || state.health < 30) {
+          return { tone: "crisis", title: "Crisis", body: state.statusText };
+        }
+        if (state.happiness > 70 && state.health > 70 && state.environment > 50) {
+          return { tone: "prosper", title: "Prosperity", body: state.statusText };
+        }
+        return { tone: "", title: "Status", body: state.statusText };
+      }
+
+      function meterTone(value) {
+        if (value >= 70) return "#4f8e5d";
+        if (value >= 40) return "#d59f4d";
+        return "#a63d33";
+      }
+
+      function sparkPoints(values) {
+        if (!values.length) return "";
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        return values
+          .map((value, index) => {
+            const x = values.length === 1 ? 0 : (index / (values.length - 1)) * 100;
+            const y = max === min ? 50 : 100 - ((value - min) / (max - min)) * 100;
+            return `${x},${y}`;
+          })
+          .join(" ");
+      }
+
+      function GameHeader({ state }) {
+        const stage = STAGES.find((entry) => entry.label === state.developmentStage) || STAGES[0];
+        const banner = getStatusBanner(state);
+        return (
+          <section className="header-card">
+            <div className="title-row">
+              <div>
+                <h1>Civilization Simulator Lite</h1>
+                <p className="subtitle">
+                  Guide a growing society through famine, invention, unrest, and ambition. Every turn pushes the same old question:
+                  survive now, or build something larger than the current complaint.
+                </p>
+              </div>
+              <div className={`status-banner ${banner.tone}`}>
+                <strong>{banner.title}</strong>
+                <div>{banner.body}</div>
+              </div>
+            </div>
+            <div className="meta-strip">
+              <div className="meta-pill">
+                Era <strong>{state.developmentStage}</strong>
+              </div>
+              <div className="meta-pill">
+                Year <strong>{state.year}</strong>
+              </div>
+              <div className="meta-pill">
+                Turn <strong>{state.turn}</strong>
+              </div>
+              <div className="meta-pill">
+                Tech Level <strong>{state.technologyLevel}</strong>
+              </div>
+              <div className="meta-pill">
+                Legacy <strong>{state.legacyScore}</strong>
+              </div>
+              <div className="meta-pill">
+                Next Stage <strong>{STAGES[Math.min(stageIndexFromLabel(stage.label) + 1, STAGES.length - 1)].label}</strong>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function ControlPanel({ state, dispatch }) {
+        const canStart = state.status === "menu";
+        const canPause = state.status === "running";
+        const canResume = state.status === "paused";
+        const canStep = state.status !== "running" && state.status !== "won" && state.status !== "lost";
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Control Panel</h2>
+                <p>Hybrid pacing: auto-run one turn per second or step manually when you need precision.</p>
+              </div>
+              <div className="points-pill">Policies Used: {totalPolicyPoints(state.policies)}/{POLICY_POINT_CAP}</div>
+            </div>
+            <div className="control-row">
+              <button id="start-btn" className="btn-primary" disabled={!canStart} onClick={() => dispatch({ type: "START_GAME" })}>
+                Start
+              </button>
+              <button id="pause-btn" className="btn-secondary" disabled={!canPause} onClick={() => dispatch({ type: "PAUSE_GAME" })}>
+                Pause
+              </button>
+              <button id="resume-btn" className="btn-accent" disabled={!canResume} onClick={() => dispatch({ type: "RESUME_GAME" })}>
+                Resume
+              </button>
+              <button id="step-btn" className="btn-secondary" disabled={!canStep} onClick={() => dispatch({ type: "STEP_TURN" })}>
+                Next Turn
+              </button>
+              <button
+                id="reset-btn"
+                className="btn-danger"
+                onClick={() => dispatch({ type: "RESET_GAME", seed: (Date.now() >>> 0) || 11 })}
+              >
+                Reset
+              </button>
+            </div>
+            <div className="footer-note">
+              Press <strong>F</strong> to toggle fullscreen. Manual stepping leaves the game paused so you can inspect each consequence.
+            </div>
+          </section>
+        );
+      }
+
+      function ResourcePanel({ state, assets }) {
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Resource Ledger</h2>
+                <p>Core stocks define whether growth becomes civilization or a cautionary note.</p>
+              </div>
+            </div>
+            <div className="resource-grid">
+              {RESOURCE_META.map((item) => {
+                const deltaKey = `${item.key}Delta`;
+                const delta = state.lastBreakdown[deltaKey] || 0;
+                return (
+                  <article className="resource-card" key={item.key}>
+                    <img src={assets[item.icon]?.uri} alt={item.label} />
+                    <div>
+                      <h4>{item.label}</h4>
+                      <div className="resource-value">{Math.round(state[item.key])}</div>
+                      <div className={`delta ${delta > 0 ? "good" : delta < 0 ? "bad" : ""}`}>Last turn {formatSigned(delta)}</div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        );
+      }
+
+      function StatsPanel({ state, assets }) {
+        const stageIdx = stageIndexFromLabel(state.developmentStage);
+        const nextStage = STAGES[Math.min(stageIdx + 1, STAGES.length - 1)];
+        const currentStage = STAGES[stageIdx] || STAGES[0];
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Civic Metrics</h2>
+                <p>These are the quiet variables that decide whether a good harvest becomes a durable society.</p>
+              </div>
+            </div>
+            <div className="meter-grid">
+              {METRIC_META.map((metric) => (
+                <div className="meter-row" key={metric.key}>
+                  <div className="meter-name">
+                    <img className="icon-badge" src={assets[metric.icon]?.uri} alt={metric.label} />
+                    <span>{metric.label}</span>
+                  </div>
+                  <div className="meter-bar">
+                    <div
+                      className="meter-fill"
+                      style={{
+                        width: `${clamp(state[metric.key], 0, 100)}%`,
+                        background: `linear-gradient(90deg, ${metric.color}, ${meterTone(state[metric.key])})`,
+                      }}
+                    />
+                  </div>
+                  <strong>{Math.round(state[metric.key])}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="legend-row">
+              <div className="legend-pill">
+                <span className="legend-swatch" style={{ background: "#d59f4d" }} />
+                {currentStage.label} requirements met
+              </div>
+              <div className="legend-pill">
+                <span className="legend-swatch" style={{ background: "#4f8e5d" }} />
+                Next: {nextStage.label} needs Pop {nextStage.pop}, Industry {nextStage.industry}, Tech {nextStage.tech}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function PolicyPanel({ state, dispatch }) {
+        const spent = totalPolicyPoints(state.policies);
+        const remaining = POLICY_POINT_CAP - spent;
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Policy Cabinet</h2>
+                <p>Each policy level is a permanent nudge each turn. The tradeoff is the point, not an accident.</p>
+              </div>
+              <div className="points-pill">Free Points: {remaining}</div>
+            </div>
+            <div className="policy-list">
+              {Object.entries(POLICY_DEFS).map(([key, policy]) => (
+                <div className="policy-row" key={key}>
+                  <div className="policy-topline">
+                    <div>
+                      <div className="policy-label">{policy.label}</div>
+                      <div className="minor-copy">{policy.summary}</div>
+                    </div>
+                    <div className="points-pill">Level {state.policies[key]}</div>
+                  </div>
+                  <div className="policy-controls">
+                    <button
+                      className="btn-secondary"
+                      onClick={() => dispatch({ type: "SET_POLICY", key, delta: -1 })}
+                      disabled={state.policies[key] <= 0}
+                      title={`Lower ${policy.label}`}
+                    >
+                      -
+                    </button>
+                    <div className="policy-level">{state.policies[key]}</div>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => dispatch({ type: "SET_POLICY", key, delta: 1 })}
+                      disabled={state.policies[key] >= 3 || remaining <= 0}
+                      title={`Raise ${policy.label}`}
+                    >
+                      +
+                    </button>
+                    <div className="minor-copy" style={{ flex: 1 }}>{policy.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function ProgressVisualization({ state }) {
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Historical Trends</h2>
+                <p>Recent turns only. Long empires deserve archivists; you have sparklines.</p>
+              </div>
+            </div>
+            <div className="history-grid">
+              {HISTORY_META.map((item) => {
+                const values = state.history[item.key] || [];
+                return (
+                  <div className="spark-card" key={item.key}>
+                    <div className="policy-topline">
+                      <strong>{item.label}</strong>
+                      <span>{values[values.length - 1] ?? 0}</span>
+                    </div>
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-label={item.label}>
+                      <path d="M0 86H100" stroke="rgba(17,37,56,0.1)" strokeWidth="1.8" />
+                      <path d={`M${sparkPoints(values)}`} fill="none" stroke={item.color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      }
+
+      function EventLog({ entries, assets }) {
+        return (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Event Log</h2>
+                <p>Recent shocks, milestones, and the occasional good news. Very occasional.</p>
+              </div>
+            </div>
+            <div className="event-list">
+              {entries.map((entry) => (
+                <article className="event-item" key={entry.id}>
+                  <img className="icon-badge" src={assets[entry.icon]?.uri} alt={entry.title} />
+                  <div>
+                    <h4>{entry.title}</h4>
+                    <div className="event-meta">
+                      Year {entry.year} · Turn {entry.turn}
+                    </div>
+                    <div className="event-body">{entry.detail}</div>
+                    <span className="event-tag">{entry.tag}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function drawSprite(ctx, asset, x, y, width, height, alpha = 1) {
+        if (!asset?.image) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(asset.image, x, y, width, height);
+        ctx.restore();
+      }
+
+      function CanvasWorld({ state, assets }) {
+        const canvasRef = useRef(null);
+
+        useEffect(() => {
+          const canvas = canvasRef.current;
+          if (!canvas || !assets.citizen) return;
+          const ctx = canvas.getContext("2d");
+          const width = canvas.width;
+          const height = canvas.height;
+          const stage = STAGES.find((entry) => entry.label === state.developmentStage) || STAGES[0];
+          const crisis = state.unrest > 55 || state.stability < 45 || state.health < 35;
+          const prosperity = state.happiness > 72 && state.health > 68 && state.environment > 50;
+
+          ctx.clearRect(0, 0, width, height);
+
+          const sky = ctx.createLinearGradient(0, 0, 0, height * 0.55);
+          sky.addColorStop(0, state.environment > 45 ? "#d2ecf5" : "#d4c7bf");
+          sky.addColorStop(1, state.environment > 45 ? "#87b6c8" : "#a99a90");
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, width, height);
+
+          const sunX = width - 120;
+          const sunY = 90;
+          const sun = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 80);
+          sun.addColorStop(0, prosperity ? "rgba(255,242,172,0.92)" : "rgba(250,224,157,0.8)");
+          sun.addColorStop(1, "rgba(255,227,120,0)");
+          ctx.fillStyle = sun;
+          ctx.beginPath();
+          ctx.arc(sunX, sunY, 80, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = state.environment > 38 ? "#7f9d67" : "#857156";
+          ctx.fillRect(0, height * 0.46, width, height * 0.54);
+          ctx.fillStyle = state.environment > 38 ? "#5c7d59" : "#675b48";
+          ctx.beginPath();
+          ctx.moveTo(0, height * 0.62);
+          ctx.quadraticCurveTo(width * 0.22, height * 0.55, width * 0.38, height * 0.6);
+          ctx.quadraticCurveTo(width * 0.56, height * 0.68, width * 0.78, height * 0.58);
+          ctx.quadraticCurveTo(width * 0.9, height * 0.52, width, height * 0.62);
+          ctx.lineTo(width, height);
+          ctx.lineTo(0, height);
+          ctx.closePath();
+          ctx.fill();
+
+          drawSprite(ctx, assets.riverStrip, 0, height - 186, width * 0.42, 165, 0.94);
+
+          const fieldAsset =
+            state.environment > 65 ? assets.fertileField : state.environment > 35 ? assets.normalField : assets.witheredField;
+          const forestAsset = state.environment > 50 ? assets.healthyForest : assets.damagedForest;
+          const homeAsset = state.population > 135 ? assets.apartmentBlock : state.population > 58 ? assets.house : assets.hut;
+          const hubAsset = assets[stage.hub];
+
+          const homeCount = Math.max(2, Math.round(state.population / 18));
+          const farmCount = Math.max(2, state.policies.agriculture + Math.round(state.food / 95));
+          const industryCount = Math.max(1, state.policies.industry + Math.round(state.industry / 100));
+          const knowledgeCount = Math.max(1, state.policies.education + state.policies.research + Math.round(state.knowledge / 110));
+          const civicCount = Math.max(1, state.policies.health + state.policies.welfare);
+
+          const farmStartX = 40;
+          for (let i = 0; i < farmCount; i++) {
+            drawSprite(ctx, fieldAsset, farmStartX + i * 98, height - 190 + (i % 2) * 12, 110, 84);
+          }
+          drawSprite(ctx, assets.farmPlot, farmStartX + 36, height - 224, 132, 92);
+
+          for (let i = 0; i < 3; i++) {
+            drawSprite(ctx, forestAsset, 28 + i * 82, 210 + (i % 2) * 18, 96, 78, state.environment > 30 ? 1 : 0.82);
+          }
+
+          if (state.environment < 45 || state.policies.industry >= 2) {
+            drawSprite(ctx, assets.pollutedGround, width * 0.56, height - 144, 220, 92, 0.82);
+          }
+
+          const structureY = height - 242;
+          for (let i = 0; i < homeCount; i++) {
+            drawSprite(ctx, homeAsset, 240 + i * 66, structureY + ((i % 3) * 10), 86, 72);
+          }
+
+          drawSprite(ctx, hubAsset, width * 0.44, height - 295, 260, 190);
+
+          const industryAssets = [assets.workshop, assets.factory, assets.granary, assets.waterTower];
+          for (let i = 0; i < industryCount; i++) {
+            const asset = industryAssets[i % industryAssets.length];
+            drawSprite(ctx, asset, width * 0.65 + i * 58, height - 228 + (i % 2) * 8, 92, 84);
+          }
+
+          const knowledgeAssets = [assets.school, assets.library, assets.lab, assets.observatory];
+          for (let i = 0; i < knowledgeCount; i++) {
+            const asset = knowledgeAssets[i % knowledgeAssets.length];
+            drawSprite(ctx, asset, width * 0.44 + i * 52, height - 160 - (i % 2) * 12, 88, 76);
+          }
+
+          const civicAssets = [assets.clinic, assets.hospital, assets.park, assets.watchtower, assets.solarField];
+          for (let i = 0; i < civicCount; i++) {
+            const asset = civicAssets[i % civicAssets.length];
+            drawSprite(ctx, asset, 160 + i * 90, height - 118 - (i % 2) * 8, 96, 80);
+          }
+
+          if (state.technologyLevel >= 8) {
+            drawSprite(ctx, assets.solarField, width - 280, height - 145, 170, 92);
+          }
+
+          const citizenCount = Math.min(12, Math.max(3, Math.round(state.population / 20)));
+          for (let i = 0; i < citizenCount; i++) {
+            const x = 250 + ((i * 61) % 430);
+            const y = height - 72 - ((i % 3) * 12);
+            drawSprite(ctx, assets.citizen, x, y, 28, 28, 0.92);
+          }
+
+          if (state.policies.industry >= 2 || state.environment < 42) {
+            const smokeCount = Math.max(1, Math.round(state.policies.industry + (50 - state.environment) / 24));
+            for (let i = 0; i < smokeCount; i++) {
+              drawSprite(ctx, assets.smokePlume, width * 0.7 + i * 26, 90 + i * 4, 82, 82, 0.7);
+            }
+          }
+
+          if (crisis) {
+            drawSprite(ctx, assets.stormCloud, 40, 30, 180, 120, 0.88);
+            drawSprite(ctx, assets.eventUnrest, width - 140, 24, 92, 92, 0.92);
+            ctx.fillStyle = "rgba(166,61,51,0.12)";
+            ctx.fillRect(0, 0, width, height);
+          }
+
+          if (prosperity) {
+            drawSprite(ctx, assets.eventHarvest, width - 152, 28, 96, 96, 0.95);
+            ctx.strokeStyle = "rgba(255,247,194,0.52)";
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, height - 40);
+            for (let x = 0; x <= width; x += 40) {
+              ctx.lineTo(x, height - 34 - Math.sin(x / 60) * 4);
+            }
+            ctx.stroke();
+          }
+        }, [state, assets]);
+
+        return (
+          <section className="panel world-panel">
+            <div className="panel-header">
+              <div>
+                <h2>World Canvas</h2>
+                <p>The map reflects the real simulation state: density, smoke, ecology, prosperity, and technological unlocks all come from the reducer.</p>
+              </div>
+            </div>
+            <div className="world-wrap">
+              <canvas ref={canvasRef} width="960" height="540" />
+              <div className="world-overlay">
+                <div className="world-chip">Hub: {state.developmentStage}</div>
+                <div className="world-chip">Effects: {state.activeEffects.length ? state.activeEffects.map((effect) => effect.name).join(", ") : "None"}</div>
+              </div>
+            </div>
+            <div className="legend-row">
+              <div className="legend-pill">
+                <span className="legend-swatch" style={{ background: "#4f8e5d" }} />
+                Prosperity = cleaner land, brighter light, stronger morale
+              </div>
+              <div className="legend-pill">
+                <span className="legend-swatch" style={{ background: "#a63d33" }} />
+                Crisis = smoke, storm tint, unrest markers, and harsher terrain
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function App() {
+        const [state, dispatch] = useReducer(reducer, undefined, () => createInitialState());
+        const [assets, setAssets] = useState({});
+        const latestStateRef = useRef(state);
+        const virtualAccumulatorRef = useRef(0);
+        const shellRef = useRef(null);
+
+        useEffect(() => {
+          latestStateRef.current = state;
+        }, [state]);
+
+        useEffect(() => {
+          let cancelled = false;
+          loadAssetPack().then((pack) => {
+            if (cancelled) return;
+            setAssets(pack);
+            dispatch({ type: "ASSETS_READY" });
+          });
+          return () => {
+            cancelled = true;
+          };
+        }, []);
+
+        useEffect(() => {
+          if (state.status !== "running") return undefined;
+          const timer = window.setInterval(() => {
+            dispatch({ type: "STEP_TURN" });
+          }, TURN_INTERVAL_MS);
+          return () => window.clearInterval(timer);
+        }, [state.status]);
+
+        useEffect(() => {
+          // Deterministic browser hooks used by automated game checks.
+          window.render_game_to_text = () => JSON.stringify(getWorldSnapshot(latestStateRef.current), null, 2);
+          window.advanceTime = (ms) => {
+            virtualAccumulatorRef.current += ms;
+            while (
+              virtualAccumulatorRef.current >= TURN_INTERVAL_MS &&
+              latestStateRef.current.status === "running"
+            ) {
+              virtualAccumulatorRef.current -= TURN_INTERVAL_MS;
+              dispatch({ type: "STEP_TURN" });
+            }
+            return Promise.resolve();
+          };
+          return () => {
+            delete window.render_game_to_text;
+            delete window.advanceTime;
+          };
+        }, []);
+
+        useEffect(() => {
+          function onKeyDown(event) {
+            if (event.key.toLowerCase() !== "f") return;
+            const host = shellRef.current;
+            if (!host) return;
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else if (host.requestFullscreen) {
+              host.requestFullscreen();
+            }
+          }
+
+          window.addEventListener("keydown", onKeyDown);
+          return () => window.removeEventListener("keydown", onKeyDown);
+        }, []);
+
+        const ready = state.assetsReady && Object.keys(assets).length > 0;
+        const snapshot = getWorldSnapshot(state);
+
+        if (!ready) {
+          return (
+            <div className="app-shell">
+              <section className="header-card">
+                <h1>Civilization Simulator Lite</h1>
+                <p className="subtitle">Loading the asset registry and preparing the machinery of history.</p>
+              </section>
+            </div>
+          );
+        }
+
+        return (
+          <div className="app-shell" ref={shellRef}>
+            <GameHeader state={state} />
+            <div className="main-grid">
+              <div className="left-column">
+                <CanvasWorld state={state} assets={assets} />
+                <ControlPanel state={state} dispatch={dispatch} />
+                <ResourcePanel state={state} assets={assets} />
+                <ProgressVisualization state={state} />
+              </div>
+              <div className="right-column">
+                <StatsPanel state={state} assets={assets} />
+                <PolicyPanel state={state} dispatch={dispatch} />
+                <EventLog entries={state.eventLog} assets={assets} />
+                <section className="panel">
+                  <div className="panel-header">
+                    <div>
+                      <h2>Simulation Notes</h2>
+                      <p>Deterministic turn logic with weighted events, bounded variables, and replayable seeded randomness.</p>
+                    </div>
+                  </div>
+                  <div className="minor-copy">
+                    <strong>Snapshot</strong>
+                    <pre style={{ margin: "10px 0 0", whiteSpace: "pre-wrap", fontSize: "0.8rem", lineHeight: 1.45 }}>
+{JSON.stringify(snapshot, null, 2)}
+                    </pre>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>
