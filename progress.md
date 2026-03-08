@@ -28,3 +28,16 @@ Original prompt: Build a complete single-file React Canvas game called Civilizat
   - served the repo on `http://127.0.0.1:4318`
   - verified the refactored inspector in Playwright MCP with no app console errors
   - ran the `develop-web-game` Playwright client against the updated build; output state and screenshot were generated with no error JSON
+- 2026-03-08 UI/UX improvement pass in progress:
+  - replaced the split header/control area with a single strategic HUD that surfaces phase, readiness, selected district summary, resource totals vs rates, primary actions, shortcuts, and a dedicated alert center
+  - expanded the derived `getVillageModel()` output so alerts now carry actionable commands/targets, notices expose recent changes, comparison rows include deltas, and tile zones carry next-step/stress metadata
+  - added action feedback state to the reducer for start/pause/resume/reset/policy/project/turn outcomes so the UI can answer “what changed?” directly
+  - upgraded inspector sections with richer tooltips, disclosure blocks for dense details, keyboardable rows, stronger selected/pinned treatment, recommended production emphasis, and compact-mode simplification
+  - upgraded map overlay handling to support state / influence / stress modes with visibly different fills, dashes, stripe patterns, and stronger pinned-selection framing
+  - added keyboard shortcuts for start/pause/resume (`Space`), end turn (`N`), reset (`R`), compact mode (`C`), overlay cycle (`O`), tab selection (`1-6`), center map (`M`), and fullscreen (`F`)
+  - validation after the pass:
+    - served the repo on `http://127.0.0.1:4320`
+    - reloaded the page in Playwright MCP with zero runtime console errors; only the expected in-browser Babel warning remains
+    - visually inspected a full-page screenshot of the updated HUD, map, inspector, and compact mode layout
+    - verified direct interactions in-browser: `Start`, `Space` pause, compact toggle, alert-center action jump (`Open Population`), and the resulting map/selection synchronization
+    - attempted the `develop-web-game` Playwright client twice; the script launched but did not emit artifacts or a completion payload before control returned, so validation relied on direct Playwright browser checks instead

@@ -261,12 +261,23 @@
         padding: 12px 15px;
         font: inherit;
         font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         cursor: pointer;
         transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
       }
 
       button:hover:not(:disabled) {
         transform: translateY(-1px);
+      }
+
+      button:focus-visible,
+      [role="button"]:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid rgba(47, 127, 157, 0.36);
+        outline-offset: 2px;
       }
 
       button:disabled {
@@ -293,6 +304,33 @@
       .btn-accent {
         background: linear-gradient(135deg, #e0b064, var(--gold));
         color: #342411;
+      }
+
+      .action-button {
+        min-height: 48px;
+      }
+
+      .shortcut-key {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(17, 37, 56, 0.18);
+        background: rgba(255, 252, 245, 0.72);
+        color: rgba(17, 37, 56, 0.8);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .btn-primary .shortcut-key,
+      .btn-accent .shortcut-key,
+      .sticky-bar .shortcut-key {
+        background: rgba(255, 255, 255, 0.18);
+        color: inherit;
+        border-color: rgba(255, 255, 255, 0.16);
       }
 
       .resource-grid {
@@ -527,6 +565,240 @@
         padding-bottom: 92px;
       }
 
+      .strategic-hud {
+        display: grid;
+        gap: 18px;
+      }
+
+      .hud-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
+        gap: 16px;
+      }
+
+      .hud-main-column,
+      .alert-center-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .hud-priority-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .hud-card,
+      .hud-action-panel {
+        padding: 16px;
+        border-radius: 22px;
+        background: rgba(255, 252, 245, 0.84);
+        border: 1px solid rgba(17, 37, 56, 0.09);
+      }
+
+      .hud-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .hud-card-copy {
+        margin-top: 10px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .hud-card-emphasis {
+        margin-top: 10px;
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .hud-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+        font-size: 0.84rem;
+        color: rgba(17, 37, 56, 0.66);
+      }
+
+      .hud-card-divider {
+        height: 1px;
+        background: rgba(17, 37, 56, 0.08);
+      }
+
+      .hud-resource-ribbon {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .hud-resource-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .hud-resource-top,
+      .hud-resource-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .hud-resource-label {
+        justify-content: flex-start;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(17, 37, 56, 0.58);
+      }
+
+      .hud-resource-total {
+        margin-top: 8px;
+        font-size: 1.65rem;
+        font-weight: 700;
+      }
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .primary-action-row {
+        margin-top: 12px;
+      }
+
+      .secondary-action-row {
+        margin-top: 10px;
+        align-items: center;
+      }
+
+      .shortcut-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        color: rgba(17, 37, 56, 0.72);
+        font-size: 0.82rem;
+      }
+
+      .alert-center-list,
+      .feedback-feed {
+        display: grid;
+        gap: 10px;
+      }
+
+      .alert-center-item,
+      .feedback-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .alert-center-item.critical,
+      .feedback-row.bad {
+        border-color: rgba(166, 61, 51, 0.24);
+        background: rgba(253, 237, 232, 0.92);
+      }
+
+      .alert-center-item.warning,
+      .feedback-row.warn {
+        border-color: rgba(197, 125, 44, 0.24);
+        background: rgba(255, 245, 227, 0.92);
+      }
+
+      .feedback-row.good {
+        border-color: rgba(79, 142, 93, 0.24);
+        background: rgba(231, 247, 233, 0.9);
+      }
+
+      .feedback-row {
+        grid-template-columns: auto 1fr;
+      }
+
+      .feedback-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: rgba(17, 37, 56, 0.08);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .alert-action-button {
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(17, 37, 56, 0.08);
+        color: var(--ink);
+      }
+
+      .alert-center-copy {
+        display: grid;
+        gap: 6px;
+      }
+
+      .tooltip-wrap {
+        position: relative;
+        display: inline-flex;
+        vertical-align: middle;
+      }
+
+      .tooltip-trigger {
+        width: 20px;
+        height: 20px;
+        min-height: 20px;
+        padding: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(17, 37, 56, 0.14);
+        background: rgba(17, 37, 56, 0.06);
+        color: rgba(17, 37, 56, 0.72);
+        font-size: 0.72rem;
+      }
+
+      .tooltip-card {
+        position: absolute;
+        left: 0;
+        top: calc(100% + 8px);
+        z-index: 6;
+        width: min(280px, 70vw);
+        display: none;
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(17, 37, 56, 0.96);
+        color: #f7f1df;
+        box-shadow: 0 18px 26px rgba(17, 37, 56, 0.22);
+      }
+
+      .tooltip-card strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .tooltip-card span {
+        display: block;
+        font-size: 0.84rem;
+        line-height: 1.45;
+      }
+
+      .tooltip-wrap:hover .tooltip-card,
+      .tooltip-wrap:focus-within .tooltip-card {
+        display: block;
+      }
+
       .village-topbar {
         display: grid;
         gap: 14px;
@@ -652,6 +924,13 @@
         color: var(--brass);
         border-color: rgba(197, 125, 44, 0.3);
         background: rgba(255, 244, 222, 0.9);
+      }
+
+      .status-chip.focus,
+      .tile-state-chip.focus {
+        color: var(--sea);
+        border-color: rgba(47, 127, 157, 0.3);
+        background: rgba(232, 246, 249, 0.92);
       }
 
       .alert-strip {
@@ -910,6 +1189,51 @@
         font-size: 0.95rem;
       }
 
+      .detail-disclosure {
+        border-radius: 16px;
+        border: 1px dashed rgba(17, 37, 56, 0.18);
+        background: rgba(255, 252, 245, 0.64);
+        padding: 10px 12px;
+      }
+
+      .detail-disclosure summary {
+        cursor: pointer;
+        font-weight: 700;
+        list-style: none;
+      }
+
+      .detail-disclosure summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .detail-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .detail-chip {
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(17, 37, 56, 0.08);
+      }
+
+      .detail-chip strong,
+      .detail-chip span {
+        display: block;
+      }
+
+      .detail-chip span {
+        margin-top: 4px;
+        font-size: 0.86rem;
+        color: rgba(17, 37, 56, 0.72);
+      }
+
+      .main-grid.compact-inspector {
+        grid-template-columns: minmax(0, 1.95fr) minmax(300px, 0.78fr);
+      }
+
       .focus-summary {
         display: grid;
         gap: 8px;
@@ -955,6 +1279,11 @@
           grid-template-columns: 1fr;
         }
 
+        .hud-grid,
+        .main-grid.compact-inspector {
+          grid-template-columns: 1fr;
+        }
+
         .title-row {
           flex-direction: column;
         }
@@ -963,6 +1292,8 @@
           width: 100%;
         }
 
+        .hud-priority-grid,
+        .hud-resource-ribbon,
         .village-summary-grid,
         .split-metrics,
         .overview-grid {
@@ -990,7 +1321,11 @@
         .building-row-top,
         .tile-row-top,
         .compare-row,
-        .split-header {
+        .split-header,
+        .hud-card-header,
+        .hud-resource-top,
+        .alert-center-item,
+        .feedback-row {
           flex-direction: column;
           align-items: flex-start;
         }
@@ -1092,12 +1427,38 @@
       ];
 
       const VILLAGE_TABS = [
-        { key: "overview", label: "Overview" },
-        { key: "population", label: "Population" },
-        { key: "buildings", label: "Buildings" },
-        { key: "production", label: "Production" },
-        { key: "defense", label: "Defense" },
-        { key: "economy", label: "Trade / Economy" },
+        { key: "overview", label: "Overview", shortcut: "1" },
+        { key: "population", label: "Population", shortcut: "2" },
+        { key: "buildings", label: "Buildings", shortcut: "3" },
+        { key: "production", label: "Production", shortcut: "4" },
+        { key: "defense", label: "Defense", shortcut: "5" },
+        { key: "economy", label: "Trade / Economy", shortcut: "6" },
+      ];
+      const OVERLAY_OPTIONS = [
+        {
+          key: "work",
+          label: "Worked States",
+          shortLabel: "States",
+          description: "Shows worked, owned, workable, blocked, and selected districts.",
+        },
+        {
+          key: "influence",
+          label: "Influence Area",
+          shortLabel: "Influence",
+          description: "Shows current settlement reach and the next ring of workable land.",
+        },
+        {
+          key: "stress",
+          label: "Stress Map",
+          shortLabel: "Stress",
+          description: "Highlights districts carrying current shortages, weak coverage, or blocked growth.",
+        },
+        {
+          key: "none",
+          label: "Overlay Off",
+          shortLabel: "Off",
+          description: "Hides the district overlay when you want a cleaner map read.",
+        },
       ];
 
       const SETTLEMENT_NAME_PARTS = {
@@ -1223,6 +1584,81 @@
         if (value > 0.1) return { icon: "UP", label: positive, tone: "good" };
         if (value < -0.1) return { icon: "DOWN", label: negative, tone: "bad" };
         return { icon: "EVEN", label: neutral, tone: "warn" };
+      }
+
+      function getPhaseLabel(status) {
+        if (status === "menu") return "Opening Brief";
+        if (status === "running") return "Auto Resolve";
+        if (status === "paused") return "Planning";
+        if (status === "won") return "Victory";
+        if (status === "lost") return "Collapse";
+        return "Status";
+      }
+
+      function getZoneStateMeta(state) {
+        if (state === "worked") return { tone: "good", icon: "WORK", label: "Worked" };
+        if (state === "owned") return { tone: "good", icon: "OWN", label: "Owned" };
+        if (state === "selected") return { tone: "focus", icon: "PIN", label: "Selected" };
+        if (state === "blocked") return { tone: "bad", icon: "BLOCK", label: "Blocked" };
+        if (state === "workable") return { tone: "warn", icon: "RANGE", label: "Workable" };
+        return { tone: "warn", icon: "INFO", label: "Watch" };
+      }
+
+      function getOverlayMeta(mode) {
+        return OVERLAY_OPTIONS.find((entry) => entry.key === mode) || OVERLAY_OPTIONS[0];
+      }
+
+      function pushActionFeed(feed, entry) {
+        if (!entry) return feed || [];
+        return [entry, ...(feed || [])].slice(0, 6);
+      }
+
+      function makeActionFeedback({ id, title, detail, tone = "warn", tag = "Action", turn = 0 }) {
+        return { id, title, detail, tone, tag, turn };
+      }
+
+      function getReadinessModel(state, village) {
+        if (state.status === "won") {
+          return { tone: "good", label: "Campaign Complete", detail: "The simulation is finished in victory." };
+        }
+        if (state.status === "lost") {
+          return { tone: "bad", label: "Collapse Locked", detail: "The simulation ended in failure." };
+        }
+        if (state.status === "running") {
+          return { tone: "warn", label: "Timer Running", detail: "Turns are resolving automatically every second." };
+        }
+        if (state.status === "menu") {
+          return { tone: "warn", label: "Start Required", detail: "Begin the simulation to convert plans into consequences." };
+        }
+
+        const criticalAlerts = village.alerts.filter((alert) => alert.severity === "critical");
+        const warningAlerts = village.alerts.filter((alert) => alert.severity === "warning");
+        if (criticalAlerts.length) {
+          return {
+            tone: "bad",
+            label: `${criticalAlerts.length} blocker${criticalAlerts.length === 1 ? "" : "s"}`,
+            detail: criticalAlerts[0].title,
+          };
+        }
+        if (warningAlerts.length) {
+          return {
+            tone: "warn",
+            label: `${warningAlerts.length} caution${warningAlerts.length === 1 ? "" : "s"}`,
+            detail: warningAlerts[0].title,
+          };
+        }
+        return {
+          tone: "good",
+          label: "Ready to End Turn",
+          detail: "No urgent blockers are visible in the current state.",
+        };
+      }
+
+      function activateOnKeyDown(event, onActivate) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onActivate();
+        }
       }
 
       function turnsToWhole(value) {
@@ -1858,6 +2294,15 @@
             knowledgeDelta: 0,
             populationDelta: 0,
           },
+          actionFeed: [
+            makeActionFeedback({
+              id: "feed-boot-1",
+              title: "Settlement founded",
+              detail: "Choose priorities, then start or step the first turn to see the first pressure report.",
+              tone: "good",
+              tag: "Setup",
+            }),
+          ],
           victoryText: "",
           statusText: "Set your priorities and begin the first age.",
         };
@@ -2191,6 +2636,44 @@
             ? "Growth is outrunning supply. Granaries first, speeches later."
             : "The machinery of civilization continues to complain, but mostly function.";
 
+        const topLog = logEntries[0];
+        const feedbackTitle =
+          next.status === "won"
+            ? "Victory secured"
+            : next.status === "lost"
+            ? "Civilization collapsed"
+            : `Turn ${next.turn} resolved`;
+        const feedbackDetailParts = [
+          `Food ${formatSigned(next.lastBreakdown.foodDelta)}`,
+          `Industry ${formatSigned(next.lastBreakdown.industryDelta)}`,
+          `Knowledge ${formatSigned(next.lastBreakdown.knowledgeDelta)}`,
+        ];
+        if (next.lastBreakdown.populationDelta !== 0) {
+          feedbackDetailParts.push(`Population ${formatSigned(next.lastBreakdown.populationDelta)}`);
+        }
+        if (topLog) {
+          feedbackDetailParts.push(topLog.title);
+        }
+        next.actionFeed = pushActionFeed(
+          currentState.actionFeed,
+          makeActionFeedback({
+            id: `feed-turn-${next.turn}`,
+            title: feedbackTitle,
+            detail: feedbackDetailParts.join(" · "),
+            tone:
+              next.status === "won"
+                ? "good"
+                : next.status === "lost"
+                ? "bad"
+                : next.unrest > 55 || next.lastBreakdown.foodDelta < -6
+                ? "bad"
+                : topLog
+                ? "good"
+                : "warn",
+            tag: topLog?.tag || "Turn",
+            turn: next.turn,
+          })
+        );
         next.eventLog = [...logEntries, ...currentState.eventLog].slice(0, 18);
         next.rngSeed = rngSeed;
         return next;
@@ -2201,11 +2684,59 @@
           case "ASSETS_READY":
             return { ...state, assetsReady: true };
           case "START_GAME":
-            return state.status === "menu" ? { ...state, status: "running" } : state;
+            return state.status === "menu"
+              ? {
+                  ...state,
+                  status: "running",
+                  actionFeed: pushActionFeed(
+                    state.actionFeed,
+                    makeActionFeedback({
+                      id: `feed-start-${state.turn}`,
+                      title: "Simulation started",
+                      detail: "Auto-resolve is active. Pause or step manually whenever you need a closer read.",
+                      tone: "good",
+                      tag: "System",
+                      turn: state.turn,
+                    })
+                  ),
+                }
+              : state;
           case "PAUSE_GAME":
-            return state.status === "running" ? { ...state, status: "paused" } : state;
+            return state.status === "running"
+              ? {
+                  ...state,
+                  status: "paused",
+                  actionFeed: pushActionFeed(
+                    state.actionFeed,
+                    makeActionFeedback({
+                      id: `feed-pause-${state.turn}`,
+                      title: "Simulation paused",
+                      detail: "The game is in planning mode. You can inspect, queue projects, and step turns manually.",
+                      tone: "warn",
+                      tag: "Control",
+                      turn: state.turn,
+                    })
+                  ),
+                }
+              : state;
           case "RESUME_GAME":
-            return state.status === "paused" ? { ...state, status: "running" } : state;
+            return state.status === "paused"
+              ? {
+                  ...state,
+                  status: "running",
+                  actionFeed: pushActionFeed(
+                    state.actionFeed,
+                    makeActionFeedback({
+                      id: `feed-resume-${state.turn}`,
+                      title: "Auto-resolve resumed",
+                      detail: "Turns will keep advancing until you pause again or the simulation ends.",
+                      tone: "good",
+                      tag: "Control",
+                      turn: state.turn,
+                    })
+                  ),
+                }
+              : state;
           case "STEP_TURN": {
             const stepped = simulateTurn({
               ...state,
@@ -2216,6 +2747,16 @@
           case "RESET_GAME": {
             const reset = createInitialState(action.seed);
             reset.assetsReady = state.assetsReady;
+            reset.actionFeed = pushActionFeed(
+              reset.actionFeed,
+              makeActionFeedback({
+                id: `feed-reset-${action.seed}`,
+                title: "Simulation reset",
+                detail: "A fresh settlement seed is live. Old mistakes were not archived out of kindness.",
+                tone: "warn",
+                tag: "System",
+              })
+            );
             return reset;
           }
           case "SET_POLICY": {
@@ -2225,18 +2766,60 @@
             if (nextLevel === current) return state;
             const nextPolicies = { ...state.policies, [action.key]: nextLevel };
             if (totalPolicyPoints(nextPolicies) > POLICY_POINT_CAP) return state;
-            return { ...state, policies: nextPolicies };
+            return {
+              ...state,
+              policies: nextPolicies,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-policy-${action.key}-${nextLevel}-${state.turn}`,
+                  title: `${POLICY_DEFS[action.key].label} ${action.delta > 0 ? "raised" : "lowered"}`,
+                  detail: `Policy level is now ${nextLevel}. ${POLICY_DEFS[action.key].summary}`,
+                  tone: action.delta > 0 ? "good" : "warn",
+                  tag: "Policy",
+                  turn: state.turn,
+                })
+              ),
+            };
           }
           case "QUEUE_PROJECT": {
             if (!PROJECT_DEFS[action.key] || state.projectQueue.length >= 4) return state;
+            const queuedProject = PROJECT_DEFS[action.key];
             return {
               ...state,
               projectQueue: [...state.projectQueue, makeProjectItem(action.key, state.nextQueueId)],
               nextQueueId: state.nextQueueId + 1,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-project-${action.key}-${state.nextQueueId}`,
+                  title: `${queuedProject.label} queued`,
+                  detail: `${queuedProject.effect}. It joins the queue at position ${state.projectQueue.length + 1}.`,
+                  tone: "good",
+                  tag: queuedProject.category,
+                  turn: state.turn,
+                })
+              ),
             };
           }
           case "RENAME_SETTLEMENT":
-            return action.name ? { ...state, settlementName: action.name.trim().slice(0, 32) } : state;
+            return action.name
+              ? {
+                  ...state,
+                  settlementName: action.name.trim().slice(0, 32),
+                  actionFeed: pushActionFeed(
+                    state.actionFeed,
+                    makeActionFeedback({
+                      id: `feed-rename-${state.turn}`,
+                      title: "Settlement renamed",
+                      detail: `The settlement now answers to ${action.name.trim().slice(0, 32)}.`,
+                      tone: "good",
+                      tag: "System",
+                      turn: state.turn,
+                    })
+                  ),
+                }
+              : state;
           default:
             return state;
         }
@@ -2320,9 +2903,9 @@
       }
 
       function getStatusChip(status) {
-        if (status === "good") return { tone: "good", label: "OK Active" };
-        if (status === "bad") return { tone: "bad", label: "Alert Critical" };
-        return { tone: "warn", label: "Watch Closely" };
+        if (status === "good") return { tone: "good", icon: "ACTIVE", label: "Online" };
+        if (status === "bad") return { tone: "bad", icon: "BLOCK", label: "Blocked" };
+        return { tone: "warn", icon: "WATCH", label: "Strained" };
       }
 
       function buildTileZones(state, village) {
@@ -2334,64 +2917,80 @@
             label: "Field Belt",
             rect: { x: 28, y: 320, w: 312, h: 126 },
             state: "worked",
+            stress: village.preview.foodNet < 0 ? "high" : "low",
             yieldLabel: `${formatPerTurn(village.preview.foodProduction)} food output`,
             detail: village.preview.foodNet >= 0 ? "Worked farms are covering demand." : "Fields are falling behind food demand.",
+            nextStep: village.preview.foodNet >= 0 ? "Food is holding. Keep reserve storage ahead of growth." : "Queue Granary Expansion or raise Agriculture.",
           },
           {
             id: "river",
             label: "River Strip",
             rect: { x: 0, y: 356, w: 392, h: 136 },
             state: waterHealthy ? "owned" : "blocked",
+            stress: waterHealthy ? "low" : "high",
             yieldLabel: waterHealthy ? "Fresh water and trade access" : "Water quality is dragging the district down",
             detail: waterHealthy ? "Owned and supporting health." : "Pollution is weakening this tile.",
+            nextStep: waterHealthy ? "Protect environment so water support stays intact." : "Raise Environment or build cleaner infrastructure.",
           },
           {
             id: "homes",
             label: "Residential Ring",
             rect: { x: 228, y: 288, w: 260, h: 138 },
             state: village.housingShortage ? "worked" : "owned",
+            stress: village.housingShortage ? "high" : "low",
             yieldLabel: `${village.housingUsed}/${village.housingCap} housing`,
             detail: village.housingShortage ? "Growth is blocked by tight housing." : "Homes are stable for the current population.",
+            nextStep: village.housingShortage ? "Queue Housing Quarter before growth pressure is wasted." : "Housing can absorb the next round of growth.",
           },
           {
             id: "hub",
             label: "Civic Core",
             rect: { x: 412, y: 244, w: 276, h: 176 },
             state: "selected",
+            stress: "medium",
             yieldLabel: `Stage hub: ${state.developmentStage}`,
             detail: "This is the settlement center and the anchor for the inspector.",
+            nextStep: "Use the quick actions or tabs here to set the next civic priority.",
           },
           {
             id: "scholar",
             label: "Scholar Quarter",
             rect: { x: 430, y: 316, w: 210, h: 92 },
             state: village.knowledgeQuarterBlocked ? "workable" : "worked",
+            stress: village.knowledgeQuarterBlocked ? "medium" : "low",
             yieldLabel: `${formatPerTurn(village.preview.knowledgeProduction)} knowledge`,
             detail: village.knowledgeQuarterBlocked ? "This district wants more education or research focus." : "Schools and labs are functioning.",
+            nextStep: village.knowledgeQuarterBlocked ? "Raise Education or Research to unbottleneck knowledge output." : "Keep knowledge rising so the next era arrives on time.",
           },
           {
             id: "industry",
             label: "Workshop Ward",
             rect: { x: 620, y: 292, w: 268, h: 118 },
             state: village.industryStrained ? "worked" : "owned",
+            stress: village.industryStrained ? "medium" : "low",
             yieldLabel: `${formatPerTurn(village.preview.industryProduction)} industry`,
             detail: village.industryStrained ? "Upkeep or unrest is reducing useful output." : "Production lines are feeding the queue.",
+            nextStep: village.industryStrained ? "Reduce upkeep pressure or reinforce stability." : "Industry can support another queued project.",
           },
           {
             id: "civic",
             label: "Commons",
             rect: { x: 150, y: 402, w: 420, h: 98 },
             state: village.idleWorkers > 1 ? "workable" : "worked",
+            stress: village.idleWorkers > 1 || state.unrest > 45 ? "medium" : "low",
             yieldLabel: `${pluralize(village.assignments.caretakers + village.assignments.guards, "crew")} on civic duty`,
             detail: village.idleWorkers > 1 ? "The commons can absorb more useful labor." : "Care and guard labor are already committed.",
+            nextStep: village.idleWorkers > 1 ? "Shift population pressure into civic or defense work." : "Civic staffing is committed. Watch unrest and morale.",
           },
           {
             id: "outskirts",
             label: "Outer Ring",
             rect: { x: 18, y: 196, w: 280, h: 108 },
             state: outskirtsOpen ? "workable" : "blocked",
+            stress: outskirtsOpen ? "medium" : "high",
             yieldLabel: outskirtsOpen ? "In workable radius" : "Outside current settlement reach",
             detail: outskirtsOpen ? "This ring can support more projects as the village grows." : "Advance the village stage to exploit this area.",
+            nextStep: outskirtsOpen ? "Queue expansion projects if you want this land to matter soon." : `Reach ${village.nextStage.label} to exploit this ring.`,
           },
         ];
       }
@@ -2442,6 +3041,10 @@
               ? `Food is trending ${formatSigned(preview.foodNet)} per turn. Growth will stall or reverse.`
               : `Only ${Math.round(state.food)} food remains in storage.`,
             action: "Shift policy toward Agriculture or queue Granary Expansion.",
+            actionLabel: "Queue Granary",
+            command: { type: "queueProject", key: "granary" },
+            targetTab: "production",
+            focusZoneId: "fields",
           });
         }
         if (housingShortage) {
@@ -2452,6 +3055,10 @@
             title: "Housing shortage",
             detail: `Population is at ${housingUsed}/${housingCap} housing. Growth is blocked.`,
             action: "Queue Housing Quarter or reduce short-term migration pressure.",
+            actionLabel: "Queue Housing",
+            command: { type: "queueProject", key: "housing" },
+            targetTab: "production",
+            focusZoneId: "homes",
           });
         }
         if (idleWorkers > 2) {
@@ -2462,6 +3069,10 @@
             title: "Idle workers",
             detail: `${idleWorkers} workers are unassigned relative to current district demand.`,
             action: "Increase a policy focus or start a civic project.",
+            actionLabel: "Open Population",
+            command: { type: "openTab", tab: "population" },
+            targetTab: "population",
+            focusZoneId: "civic",
           });
         }
         if (state.unrest > 55 || state.stability < 42) {
@@ -2472,6 +3083,10 @@
             title: "Instability",
             detail: `Unrest is ${Math.round(state.unrest)} and stability is ${Math.round(state.stability)}.`,
             action: "Increase Security or Welfare before production collapses further.",
+            actionLabel: state.policies.security < 3 ? "Raise Security" : "Inspect Defense",
+            command: state.policies.security < 3 ? { type: "setPolicy", key: "security", delta: 1 } : { type: "openTab", tab: "defense" },
+            targetTab: state.policies.security < 3 ? "economy" : "defense",
+            focusZoneId: "civic",
           });
         }
         if (defenseScore < 36) {
@@ -2482,6 +3097,10 @@
             title: "Weak defense",
             detail: garrison > 0 ? `Guard presence is thin at ${garrison}.` : "No meaningful garrison is present.",
             action: "Raise Security or queue a Guard Post.",
+            actionLabel: "Queue Guard Post",
+            command: { type: "queueProject", key: "guardpost" },
+            targetTab: "production",
+            focusZoneId: "civic",
           });
         }
         if (!state.projectQueue.length) {
@@ -2492,6 +3111,39 @@
             title: "No production queued",
             detail: "Construction capacity exists, but the settlement has no active project.",
             action: "Queue a project from the sticky action bar.",
+            actionLabel: "Set Production",
+            command: { type: "openTab", tab: "production" },
+            targetTab: "production",
+            focusZoneId: "industry",
+          });
+        }
+
+        const notices = [];
+        if (currentProject && projectTurnsRemaining && projectTurnsRemaining <= 2) {
+          notices.push({
+            key: "project-ready",
+            tone: "good",
+            icon: "DONE",
+            title: `${currentProject.def.label} nearly complete`,
+            detail: `${projectTurnsRemaining} ${projectTurnsRemaining === 1 ? "turn" : "turns"} remaining at current output.`,
+          });
+        }
+        if (state.activeEffects.length) {
+          notices.push({
+            key: "effect",
+            tone: "warn",
+            icon: "FX",
+            title: "Active temporary effects",
+            detail: state.activeEffects.map((effect) => `${effect.name} (${effect.turnsLeft})`).join(", "),
+          });
+        }
+        if (state.actionFeed[0]) {
+          notices.push({
+            key: "latest-change",
+            tone: state.actionFeed[0].tone,
+            icon: state.actionFeed[0].tag,
+            title: state.actionFeed[0].title,
+            detail: state.actionFeed[0].detail,
           });
         }
 
@@ -2620,6 +3272,7 @@
             current: Math.round(state.population),
             previous: Math.round(Math.max(0, state.population - state.lastBreakdown.populationDelta)),
             peak: Math.round(Math.max(...state.history.population)),
+            delta: state.lastBreakdown.populationDelta,
           },
           {
             key: "food",
@@ -2627,6 +3280,7 @@
             current: Math.round(state.food),
             previous: Math.round(state.food - state.lastBreakdown.foodDelta),
             peak: Math.round(Math.max(...state.history.food)),
+            delta: state.lastBreakdown.foodDelta,
           },
           {
             key: "knowledge",
@@ -2634,6 +3288,7 @@
             current: Math.round(state.knowledge),
             previous: Math.round(state.knowledge - state.lastBreakdown.knowledgeDelta),
             peak: Math.round(Math.max(...state.history.knowledge)),
+            delta: state.lastBreakdown.knowledgeDelta,
           },
           {
             key: "legacy",
@@ -2641,8 +3296,12 @@
             current: Math.round(state.legacyScore),
             previous: Math.round(state.history.legacyScore[state.history.legacyScore.length - 2] || 0),
             peak: Math.round(Math.max(...state.history.legacyScore)),
+            delta: Math.round(state.legacyScore - (state.history.legacyScore[state.history.legacyScore.length - 2] || 0)),
           },
-        ];
+        ].map((row) => ({
+          ...row,
+          trend: getTrendDescriptor(row.delta, "Ahead", "Behind", "Flat"),
+        }));
 
         const village = {
           name: state.settlementName,
@@ -2669,6 +3328,7 @@
           growthTurns,
           currentProject,
           alerts,
+          notices,
           bottlenecks,
           buildings,
           compare,
@@ -2676,6 +3336,7 @@
 
         village.tileZones = buildTileZones(state, village);
         village.primaryRecommendation = alerts[0]?.action ||
+          notices[0]?.detail ||
           (currentProject
             ? `Keep ${currentProject.def.label} moving for ${projectTurnsRemaining} more ${projectTurnsRemaining === 1 ? "turn" : "turns"}.`
             : `Queue ${preview.foodNet < 0 ? "Granary Expansion" : preview.industryNet < 0 ? "Workshop District" : "Schoolhouse Charter"} next.`);
@@ -2685,6 +3346,7 @@
           (currentProject
             ? `${currentProject.def.label} is consuming the settlement's available construction capacity.`
             : "No acute blocker is present, so the village is coasting on current policy settings.");
+        village.readiness = getReadinessModel(state, village);
         return village;
       }
 
@@ -2769,17 +3431,170 @@
           .join(" ");
       }
 
-      function GameHeader({ state }) {
-        const stage = STAGES.find((entry) => entry.label === state.developmentStage) || STAGES[0];
-        const banner = getStatusBanner(state);
+      function ShortcutKey({ label }) {
+        return <span className="shortcut-key">{label}</span>;
+      }
+
+      function InfoTooltip({ title, body, impact, action, shortcut }) {
         return (
-          <section className="header-card">
+          <span className="tooltip-wrap">
+            <button type="button" className="tooltip-trigger" aria-label={`Explain ${title}`}>
+              ?
+            </button>
+            <span className="tooltip-card" role="tooltip">
+              <strong>{title}</strong>
+              <span>{body}</span>
+              {impact ? <span><strong>Affects:</strong> {impact}</span> : null}
+              {action ? <span><strong>What to do:</strong> {action}</span> : null}
+              {shortcut ? <span><strong>Shortcut:</strong> {shortcut}</span> : null}
+            </span>
+          </span>
+        );
+      }
+
+      function ActionButton({ id, tone = "secondary", label, shortcut, detail, disabled, onClick }) {
+        const toneClass =
+          tone === "primary" ? "btn-primary" : tone === "accent" ? "btn-accent" : tone === "danger" ? "btn-danger" : "btn-secondary";
+        return (
+          <button id={id} className={`action-button ${toneClass}`} disabled={disabled} onClick={onClick} title={detail}>
+            <span>{label}</span>
+            {shortcut ? <ShortcutKey label={shortcut} /> : null}
+          </button>
+        );
+      }
+
+      function AlertCenter({ alerts, notices, onAlertAction }) {
+        const urgent = alerts.slice(0, 4);
+        return (
+          <div className="hud-card alert-center-card">
+            <div className="hud-card-header">
+              <div>
+                <div className="eyebrow">Alert Center</div>
+                <h3>Urgent Now</h3>
+              </div>
+              <span className={`status-chip ${alerts.some((alert) => alert.severity === "critical") ? "bad" : alerts.length ? "warn" : "good"}`}>
+                {alerts.length ? `${alerts.length} open` : "Clear"}
+              </span>
+            </div>
+            {urgent.length ? (
+              <div className="alert-center-list">
+                {urgent.map((alert) => (
+                  <div key={alert.key} className={`alert-center-item ${alert.severity}`}>
+                    <div className="alert-center-copy">
+                      <strong>{alert.icon} {alert.title}</strong>
+                      <div className="minor-copy">{alert.detail}</div>
+                    </div>
+                    <button className="alert-action-button" onClick={() => onAlertAction(alert)} title={alert.action}>
+                      {alert.actionLabel || "Resolve"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <strong>No urgent alerts.</strong>
+                <div className="minor-copy" style={{ marginTop: "8px" }}>Nothing is actively burning. It will likely correct that later.</div>
+              </div>
+            )}
+            <div className="hud-card-divider" />
+            <div className="hud-card-header" style={{ marginBottom: "10px" }}>
+              <div>
+                <div className="eyebrow">Recent Change</div>
+                <h3>What Changed</h3>
+              </div>
+            </div>
+            <div className="feedback-feed" aria-live="polite">
+              {(notices || []).slice(0, 3).map((notice) => (
+                <div key={notice.id || notice.key} className={`feedback-row ${notice.tone || "warn"}`}>
+                  <span className="feedback-tag">{notice.icon || notice.tag}</span>
+                  <div>
+                    <strong>{notice.title}</strong>
+                    <div className="minor-copy">{notice.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      function StrategicHud({
+        state,
+        village,
+        selectedZone,
+        dispatch,
+        inspectorMode,
+        setInspectorMode,
+        onAlertAction,
+        overlayMode,
+        setOverlayMode,
+      }) {
+        const banner = getStatusBanner(state);
+        const readiness = village.readiness;
+        const nextStage = STAGES[Math.min(stageIndexFromLabel(state.developmentStage) + 1, STAGES.length - 1)];
+        const selectedMeta = getZoneStateMeta(selectedZone?.state || "selected");
+        const keyResources = [
+          {
+            key: "food",
+            label: "Food",
+            total: Math.round(state.food),
+            rate: formatPerTurn(village.preview.foodNet),
+            tone: getDeltaTone(village.preview.foodNet),
+            tooltip: {
+              title: "Food",
+              body: "Stored food prevents starvation and supports population growth.",
+              impact: "Agriculture, health, environment, welfare, research, and population demand.",
+              action: "Raise Agriculture or queue Granary Expansion when the net turns negative.",
+            },
+          },
+          {
+            key: "industry",
+            label: "Industry",
+            total: Math.round(state.industry),
+            rate: formatPerTurn(village.preview.industryNet),
+            tone: getDeltaTone(village.preview.industryNet),
+            tooltip: {
+              title: "Industry",
+              body: "Industry is both the stockpile and the throughput that feeds construction.",
+              impact: "Industry policy, stability, upkeep, pollution pressure, and current stage.",
+              action: "Queue production while the net stays positive, or reduce upkeep when it stalls.",
+            },
+          },
+          {
+            key: "knowledge",
+            label: "Knowledge",
+            total: Math.round(state.knowledge),
+            rate: formatPerTurn(village.preview.knowledgeNet),
+            tone: getDeltaTone(village.preview.knowledgeNet),
+            tooltip: {
+              title: "Knowledge",
+              body: "Knowledge drives technology level and long-term development milestones.",
+              impact: "Education, research, happiness, and active breakthroughs.",
+              action: "Raise Education or Research if era progression is lagging.",
+            },
+          },
+          {
+            key: "population",
+            label: "Population",
+            total: Math.round(state.population),
+            rate: village.growthTurns ? `+1 in ${village.growthTurns} turns` : village.housingShortage ? "Blocked" : "Flat",
+            tone: village.housingShortage ? "bad" : village.growthTurns ? "good" : "warn",
+            tooltip: {
+              title: "Population",
+              body: "Population multiplies production, demand, and political pressure at the same time.",
+              impact: "Food reserves, health, happiness, unrest, and housing capacity.",
+              action: "Keep food positive and housing available if you want growth to matter.",
+            },
+          },
+        ];
+
+        return (
+          <section className="header-card strategic-hud">
             <div className="title-row">
               <div>
                 <h1>Civilization Simulator Lite</h1>
                 <p className="subtitle">
-                  Guide a growing society through famine, invention, unrest, and ambition. Every turn pushes the same old question:
-                  survive now, or build something larger than the current complaint.
+                  Strategy-first HUD pass: phase, blockers, selection, resources, and next actions are front-loaded so the simulation stops hiding the useful parts.
                 </p>
               </div>
               <div className={`status-banner ${banner.tone}`}>
@@ -2789,65 +3604,154 @@
             </div>
             <div className="meta-strip">
               <div className="meta-pill">
-                Era <strong>{state.developmentStage}</strong>
-              </div>
-              <div className="meta-pill">
-                Year <strong>{state.year}</strong>
+                Phase <strong>{getPhaseLabel(state.status)}</strong>
               </div>
               <div className="meta-pill">
                 Turn <strong>{state.turn}</strong>
               </div>
               <div className="meta-pill">
-                Tech Level <strong>{state.technologyLevel}</strong>
+                Year <strong>{state.year}</strong>
               </div>
               <div className="meta-pill">
-                Legacy <strong>{state.legacyScore}</strong>
+                Era <strong>{state.developmentStage}</strong>
               </div>
               <div className="meta-pill">
-                Next Stage <strong>{STAGES[Math.min(stageIndexFromLabel(stage.label) + 1, STAGES.length - 1)].label}</strong>
+                Tech <strong>{state.technologyLevel}</strong>
+              </div>
+              <div className="meta-pill">
+                Next Stage <strong>{nextStage.label}</strong>
               </div>
             </div>
-          </section>
-        );
-      }
-
-      function ControlPanel({ state, dispatch }) {
-        const canStart = state.status === "menu";
-        const canPause = state.status === "running";
-        const canResume = state.status === "paused";
-        const canStep = state.status !== "running" && state.status !== "won" && state.status !== "lost";
-        return (
-          <section className="panel">
-            <div className="panel-header">
-              <div>
-                <h2>Control Panel</h2>
-                <p>Hybrid pacing: auto-run one turn per second or step manually when you need precision.</p>
+            <div className="hud-grid">
+              <div className="hud-main-column">
+                <div className="hud-priority-grid">
+                  <div className="hud-card">
+                    <div className="hud-card-header">
+                      <div>
+                        <div className="eyebrow">What Matters Now</div>
+                        <h3>Turn Readiness</h3>
+                      </div>
+                      <span className={`status-chip ${readiness.tone}`}>{readiness.label}</span>
+                    </div>
+                    <div className="hud-card-copy">{readiness.detail}</div>
+                    <div className="hud-card-meta">
+                      <span>Policies {totalPolicyPoints(state.policies)}/{POLICY_POINT_CAP}</span>
+                      <span>Legacy {state.legacyScore}</span>
+                    </div>
+                  </div>
+                  <div className="hud-card selected-summary-card">
+                    <div className="hud-card-header">
+                      <div>
+                        <div className="eyebrow">Selected Focus</div>
+                        <h3>{selectedZone?.label || state.settlementName}</h3>
+                      </div>
+                      <span className={`status-chip ${selectedMeta.tone}`}>
+                        {selectedMeta.icon}
+                        <span>{selectedMeta.label}</span>
+                      </span>
+                    </div>
+                    <div className="hud-card-copy">{selectedZone?.detail || "Settlement-wide focus."}</div>
+                    <div className="hud-card-emphasis">{selectedZone?.yieldLabel || `Stage hub: ${state.developmentStage}`}</div>
+                    <div className="minor-copy" style={{ marginTop: "8px" }}>{selectedZone?.nextStep || village.primaryRecommendation}</div>
+                  </div>
+                </div>
+                <div className="hud-resource-ribbon">
+                  {keyResources.map((resource) => (
+                    <div key={resource.key} className="hud-resource-card">
+                      <div className="hud-resource-top">
+                        <div className="hud-resource-label">
+                          <span>{resource.label}</span>
+                          <InfoTooltip {...resource.tooltip} />
+                        </div>
+                        <span className={`status-chip ${resource.tone}`}>{resource.rate}</span>
+                      </div>
+                      <div className="hud-resource-total">{resource.total}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="hud-action-panel">
+                  <div className="hud-card-header">
+                    <div>
+                      <div className="eyebrow">What Can You Do Next</div>
+                      <h3>Primary Actions</h3>
+                    </div>
+                    <span className="minor-copy">Compact mode narrows the inspector and gives the map more room.</span>
+                  </div>
+                  <div className="action-row primary-action-row">
+                    <ActionButton
+                      id="start-btn"
+                      tone={state.status === "menu" ? "primary" : "secondary"}
+                      label="Start"
+                      shortcut="Space"
+                      detail="Begin auto-resolve. Space starts from the opening brief."
+                      disabled={state.status !== "menu"}
+                      onClick={() => dispatch({ type: "START_GAME" })}
+                    />
+                    <ActionButton
+                      id="pause-btn"
+                      tone={state.status === "running" ? "accent" : "secondary"}
+                      label="Pause"
+                      shortcut="Space"
+                      detail="Pause auto-resolve and return to planning mode."
+                      disabled={state.status !== "running"}
+                      onClick={() => dispatch({ type: "PAUSE_GAME" })}
+                    />
+                    <ActionButton
+                      id="resume-btn"
+                      tone={state.status === "paused" ? "accent" : "secondary"}
+                      label="Resume"
+                      shortcut="Space"
+                      detail="Resume auto-resolve from planning mode."
+                      disabled={state.status !== "paused"}
+                      onClick={() => dispatch({ type: "RESUME_GAME" })}
+                    />
+                    <ActionButton
+                      id="step-btn"
+                      tone={state.status === "paused" || state.status === "menu" ? "primary" : "secondary"}
+                      label="End Turn"
+                      shortcut="N"
+                      detail="Resolve exactly one turn while paused or before the first auto-run."
+                      disabled={state.status === "running" || state.status === "won" || state.status === "lost"}
+                      onClick={() => dispatch({ type: "STEP_TURN" })}
+                    />
+                    <ActionButton
+                      id="reset-btn"
+                      tone="danger"
+                      label="Reset"
+                      shortcut="R"
+                      detail="Reset the simulation with a fresh seed."
+                      disabled={false}
+                      onClick={() => dispatch({ type: "RESET_GAME", seed: (Date.now() >>> 0) || 11 })}
+                    />
+                  </div>
+                  <div className="action-row secondary-action-row">
+                    <ActionButton
+                      tone={inspectorMode === "compact" ? "accent" : "secondary"}
+                      label={inspectorMode === "compact" ? "Compact On" : "Compact Off"}
+                      shortcut="C"
+                      detail="Toggle compact inspector mode and reduce side-panel footprint."
+                      onClick={() => setInspectorMode(inspectorMode === "compact" ? "expanded" : "compact")}
+                    />
+                    <ActionButton
+                      tone="secondary"
+                      label={getOverlayMeta(overlayMode).shortLabel}
+                      shortcut="O"
+                      detail={`Cycle overlay mode. Current: ${getOverlayMeta(overlayMode).label}.`}
+                      onClick={() => {
+                        const currentIndex = OVERLAY_OPTIONS.findIndex((option) => option.key === overlayMode);
+                        const nextMode = OVERLAY_OPTIONS[(currentIndex + 1) % OVERLAY_OPTIONS.length];
+                        setOverlayMode(nextMode.key);
+                      }}
+                    />
+                    <div className="shortcut-legend">
+                      <span><ShortcutKey label="1-6" /> Tabs</span>
+                      <span><ShortcutKey label="M" /> Center map</span>
+                      <span><ShortcutKey label="F" /> Fullscreen</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="points-pill">Policies Used: {totalPolicyPoints(state.policies)}/{POLICY_POINT_CAP}</div>
-            </div>
-            <div className="control-row">
-              <button id="start-btn" className="btn-primary" disabled={!canStart} onClick={() => dispatch({ type: "START_GAME" })}>
-                Start
-              </button>
-              <button id="pause-btn" className="btn-secondary" disabled={!canPause} onClick={() => dispatch({ type: "PAUSE_GAME" })}>
-                Pause
-              </button>
-              <button id="resume-btn" className="btn-accent" disabled={!canResume} onClick={() => dispatch({ type: "RESUME_GAME" })}>
-                Resume
-              </button>
-              <button id="step-btn" className="btn-secondary" disabled={!canStep} onClick={() => dispatch({ type: "STEP_TURN" })}>
-                Next Turn
-              </button>
-              <button
-                id="reset-btn"
-                className="btn-danger"
-                onClick={() => dispatch({ type: "RESET_GAME", seed: (Date.now() >>> 0) || 11 })}
-              >
-                Reset
-              </button>
-            </div>
-            <div className="footer-note">
-              Press <strong>F</strong> to toggle fullscreen. Manual stepping leaves the game paused so you can inspect each consequence.
+              <AlertCenter alerts={village.alerts} notices={state.actionFeed} onAlertAction={onAlertAction} />
             </div>
           </section>
         );
@@ -2920,38 +3824,6 @@
         );
       }
 
-      function VillageAlertStrip({ alerts }) {
-        if (!alerts.length) {
-          return (
-            <div className="alert-strip">
-                <div className="alert-item">
-                  <div className="alert-icon">OK</div>
-                  <div>
-                    <strong>No urgent alerts</strong>
-                  <div className="minor-copy">The settlement has no immediate crisis. That is as close to peace as this game gets.</div>
-                </div>
-                <span className="status-chip good">Stable</span>
-              </div>
-            </div>
-          );
-        }
-
-        return (
-          <div className="alert-strip">
-            {alerts.map((alert) => (
-              <div key={alert.key} className={`alert-item ${alert.severity}`}>
-                <div className="alert-icon">{alert.icon}</div>
-                <div>
-                  <strong>{alert.title}</strong>
-                  <div className="minor-copy">{alert.detail}</div>
-                </div>
-                <span className={`status-chip ${alert.severity === "critical" ? "bad" : "warn"}`}>{alert.action}</span>
-              </div>
-            ))}
-          </div>
-        );
-      }
-
       function ResourcePanel({ state, assets, village }) {
         const rows = [
           {
@@ -2962,6 +3834,12 @@
             yield: village.preview.foodProduction,
             upkeep: village.preview.foodDemand + village.preview.foodMaintenance,
             net: village.preview.foodNet,
+            tooltip: {
+              title: "Food",
+              body: "Food is the short-horizon survival resource. When net food goes negative, growth and stability stop cooperating.",
+              impact: "Agriculture, environment, health, welfare, research upkeep, and population demand.",
+              action: "Watch the stored total and the net together. Either one can still kill you.",
+            },
           },
           {
             key: "industry",
@@ -2971,6 +3849,12 @@
             yield: village.preview.industryProduction,
             upkeep: village.preview.industryMaintenance,
             net: village.preview.industryNet,
+            tooltip: {
+              title: "Industry",
+              body: "Industry fills the queue and also pays the maintenance bill for your civic posture.",
+              impact: "Industry focus, stability, environmental drag, and policy upkeep.",
+              action: "Positive throughput means you can afford more queue. Negative throughput means the queue is mostly theater.",
+            },
           },
           {
             key: "knowledge",
@@ -2980,6 +3864,12 @@
             yield: village.preview.knowledgeProduction,
             upkeep: 0,
             net: village.preview.knowledgeNet,
+            tooltip: {
+              title: "Knowledge",
+              body: "Knowledge is how the settlement stops being a tribe with better furniture.",
+              impact: "Education, research, happiness, and technology level.",
+              action: "If development is behind target, this is the quiet culprit more often than not.",
+            },
           },
         ];
 
@@ -3000,7 +3890,7 @@
                       <div className="meter-name">
                         <img className="icon-badge" src={assets[row.icon]?.uri} alt={row.label} />
                         <div>
-                          <strong>{row.label}</strong>
+                          <strong>{row.label} <InfoTooltip {...row.tooltip} /></strong>
                           <div className="minor-copy">{row.label}: {Math.round(row.stock)} ({formatPerTurn(row.net)})</div>
                         </div>
                       </div>
@@ -3027,6 +3917,23 @@
                 );
               })}
             </div>
+            <details className="detail-disclosure">
+              <summary>Show rate drivers</summary>
+              <div className="detail-grid">
+                <div className="detail-chip">
+                  <strong>Food</strong>
+                  <span>Yield {formatSigned(village.preview.foodProduction)} · Demand -{Math.round(village.preview.foodDemand)} · Upkeep -{Math.round(village.preview.foodMaintenance)}</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Industry</strong>
+                  <span>Yield {formatSigned(village.preview.industryProduction)} · Upkeep -{Math.round(village.preview.industryMaintenance)}</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Knowledge</strong>
+                  <span>Yield {formatSigned(village.preview.knowledgeProduction)} · Tech level {state.technologyLevel}</span>
+                </div>
+              </div>
+            </details>
           </section>
         );
       }
@@ -3105,6 +4012,17 @@
                 Next: {nextStage.label} needs Pop {nextStage.pop}, Industry {nextStage.industry}, Tech {nextStage.tech}
               </div>
             </div>
+            <details className="detail-disclosure">
+              <summary>Show bottlenecks and capacity notes</summary>
+              <div className="detail-grid">
+                {(village.bottlenecks.length ? village.bottlenecks : ["No major bottlenecks flagged this turn."]).map((item) => (
+                  <div className="detail-chip" key={item}>
+                    <strong>{item}</strong>
+                    <span>{item.includes("Food") ? "Food pressure blocks growth quickly." : item.includes("Housing") ? "Housing caps growth even when food exists." : item.includes("Unrest") ? "Unrest drags stability and production." : "This pressure is not theoretical."}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
           </section>
         );
       }
@@ -3165,6 +4083,7 @@
           const turns = village.preview.projectGain > 0 ? Math.max(1, Math.ceil(remaining / village.preview.projectGain)) : null;
           return { ...item, def, remaining, turns, progressPct: Math.min(100, (item.progress / def.cost) * 100), current: index === 0 };
         });
+        const recommendedProjectKey = village.alerts.find((alert) => alert.command?.type === "queueProject")?.command?.key;
 
         return (
           <section className="inspector-section">
@@ -3215,11 +4134,34 @@
             )}
             <div className="queue-actions">
               {Object.entries(PROJECT_DEFS).map(([key, def]) => (
-                <button key={key} className="btn-secondary" disabled={state.projectQueue.length >= 4} onClick={() => dispatch({ type: "QUEUE_PROJECT", key })}>
+                <button
+                  key={key}
+                  className={recommendedProjectKey === key ? "btn-primary" : "btn-secondary"}
+                  disabled={state.projectQueue.length >= 4}
+                  onClick={() => dispatch({ type: "QUEUE_PROJECT", key })}
+                  title={`${def.effect}. Focus: ${def.category}.`}
+                >
                   Queue {def.label}
                 </button>
               ))}
             </div>
+            <details className="detail-disclosure">
+              <summary>Show queue throughput details</summary>
+              <div className="detail-grid">
+                <div className="detail-chip">
+                  <strong>Current throughput</strong>
+                  <span>{formatSigned(village.preview.projectGain)} production applied to the active project each turn.</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Queue depth</strong>
+                  <span>{queue.length ? `${queue.length} projects queued.` : "No projects queued."}</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Recommendation</strong>
+                  <span>{village.primaryRecommendation}</span>
+                </div>
+              </div>
+            </details>
           </section>
         );
       }
@@ -3260,6 +4202,9 @@
                           onMouseEnter={() => setHoveredZoneId(group.zoneId)}
                           onMouseLeave={() => setHoveredZoneId(null)}
                           onClick={() => setSelectedZoneId(group.zoneId)}
+                          onKeyDown={(event) => activateOnKeyDown(event, () => setSelectedZoneId(group.zoneId))}
+                          role="button"
+                          tabIndex={0}
                         >
                           <div className="building-row-top">
                             <div className="meter-name">
@@ -3270,7 +4215,7 @@
                               </div>
                             </div>
                             <div className="pill-row">
-                              <span className={`status-chip ${chip.tone}`}>{chip.label}</span>
+                              <span className={`status-chip ${chip.tone}`}>{chip.icon} {chip.label}</span>
                               <span className="status-chip">Count {entry.count}</span>
                             </div>
                           </div>
@@ -3288,12 +4233,6 @@
       }
 
       function TileLinkPanel({ village, hoveredZoneId, setHoveredZoneId, selectedZoneId, setSelectedZoneId }) {
-        const toneForState = (state) => {
-          if (state === "worked" || state === "selected") return "good";
-          if (state === "blocked") return "bad";
-          return "warn";
-        };
-
         return (
           <section className="inspector-section">
             <div className="panel-header">
@@ -3303,33 +4242,41 @@
               </div>
             </div>
             <div className="tile-list">
-              {village.tileZones.map((tile) => (
-                <div
-                  key={tile.id}
-                  className={`tile-row ${hoveredZoneId === tile.id || selectedZoneId === tile.id ? "is-highlighted" : ""}`}
-                  onMouseEnter={() => setHoveredZoneId(tile.id)}
-                  onMouseLeave={() => setHoveredZoneId(null)}
-                  onClick={() => setSelectedZoneId(tile.id)}
-                >
-                  <div className="tile-row-top">
-                    <div>
-                      <strong>{tile.label}</strong>
-                      <small>{tile.detail}</small>
+              {village.tileZones.map((tile) => {
+                const stateMeta = getZoneStateMeta(tile.state);
+                return (
+                  <div
+                    key={tile.id}
+                    className={`tile-row ${hoveredZoneId === tile.id || selectedZoneId === tile.id ? "is-highlighted" : ""}`}
+                    onMouseEnter={() => setHoveredZoneId(tile.id)}
+                    onMouseLeave={() => setHoveredZoneId(null)}
+                    onClick={() => setSelectedZoneId(tile.id)}
+                    onKeyDown={(event) => activateOnKeyDown(event, () => setSelectedZoneId(tile.id))}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="tile-row-top">
+                      <div>
+                        <strong>{tile.label}</strong>
+                        <small>{tile.detail}</small>
+                      </div>
+                      <div className="tile-state-band">
+                        <span className={`tile-state-chip ${stateMeta.tone}`}>{stateMeta.icon} {stateMeta.label}</span>
+                        {selectedZoneId === tile.id ? <span className="status-chip focus">PIN Focused</span> : null}
+                      </div>
                     </div>
-                    <div className="tile-state-band">
-                      <span className={`tile-state-chip ${toneForState(tile.state)}`}>{tile.state}</span>
-                    </div>
+                    <div className="minor-copy" style={{ marginTop: "8px" }}>{tile.yieldLabel}</div>
+                    <div className="minor-copy" style={{ marginTop: "6px" }}>{tile.nextStep}</div>
                   </div>
-                  <div className="minor-copy" style={{ marginTop: "8px" }}>{tile.yieldLabel}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="legend-board">
-              <div className="legend-pill">Worked</div>
-              <div className="legend-pill">Owned</div>
-              <div className="legend-pill">Workable Radius</div>
-              <div className="legend-pill">Blocked</div>
-              <div className="legend-pill">Selected</div>
+              <div className="legend-pill">WORK Worked</div>
+              <div className="legend-pill">OWN Owned</div>
+              <div className="legend-pill">RANGE Workable</div>
+              <div className="legend-pill">BLOCK Blocked</div>
+              <div className="legend-pill">PIN Selected</div>
             </div>
           </section>
         );
@@ -3347,13 +4294,33 @@
             <div className="compare-list">
               {village.compare.map((row) => (
                 <div className="compare-row" key={row.key}>
-                  <strong>{row.label}</strong>
-                  <span>Now {row.current}</span>
-                  <span>Prev {row.previous}</span>
-                  <span>Peak {row.peak}</span>
+                  <div>
+                    <strong>{row.label}</strong>
+                    <div className="minor-copy">Now {row.current} · Prev {row.previous} · Peak {row.peak}</div>
+                  </div>
+                  <span className={`status-chip ${row.trend.tone}`}>
+                    {row.trend.icon} {formatSigned(row.delta)}
+                  </span>
                 </div>
               ))}
             </div>
+            <details className="detail-disclosure">
+              <summary>Show comparison logic</summary>
+              <div className="detail-grid">
+                <div className="detail-chip">
+                  <strong>Now</strong>
+                  <span>Current value on this turn.</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Prev</strong>
+                  <span>Value before the last resolved turn.</span>
+                </div>
+                <div className="detail-chip">
+                  <strong>Peak</strong>
+                  <span>Best value reached in the recent history window.</span>
+                </div>
+              </div>
+            </details>
           </section>
         );
       }
@@ -3373,7 +4340,10 @@
         setSelectedZoneId,
         overlayMode,
         setOverlayMode,
+        onCenterMap,
       }) {
+        const selectedZone = village.tileZones.find((zone) => zone.id === selectedZoneId) || village.tileZones.find((zone) => zone.id === "hub");
+
         const renderTab = () => {
           if (activeTab === "overview") {
             return (
@@ -3467,20 +4437,19 @@
         return (
           <section className="panel village-panel" aria-label="Village Inspector">
             <VillageSummaryStrip state={state} village={village} />
-            <VillageAlertStrip alerts={village.alerts} />
             <div className="village-titlebar">
               <div className="mode-toggle" role="tablist" aria-label="Village inspector density">
                 <button className={inspectorMode === "compact" ? "is-active" : ""} onClick={() => setInspectorMode("compact")}>
-                  Compact HUD
+                  Compact HUD <ShortcutKey label="C" />
                 </button>
                 <button className={inspectorMode === "expanded" ? "is-active" : ""} onClick={() => setInspectorMode("expanded")}>
                   Expanded Inspector
                 </button>
               </div>
               <div className="overlay-toggle" aria-label="Settlement overlay toggle">
-                {["none", "work", "influence"].map((mode) => (
-                  <button key={mode} className={overlayMode === mode ? "is-active" : ""} onClick={() => setOverlayMode(mode)}>
-                    {mode === "none" ? "Overlay Off" : mode === "work" ? "Worked Tiles" : "Influence Area"}
+                {OVERLAY_OPTIONS.map((mode) => (
+                  <button key={mode.key} className={overlayMode === mode.key ? "is-active" : ""} onClick={() => setOverlayMode(mode.key)} title={mode.description}>
+                    {mode.label}
                   </button>
                 ))}
               </div>
@@ -3489,8 +4458,9 @@
               <>
                 <div className="tab-strip" role="tablist" aria-label="Village sections">
                   {VILLAGE_TABS.map((tab) => (
-                    <button key={tab.key} className={activeTab === tab.key ? "is-active" : ""} onClick={() => setActiveTab(tab.key)}>
-                      {tab.label}
+                    <button key={tab.key} className={activeTab === tab.key ? "is-active" : ""} onClick={() => setActiveTab(tab.key)} title={`${tab.label} (${tab.shortcut})`}>
+                      <span>{tab.label}</span>
+                      <ShortcutKey label={tab.shortcut} />
                     </button>
                   ))}
                 </div>
@@ -3500,21 +4470,23 @@
               <div className="inspector-section">
                 <div className="info-card">
                   <h3>Quick Decision View</h3>
+                  <div className="minor-copy" style={{ marginTop: "8px" }}><strong>Selected:</strong> {selectedZone?.label || state.settlementName}</div>
                   <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whatsHappening}</div>
                   <div className="minor-copy" style={{ marginTop: "8px" }}>{village.whyHappening}</div>
                   <div className="minor-copy" style={{ marginTop: "8px" }}>{village.primaryRecommendation}</div>
+                  {village.notices[0] ? <div className="minor-copy" style={{ marginTop: "8px" }}><strong>Changed:</strong> {village.notices[0].detail}</div> : null}
                 </div>
                 <ProductionPanel state={state} village={village} assets={assets} dispatch={dispatch} onFocusZone={setHoveredZoneId} />
               </div>
             )}
             <div className="sticky-bar">
               <div className="sticky-actions">
-                <button className="primary" onClick={() => setActiveTab("production")}>Manage Production</button>
-                <button onClick={() => setActiveTab("population")}>Assign Workers</button>
+                <button className="primary" onClick={() => setActiveTab("production")}>Manage Production <ShortcutKey label="4" /></button>
+                <button onClick={() => setActiveTab("population")}>Assign Workers <ShortcutKey label="2" /></button>
                 <button disabled={state.projectQueue.length >= 4} onClick={() => dispatch({ type: "QUEUE_PROJECT", key: "guardpost" })}>
                   Construct Guard Post
                 </button>
-                <button onClick={() => setActiveTab("defense")}>Inspect Defenses</button>
+                <button onClick={() => setActiveTab("defense")}>Inspect Defenses <ShortcutKey label="5" /></button>
                 <button
                   onClick={() => {
                     const nextName = window.prompt("Rename settlement", state.settlementName);
@@ -3523,14 +4495,7 @@
                 >
                   Rename
                 </button>
-                <button
-                  onClick={() => {
-                    const canvas = document.querySelector("canvas");
-                    if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }}
-                >
-                  Center Camera
-                </button>
+                <button onClick={onCenterMap}>Center Camera <ShortcutKey label="M" /></button>
               </div>
             </div>
           </section>
@@ -3748,26 +4713,86 @@
           if (overlayMode !== "none") {
             village.tileZones.forEach((zone) => {
               const isHighlighted = hoveredZoneId === zone.id || selectedZoneId === zone.id || zone.state === "selected";
-              const fill =
-                zone.state === "blocked"
-                  ? "rgba(166,61,51,0.14)"
-                  : zone.state === "worked"
-                  ? "rgba(79,142,93,0.14)"
-                  : zone.state === "selected"
-                  ? "rgba(213,159,77,0.16)"
-                  : "rgba(47,127,157,0.12)";
+              const stateMeta = getZoneStateMeta(zone.state);
+              let fill = "rgba(47,127,157,0.12)";
+              let stroke = "rgba(17,37,56,0.34)";
+              let labelFill = "rgba(255,252,245,0.88)";
+              let dash = [];
+
+              if (overlayMode === "stress") {
+                fill =
+                  zone.stress === "high"
+                    ? "rgba(166,61,51,0.18)"
+                    : zone.stress === "medium"
+                    ? "rgba(213,159,77,0.18)"
+                    : "rgba(79,142,93,0.14)";
+                stroke =
+                  zone.stress === "high"
+                    ? "rgba(166,61,51,0.72)"
+                    : zone.stress === "medium"
+                    ? "rgba(197,125,44,0.68)"
+                    : "rgba(79,142,93,0.6)";
+                dash = zone.stress === "high" ? [10, 6] : zone.stress === "medium" ? [6, 4] : [];
+              } else if (overlayMode === "influence") {
+                fill = zone.state === "blocked" ? "rgba(166,61,51,0.08)" : "rgba(47,127,157,0.1)";
+                stroke = zone.state === "blocked" ? "rgba(166,61,51,0.58)" : "rgba(47,127,157,0.56)";
+                dash = zone.state === "workable" || zone.id === "outskirts" ? [8, 6] : [];
+              } else {
+                fill =
+                  zone.state === "blocked"
+                    ? "rgba(166,61,51,0.14)"
+                    : zone.state === "worked"
+                    ? "rgba(79,142,93,0.14)"
+                    : zone.state === "selected"
+                    ? "rgba(213,159,77,0.16)"
+                    : "rgba(47,127,157,0.12)";
+                dash = zone.state === "workable" ? [6, 4] : [];
+              }
+
               ctx.save();
               ctx.fillStyle = fill;
-              ctx.strokeStyle = isHighlighted ? "rgba(17,37,56,0.85)" : "rgba(17,37,56,0.34)";
-              ctx.lineWidth = isHighlighted ? 3 : 1.5;
-              ctx.setLineDash(overlayMode === "influence" && zone.state === "workable" ? [8, 6] : []);
+              ctx.strokeStyle = isHighlighted ? "rgba(17,37,56,0.85)" : stroke;
+              ctx.lineWidth = isHighlighted ? 3.5 : 1.8;
+              ctx.setLineDash(dash);
               ctx.beginPath();
               ctx.roundRect(zone.rect.x, zone.rect.y, zone.rect.w, zone.rect.h, 12);
               ctx.fill();
+
+              if (overlayMode === "stress" && zone.stress !== "low") {
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(zone.rect.x, zone.rect.y, zone.rect.w, zone.rect.h, 12);
+                ctx.clip();
+                ctx.strokeStyle = zone.stress === "high" ? "rgba(166,61,51,0.42)" : "rgba(197,125,44,0.32)";
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([]);
+                for (let offset = -zone.rect.h; offset < zone.rect.w; offset += 14) {
+                  ctx.beginPath();
+                  ctx.moveTo(zone.rect.x + offset, zone.rect.y + zone.rect.h);
+                  ctx.lineTo(zone.rect.x + offset + zone.rect.h, zone.rect.y);
+                  ctx.stroke();
+                }
+                ctx.restore();
+              }
+
               ctx.stroke();
-              ctx.fillStyle = "rgba(17,37,56,0.88)";
-              ctx.font = `${isHighlighted ? "700" : "600"} 14px "Space Grotesk", sans-serif`;
-              ctx.fillText(zone.label, zone.rect.x + 10, zone.rect.y + 20);
+
+              if (isHighlighted) {
+                ctx.strokeStyle = "rgba(255,249,233,0.92)";
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.roundRect(zone.rect.x + 5, zone.rect.y + 5, zone.rect.w - 10, zone.rect.h - 10, 10);
+                ctx.stroke();
+              }
+
+              ctx.fillStyle = labelFill;
+              ctx.beginPath();
+              ctx.roundRect(zone.rect.x + 8, zone.rect.y + 8, Math.min(zone.rect.w - 16, 144), 28, 10);
+              ctx.fill();
+              ctx.fillStyle = "rgba(17,37,56,0.92)";
+              ctx.font = `${isHighlighted ? "700" : "600"} 13px "Space Grotesk", sans-serif`;
+              ctx.fillText(`${stateMeta.icon} ${zone.label}`, zone.rect.x + 16, zone.rect.y + 27);
               ctx.restore();
             });
           }
@@ -3793,9 +4818,9 @@
                 <p>The map now links directly to the inspector. Hover or select districts to trace cause and effect between land and panel rows.</p>
               </div>
               <div className="overlay-toggle">
-                {["none", "work", "influence"].map((mode) => (
-                  <button key={mode} className={overlayMode === mode ? "is-active" : ""} onClick={() => setOverlayMode(mode)}>
-                    {mode === "none" ? "Overlay Off" : mode === "work" ? "Worked / Owned" : "Influence Radius"}
+                {OVERLAY_OPTIONS.map((mode) => (
+                  <button key={mode.key} className={overlayMode === mode.key ? "is-active" : ""} onClick={() => setOverlayMode(mode.key)} title={mode.description}>
+                    {mode.label}
                   </button>
                 ))}
               </div>
@@ -3829,7 +4854,7 @@
             <div className="canvas-hint">
               <div className="legend-pill">Hover district rows to pulse map zones</div>
               <div className="legend-pill">Click map zones to pin selection</div>
-              <div className="legend-pill">Worked / owned / workable / blocked states use text, borders, and fill patterns</div>
+              <div className="legend-pill">States, influence, and stress each use different borders, fills, and stripe patterns</div>
             </div>
             <div className="legend-row">
               <div className="legend-pill">
@@ -3838,7 +4863,7 @@
               </div>
               <div className="legend-pill">
                 <span className="legend-swatch" style={{ background: "#a63d33" }} />
-                Crisis = smoke, storm tint, unrest markers, and harsher terrain
+                Crisis = smoke, storm tint, unrest markers, harsher terrain, and hotter stress overlays
               </div>
             </div>
           </section>
@@ -3911,23 +4936,95 @@
 
         useEffect(() => {
           function onKeyDown(event) {
-            if (event.key.toLowerCase() !== "f") return;
+            const targetTag = event.target?.tagName?.toLowerCase();
+            if (targetTag === "input" || targetTag === "textarea") return;
+
+            const key = event.key.toLowerCase();
             const host = shellRef.current;
-            if (!host) return;
-            if (document.fullscreenElement) {
-              document.exitFullscreen();
-            } else if (host.requestFullscreen) {
-              host.requestFullscreen();
+            if (key === "f") {
+              if (!host) return;
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              } else if (host.requestFullscreen) {
+                host.requestFullscreen();
+              }
+              return;
+            }
+
+            if (key === " ") {
+              event.preventDefault();
+              if (state.status === "menu") dispatch({ type: "START_GAME" });
+              else if (state.status === "running") dispatch({ type: "PAUSE_GAME" });
+              else if (state.status === "paused") dispatch({ type: "RESUME_GAME" });
+              return;
+            }
+
+            if (key === "n" && state.status !== "running" && state.status !== "won" && state.status !== "lost") {
+              event.preventDefault();
+              dispatch({ type: "STEP_TURN" });
+              return;
+            }
+
+            if (key === "r") {
+              dispatch({ type: "RESET_GAME", seed: (Date.now() >>> 0) || 11 });
+              return;
+            }
+
+            if (key === "c") {
+              setInspectorMode((mode) => (mode === "compact" ? "expanded" : "compact"));
+              return;
+            }
+
+            if (key === "o") {
+              setOverlayMode((mode) => {
+                const currentIndex = OVERLAY_OPTIONS.findIndex((entry) => entry.key === mode);
+                return OVERLAY_OPTIONS[(currentIndex + 1) % OVERLAY_OPTIONS.length].key;
+              });
+              return;
+            }
+
+            if (key === "m") {
+              const canvas = document.querySelector("canvas");
+              if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
+              return;
+            }
+
+            const tabMatch = VILLAGE_TABS.find((tab) => tab.shortcut === event.key);
+            if (tabMatch) {
+              setActiveVillageTab(tabMatch.key);
             }
           }
 
           window.addEventListener("keydown", onKeyDown);
           return () => window.removeEventListener("keydown", onKeyDown);
-        }, []);
+        }, [state.status]);
 
         const ready = state.assetsReady && Object.keys(assets).length > 0;
         const snapshot = getWorldSnapshot(state);
         const village = getVillageModel(state);
+        const selectedZone = village.tileZones.find((zone) => zone.id === selectedZoneId) || village.tileZones.find((zone) => zone.id === "hub");
+
+        function centerCanvas() {
+          const canvas = document.querySelector("canvas");
+          if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        function handleAlertAction(alert) {
+          if (alert.targetTab) setActiveVillageTab(alert.targetTab);
+          if (alert.focusZoneId) setSelectedZoneId(alert.focusZoneId);
+          if (!alert.command) return;
+          if (alert.command.type === "queueProject") {
+            if (state.projectQueue.length < 4) dispatch({ type: "QUEUE_PROJECT", key: alert.command.key });
+            return;
+          }
+          if (alert.command.type === "setPolicy") {
+            dispatch({ type: "SET_POLICY", key: alert.command.key, delta: alert.command.delta });
+            return;
+          }
+          if (alert.command.type === "openTab") {
+            setActiveVillageTab(alert.command.tab);
+          }
+        }
 
         if (!ready) {
           return (
@@ -3942,8 +5039,18 @@
 
         return (
           <div className="app-shell" ref={shellRef}>
-            <GameHeader state={state} />
-            <div className="main-grid">
+            <StrategicHud
+              state={state}
+              village={village}
+              selectedZone={selectedZone}
+              dispatch={dispatch}
+              inspectorMode={inspectorMode}
+              setInspectorMode={setInspectorMode}
+              onAlertAction={handleAlertAction}
+              overlayMode={overlayMode}
+              setOverlayMode={setOverlayMode}
+            />
+            <div className={`main-grid ${inspectorMode === "compact" ? "compact-inspector" : ""}`}>
               <div className="left-column">
                 <CanvasWorld
                   state={state}
@@ -3956,8 +5063,7 @@
                   overlayMode={overlayMode}
                   setOverlayMode={setOverlayMode}
                 />
-                <ControlPanel state={state} dispatch={dispatch} />
-                <ProgressVisualization state={state} />
+                {inspectorMode !== "compact" ? <ProgressVisualization state={state} /> : null}
               </div>
               <div className="right-column">
                 <VillageInspector
@@ -3975,22 +5081,25 @@
                   setSelectedZoneId={setSelectedZoneId}
                   overlayMode={overlayMode}
                   setOverlayMode={setOverlayMode}
+                  onCenterMap={centerCanvas}
                 />
-                <EventLog entries={state.eventLog} assets={assets} />
-                <section className="panel">
-                  <div className="panel-header">
-                    <div>
-                      <h2>Simulation Notes</h2>
-                      <p>Deterministic turn logic with weighted events, bounded variables, and replayable seeded randomness.</p>
+                {inspectorMode !== "compact" ? <EventLog entries={state.eventLog} assets={assets} /> : null}
+                {inspectorMode !== "compact" ? (
+                  <section className="panel">
+                    <div className="panel-header">
+                      <div>
+                        <h2>Simulation Notes</h2>
+                        <p>Deterministic turn logic with weighted events, bounded variables, and replayable seeded randomness.</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="minor-copy">
-                    <strong>Snapshot</strong>
-                    <pre style={{ margin: "10px 0 0", whiteSpace: "pre-wrap", fontSize: "0.8rem", lineHeight: 1.45 }}>
+                    <div className="minor-copy">
+                      <strong>Snapshot</strong>
+                      <pre style={{ margin: "10px 0 0", whiteSpace: "pre-wrap", fontSize: "0.8rem", lineHeight: 1.45 }}>
 {JSON.stringify(snapshot, null, 2)}
-                    </pre>
-                  </div>
-                </section>
+                      </pre>
+                    </div>
+                  </section>
+                ) : null}
               </div>
             </div>
           </div>
