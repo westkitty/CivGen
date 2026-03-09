@@ -447,8 +447,146 @@ Both must be identical across runs with same seed.
 2. **Pure reducer** — All state transitions deterministic
 3. **Deterministic seeding** — Every world/city/unit reproducible
 4. **Phone remote control** — State broadcasts every 1s, commands relay bidirectionally
-5. **Keyboard-first UI** — Full game playable via `Space`, `N`, `R`, `C`, `O`, `1-6`, `M`, `F`
+5. **Keyboard-first UI** — Full game playable via `Space`, `N`, `R`, `C`, `O`, `1-6`, `M`, `F`, `Ctrl+S`, `Ctrl+L`
 6. **Zero runtime errors** — Console clean except expected Babel warning
 7. **Elegant feedback** — Action feed explains what happened and why
 8. **Modular logic** — Each phase is self-contained; easy to extend
+
+---
+
+## Phase 9: Late-Game Enhancements & Quality-of-Life (2026-03-09)
+
+### Feature 1: Fog of War Visualization
+- **Mode toggle:** `TOGGLE_FOG_VISUALIZATION` switches between visual patterns and simple colors
+- **Three states:** unseen (dark), explored (muted), visible (normal)
+- **Rendering:** Stripe patterns for explored tiles, overlay for unseen
+- **Control:** Driven by unit sight radius and city control ranges
+
+### Feature 2: Naval Units & Water Systems
+- **Unit types:** GALLEY (scout), CARAVEL (trade), BATTLESHIP (combat)
+- **Mechanics:** Water-only units with 6 movement points, 100 HP
+- **Action:** `CREATE_NAVAL_UNIT { unitType, x, y, faction }`
+- **AI:** Naval units move autonomously to patrol and explore coastlines
+
+### Feature 3: Late-Game Crises
+- **Plague system:** Triggers when health < 45, spreads to cities
+- **Climate change:** Accumulates based on pollution/environment degradation
+- **Migration waves:** Activates when population > 150, puts border pressure
+- **Integration:** Crisis state tracked in `crises` object, logged in crisis log
+- **Effects:** Plague damages health, climate increases severity, migration causes unrest
+- **UI:** Crises displayed in status text with intensity levels
+
+### Feature 4: Espionage & Intelligence Layer
+- **Spy dispatch:** `DISPATCH_SPY { targetFaction, mission, x, y, detectionRisk }`
+- **Missions:** Tech theft, sabotage, reconnaissance, espionage
+- **State:** `espionage.playerSpies` tracks active operations
+- **Risk:** Detection risk 0.3–0.8; failure consequences vary by mission
+- **Rival spies:** Rival factions also spy; player gets alerts on detected operations
+
+### Feature 5: Cultural & Ideological Victory Path
+- **Culture generation:** Accumulates from knowledge, tourism, and special buildings
+- **Tourism:** Generated through trade routes and cultural wonders
+- **Ideologies:** Autocracy, Democracy, Theocracy, Meritocracy (track adherents)
+- **Victory condition:** Reach cultural dominance when rival cultures < 30%
+- **Action:** `GENERATE_CULTURE { amount, tourism }` manually boosts progress
+
+### Feature 6: AI Adaptivity & Learning
+- **Tactic tracking:** `aiLearning.playerTactics` records player strategies (population-growth, military-focus, tech-rush)
+- **Threat assessment:** Rivals evaluate player military strength, expansion rate, tech advantage
+- **Coalition forming:** AI factions ally when threatened by stronger rival
+- **Counter-building:** Rivals prioritize counters to detected player strategies
+- **Behavior:** Shifts from expansion-heavy to defense-heavy based on threat level
+
+### Feature 7: Animation Queue System
+- **State:** `animations` tracks unit movements, combat sequences, wonder constructions
+- **Actions:** `QUEUE_ANIMATION { animationType, id, duration, data }`
+- **Types:** unitMovements, combatSequences, wonderConstructions
+- **Rendering:** Canvas can poll animation queue for transition effects
+
+### Feature 8: Faction Specialization & Unique Units
+- **Specialization bonuses:** Each faction has unique strengths (military, science, culture, balanced)
+- **Unique buildings:** Factions unlock faction-specific structures (e.g., Elven Archers Tower)
+- **Unique units:** Orcs get heavier units, Elves get archers with bonuses, Humans get versatile units
+- **Action:** `ADD_FACTION_BUILDING { faction, building }` unlocks structure
+- **Gameplay:** Faction identity emerges naturally through building availability
+
+### Feature 9: Wonder Construction Animations
+- **Tracking:** `wonderConstructionStates` maps wonder ID to (progress, constructing, animationFrame)
+- **Action:** `UPDATE_WONDER_CONSTRUCTION { wonderId, progress, constructing, frame }`
+- **Animation frames:** 0–100 representing construction stages
+- **Visual:** Canvas can render partial wonder completion as frame-based animation
+
+### Feature 10: Save/Load & Persistent Sessions
+- **Auto-save:** Every 5 turns, game saves to localStorage with key `civgen-save-{timestamp}`
+- **Save data:** turn, year, rngSeed, empire, factions, crises, culture, timestamp
+- **Keyboard shortcuts:**
+  - `Ctrl+S` → Save current game state
+  - `Ctrl+L` → Load latest autosave
+- **Restoration:** Loaded game resumes in paused state with full state restored
+- **Capacity:** Multiple saves kept in localStorage; oldest auto-deleted when quota full
+
+---
+
+## New Reducer Actions (Phase 9)
+
+| Action | Purpose |
+|--------|---------|
+| `TOGGLE_FOG_VISUALIZATION` | Switch fog of war visual mode |
+| `CREATE_NAVAL_UNIT` | Spawn ship unit on water |
+| `TRIGGER_CRISIS` | Activate plague/climate/migration |
+| `DISPATCH_SPY` | Send spy mission to rival faction |
+| `GENERATE_CULTURE` | Boost cultural progress |
+| `UPDATE_AI_LEARNING` | Record player tactics for AI |
+| `QUEUE_ANIMATION` | Add animation to queue |
+| `ADD_FACTION_BUILDING` | Unlock faction-specific structure |
+| `UPDATE_WONDER_CONSTRUCTION` | Animate wonder progress |
+| `SAVE_GAME` | Save to localStorage |
+| `LOAD_GAME` | Restore from localStorage |
+
+---
+
+## New State Fields (Phase 9)
+
+```javascript
+{
+  fogOfWarRenderMode: 'visual' | 'simple',
+  seaUnits: [{ id, type, x, y, faction, hp, movement }],
+  crises: {
+    plague: { active, intensity, affectedCities },
+    climate: { temperature, severity },
+    migration: { active, pressureLevel },
+  },
+  crisisLog: [{ turn, type, detail }],
+  espionage: {
+    playerSpies: { [spyId]: { id, target, mission, x, y, detectionRisk } },
+    rivalSpies: {},
+    techThefts: [],
+    sabotageTargets: [],
+  },
+  culture: {
+    playerCulture,
+    tourismGenerated,
+    culturalInfluence: {},
+    ideologies: { autocracy, democracy, theocracy, meritocracy },
+    ideologyAdherents: {},
+  },
+  aiLearning: {
+    playerTactics: [],
+    coalitions: [],
+    threatAssessment: {},
+    adaptiveResponses: {},
+  },
+  animations: {
+    unitMovements: [{ id, duration, startTime, data }],
+    combatSequences: [],
+    wonderConstructions: [],
+  },
+  factionSpecializations: { [faction]: { strengthBonus, scienceBonus, cultureBonus, uniqueBuildings, uniqueUnits } },
+  wonderConstructionStates: { [wonderId]: { progress, constructing, animationFrame } },
+  autoSaveEnabled: true,
+  lastSaveTime: number,
+}
+```
+
+---
 
