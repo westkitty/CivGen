@@ -4914,6 +4914,62 @@
           return () => window.clearInterval(timer);
         }, [state.status]);
 
+        // --- Remote control WebSocket (phone → MacBook) ---
+        useEffect(() => {
+          if (location.protocol === "file:") return; // not served via relay, skip
+          const wsUrl = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws?role=host`;
+          let ws = null;
+          let stateInterval = null;
+          let reconnectTimer = null;
+
+          function connect() {
+            ws = new WebSocket(wsUrl);
+            ws.onopen = () => {
+              stateInterval = setInterval(() => {
+                try {
+                  if (ws.readyState !== WebSocket.OPEN) return;
+                  const s = latestStateRef.current;
+                  if (!s?.resources?.metrics) return;
+                  ws.send(JSON.stringify({
+                    type: "state",
+                    status: s.status,
+                    turn: s.turn,
+                    population: s.resources.population,
+                    food: s.resources.food,
+                    industry: s.resources.industry,
+                    knowledge: s.resources.knowledge,
+                    happiness: s.metrics.happiness,
+                    stability: s.metrics.stability,
+                    stage: s.developmentStage,
+                    policies: s.policies,
+                    score: s.score,
+                  }));
+                } catch (e) {
+                  // silently ignore state serialization errors during initialization
+                }
+              }, 1000);
+            };
+            ws.onmessage = (e) => {
+              try {
+                const msg = JSON.parse(e.data);
+                if (msg.type === "dispatch" && msg.action) dispatch(msg.action);
+              } catch {}
+            };
+            ws.onclose = () => {
+              clearInterval(stateInterval);
+              reconnectTimer = setTimeout(connect, 3000);
+            };
+          }
+
+          connect();
+          return () => {
+            clearInterval(stateInterval);
+            clearTimeout(reconnectTimer);
+            ws?.close();
+          };
+        }, []);
+        // --- end remote control ---
+
         useEffect(() => {
           // Deterministic browser hooks used by automated game checks.
           window.render_game_to_text = () => JSON.stringify(getWorldSnapshot(latestStateRef.current), null, 2);

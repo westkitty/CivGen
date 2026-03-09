@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CivGen Remote</title>
+  <style>
+    :root {
+      --ink: #112538;
+      --paper: #f0eadb;
+      --sand: #dcc9a3;
+      --gold: #d59f4d;
+      --brass: #c57d2c;
+      --sea: #2f7f9d;
+      --forest: #42734f;
+      --wine: #7f3f35;
+      --crisis: #a63d33;
+      --prosper: #4f8e5d;
+      --panel: rgba(245, 238, 223, 0.96);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; padding: 0;
+      background: linear-gradient(160deg, #dbe3df 0%, #c2d0cb 35%, #91b0b2 100%);
+      min-height: 100vh;
+      font-family: "Trebuchet MS", system-ui, sans-serif;
+      color: var(--ink);
+    }
+    #app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Connection banner ── */
+    #conn-bar {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.03em;
+      transition: background 0.3s, color 0.3s;
+    }
+    #conn-bar.disconnected { background: #c0392b; color: #fff; }
+    #conn-bar.connecting   { background: var(--gold); color: var(--ink); }
+    #conn-bar.no-host      { background: var(--sand); color: var(--ink); }
+    #conn-bar.ready        { background: var(--prosper); color: #fff; }
+
+    /* ── Status card ── */
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(17,37,56,0.15);
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(17,37,56,0.12);
+      padding: 12px 14px;
+    }
+    .card-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin: 0 0 8px;
+    }
+    #status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.65rem; font-weight: 600; color: var(--sea); letter-spacing: 0.06em; text-transform: uppercase; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+    #stage-line {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--ink);
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    /* ── Main action buttons ── */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: none;
+      border-radius: 10px;
+      padding: 18px 10px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s, opacity 0.2s;
+      -webkit-user-select: none;
+    }
+    .btn:active { transform: scale(0.95); }
+    .btn:disabled { opacity: 0.35; pointer-events: none; }
+    .btn-icon { font-size: 1.6rem; line-height: 1; }
+
+    .btn-start  { background: var(--prosper); color: #fff; }
+    .btn-pause  { background: var(--gold); color: var(--ink); }
+    .btn-resume { background: var(--sea); color: #fff; }
+    .btn-turn   { background: var(--ink); color: var(--paper); }
+    .btn-reset  { background: var(--wine); color: #fff; grid-column: 1 / -1; padding: 14px; font-size: 0.9rem; }
+
+    /* ── Policy panel ── */
+    .policy-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(17,37,56,0.08);
+    }
+    .policy-row:last-child { border-bottom: none; }
+    .policy-name { flex: 1; font-size: 0.82rem; font-weight: 600; }
+    .policy-level { width: 28px; text-align: center; font-size: 0.9rem; font-weight: 700; color: var(--brass); }
+    .policy-btn {
+      width: 38px; height: 38px;
+      border: 1.5px solid var(--sand);
+      border-radius: 8px;
+      background: var(--paper);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink);
+      transition: background 0.1s;
+    }
+    .policy-btn:active { background: var(--sand); }
+    .policy-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .policy-bar {
+      width: 60px; height: 6px;
+      background: var(--sand);
+      border-radius: 3px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .policy-bar-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    /* ── Points remaining pill ── */
+    #points-pill {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--brass);
+      padding: 4px;
+    }
+
+    /* ── Last action toast ── */
+    #toast {
+      position: fixed;
+      bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17,37,56,0.9);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      white-space: nowrap;
+      z-index: 99;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="conn-bar" class="connecting">Connecting…</div>
+
+  <!-- Status -->
+  <div class="card">
+    <div class="card-title">Status</div>
+    <div id="status-grid">
+      <div class="stat"><span class="stat-label">Turn</span><span class="stat-value" id="s-turn">—</span></div>
+      <div class="stat"><span class="stat-label">Score</span><span class="stat-value" id="s-score">—</span></div>
+      <div class="stat"><span class="stat-label">Population</span><span class="stat-value" id="s-pop">—</span></div>
+      <div class="stat"><span class="stat-label">Happiness</span><span class="stat-value" id="s-hap">—</span></div>
+      <div class="stat"><span class="stat-label">Food</span><span class="stat-value" id="s-food">—</span></div>
+      <div class="stat"><span class="stat-label">Stability</span><span class="stat-value" id="s-stab">—</span></div>
+    </div>
+    <div id="stage-line">Waiting for game…</div>
+  </div>
+
+  <!-- Main controls -->
+  <div class="card">
+    <div class="card-title">Controls</div>
+    <div class="btn-row" id="action-btns">
+      <button class="btn btn-start"  id="btn-start"  onclick="send('START_GAME')">
+        <span class="btn-icon">▶</span>Start
+      </button>
+      <button class="btn btn-turn"   id="btn-turn"   onclick="send('STEP_TURN')">
+        <span class="btn-icon">⏭</span>Next Turn
+      </button>
+      <button class="btn btn-pause"  id="btn-pause"  onclick="send('PAUSE_GAME')" style="display:none">
+        <span class="btn-icon">⏸</span>Pause
+      </button>
+      <button class="btn btn-resume" id="btn-resume" onclick="send('RESUME_GAME')" style="display:none">
+        <span class="btn-icon">▶</span>Resume
+      </button>
+    </div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-reset" onclick="confirmReset()">
+        <span class="btn-icon">↺</span>Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Policies -->
+  <div class="card">
+    <div class="card-title">Policies</div>
+    <div id="points-pill">— / 14 pts</div>
+    <div id="policy-list"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const POLICIES = [
+  { key: "agriculture", label: "Agriculture" },
+  { key: "industry",    label: "Industry" },
+  { key: "education",   label: "Education" },
+  { key: "health",      label: "Health" },
+  { key: "environment", label: "Environment" },
+  { key: "security",    label: "Security" },
+  { key: "welfare",     label: "Welfare" },
+  { key: "research",    label: "Research" },
+];
+const POLICY_CAP = 14;
+const MAX_LEVEL = 5; // approximate, same as game
+
+let ws = null;
+let reconnectTimer = null;
+let gameStatus = "menu";
+let policies = {};
+let totalPoints = 0;
+let toastTimer = null;
+
+// Build policy rows
+const policyList = document.getElementById("policy-list");
+POLICIES.forEach(p => {
+  const row = document.createElement("div");
+  row.className = "policy-row";
+  row.id = `pr-${p.key}`;
+  row.innerHTML = `
+    <span class="policy-name">${p.label}</span>
+    <button class="policy-btn" id="pd-${p.key}" onclick="pol('${p.key}',-1)">−</button>
+    <span class="policy-level" id="pl-${p.key}">0</span>
+    <button class="policy-btn" id="pu-${p.key}" onclick="pol('${p.key}',1)">+</button>
+    <div class="policy-bar"><div class="policy-bar-fill" id="pb-${p.key}" style="width:0%"></div></div>
+  `;
+  policyList.appendChild(row);
+});
+
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+function send(actionType, extra = {}) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) { toast("Not connected"); return; }
+  ws.send(JSON.stringify({ type: "dispatch", action: { type: actionType, ...extra } }));
+  toast(actionType.replace(/_/g, " ").toLowerCase());
+}
+
+function pol(key, delta) {
+  if (delta > 0 && totalPoints >= POLICY_CAP) { toast("No policy points left"); return; }
+  send("SET_POLICY", { key, delta });
+}
+
+function confirmReset() {
+  if (confirm("Reset the simulation?")) {
+    send("RESET_GAME", { seed: (Date.now() >>> 0) || 11 });
+  }
+}
+
+function updateState(s) {
+  gameStatus = s.status;
+
+  document.getElementById("s-turn").textContent = s.turn ?? "—";
+  document.getElementById("s-score").textContent = s.score != null ? Math.round(s.score) : "—";
+  document.getElementById("s-pop").textContent = s.population != null ? Math.round(s.population) : "—";
+  document.getElementById("s-hap").textContent = s.happiness != null ? Math.round(s.happiness) : "—";
+  document.getElementById("s-food").textContent = s.food != null ? Math.round(s.food) : "—";
+  document.getElementById("s-stab").textContent = s.stability != null ? Math.round(s.stability) : "—";
+  document.getElementById("stage-line").textContent = s.stage || "";
+
+  // Button visibility
+  const btnStart  = document.getElementById("btn-start");
+  const btnPause  = document.getElementById("btn-pause");
+  const btnResume = document.getElementById("btn-resume");
+  const btnTurn   = document.getElementById("btn-turn");
+
+  btnStart.style.display  = s.status === "menu"    ? "" : "none";
+  btnPause.style.display  = s.status === "running" ? "" : "none";
+  btnResume.style.display = s.status === "paused"  ? "" : "none";
+  btnTurn.style.display   = ["running","paused"].includes(s.status) ? "" : "none";
+
+  // Policies
+  if (s.policies) {
+    policies = s.policies;
+    totalPoints = Object.values(policies).reduce((a, b) => a + b, 0);
+    document.getElementById("points-pill").textContent = `${totalPoints} / ${POLICY_CAP} pts used`;
+    POLICIES.forEach(p => {
+      const lvl = policies[p.key] ?? 0;
+      document.getElementById(`pl-${p.key}`).textContent = lvl;
+      document.getElementById(`pb-${p.key}`).style.width = `${(lvl / MAX_LEVEL) * 100}%`;
+      document.getElementById(`pu-${p.key}`).disabled = totalPoints >= POLICY_CAP;
+      document.getElementById(`pd-${p.key}`).disabled = lvl <= 0;
+    });
+  }
+}
+
+function setConnBar(cls, text) {
+  const el = document.getElementById("conn-bar");
+  el.className = cls;
+  el.textContent = text;
+}
+
+function connect() {
+  setConnBar("connecting", "Connecting…");
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws?role=controller`);
+
+  ws.onopen = () => {
+    setConnBar("no-host", "Connected — waiting for game…");
+  };
+
+  ws.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === "hosts") {
+        setConnBar(msg.count > 0 ? "ready" : "no-host",
+          msg.count > 0 ? "Connected to game ✓" : "Connected — waiting for game…");
+      } else if (msg.type === "state") {
+        setConnBar("ready", "Connected to game ✓");
+        updateState(msg);
+      }
+    } catch {}
+  };
+
+  ws.onclose = () => {
+    setConnBar("disconnected", "Disconnected — retrying…");
+    reconnectTimer = setTimeout(connect, 3000);
+  };
+
+  ws.onerror = () => ws.close();
+}
+
+connect();
+</script>
+</body>
+</html>
