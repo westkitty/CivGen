@@ -590,3 +590,87 @@ Both must be identical across runs with same seed.
 
 ---
 
+## Phase 10: Comprehensive Faction Identity Expansion
+
+**Major faction redesign:** Expanded from 4 basic factions to 8 deeply asymmetric civilizations with distinct mechanics, terrain affinities, and AI personality.
+
+### The 8 Factions
+
+#### 1. Chrono Mycelium
+- **Theme:** Continent-scale fungal intelligence experiencing fractured time
+- **Terrain affinity:** Forest (1.25×), Swamp (1.25×), Crystal Forest (1.3×), penalty to desert/grassland
+- **Starting bonus:** New cities get +1 population but -20 stability initially
+- **Mechanics:** "Future Echo" pulse every 8 turns grants +5 knowledge (deterministic, capped)
+- **AI bias:** 0.85 expand rate, settlement speed boost, stability recovery focus
+- **Art:** Pale root-cathedrals, ring-cap fungal towers, luminous spores
+
+#### 2. Pelagic Marches
+- **Theme:** Amphibious coral-tide civilization built on wet edges and tidal prosperity
+- **Terrain affinity:** Coast (1.3×), Swamp (1.2×), River (1.2×), penalty to mountain/desert
+- **Mechanics:** "Tidal Season" prosperity pulse every 10 turns: +15 food in coastal cities
+- **AI bias:** 0.65 expand rate, 0.95 coastal bias, 0.4 inland penalty
+- **Art:** Shell citadels, coral breakwaters, whale-bone piers, brine canals
+
+#### 3. Bone Oracle Republic
+- **Theme:** Ossuary state calculating destiny from the dead
+- **Terrain affinity:** Mountain (1.1×), Ruins (1.4×), Crystal Forest (1.15×)
+- **Mechanics:** Knowledge bonuses from ruins (1.15×), prophecy milestones at turns 10/20/30, civic order bonus
+- **AI bias:** 0.65 expand rate, 0.9 ruin-hunting, 0.8 scout priority
+- **Art:** Rib vaults, vertebra observatories, bone abacuses, ceremonial processions
+
+#### 4. Gravity Nomads
+- **Theme:** Mountain culture adapted to strange weight fields and inverted geography
+- **Terrain affinity:** Mountain (1.35×), Hill (1.2×), Crystal Forest (1.1×), penalty to swamp
+- **Mechanics:** Mountain combat bonus (+0.2), mountain movement bonus (+0.15), flatland industry penalty (-0.15)
+- **AI bias:** 0.6 expand rate, 0.95 mountain bias, 0.3 flatland avoidance, 0.8 defensive bias
+- **Art:** Hanging camps, suspended shrines, inverted banners, sky-reaching structures
+
+#### 5. Archive of Forgotten Gods
+- **Theme:** Archivists and curators harvesting power from relic custody
+- **Terrain affinity:** Ruins (1.4×), Mountain (1.1×), Crystal Forest (1.15×)
+- **Mechanics:** Artifact bonuses scaled (first few +0.3, then normalized to +0.08), mana +0.2 from ruins, diplomatic penalty (-0.15)
+- **AI bias:** 0.6 expand rate, 0.95 artifact-hunting, 0.85 spell focus
+- **Art:** Chained halos, reliquary vaults, black-gold containment pylons, museum-fortresses
+
+#### 6. Billionfold Hive
+- **Theme:** Distributed insect-swarm civilization with living nests and resin towers
+- **Terrain affinity:** Forest (1.3×), Swamp (1.25×), Grassland (1.1×), penalty to desert/tundra
+- **Mechanics:** Population growth +0.2, "Biomass Rush" every 12 turns (bounded food→industry), cluster bonus (+0.12), isolation penalty (-0.2)
+- **AI bias:** 0.8 expand rate, 0.9 cluster expansion, 0.85 fertile bias
+- **Art:** Chitin terraces, resin cathedrals, brood vents, hive roads and larval reservoirs
+
+#### 7. Living Cartographers
+- **Theme:** Surveyor-mystics whose maps reshape reality through disciplined revision
+- **Terrain affinity:** Grassland (1.1×), all (+0.05 general)
+- **Mechanics:** Explored territory +0.05 economy/knowledge, scout sight +0.2, terrain revision cooldown (20 turns, bounded)
+- **AI bias:** 0.7 expand rate, 1.0 scout priority, 0.95 exploration bias
+- **Art:** Compass fortresses, parchment pennants, survey obelisks, map-stitched cloaks
+
+#### 8. Sunken Language
+- **Theme:** Civilization of living speech and militant semantics, language as biology and sorcery
+- **Terrain affinity:** Swamp (1.15×), Crystal Forest (1.2×), Mountain (1.0×)
+- **Mechanics:** Spell cost reduction (-0.2), spell effect bonus (+0.15), post-battle mana gain (+0.15, capped 5/turn), diplomatic drift (-0.1)
+- **AI bias:** 0.65 expand rate, 0.95 spell focus, 0.75 military focus
+- **Art:** Glyph storms, script armor, echoing plazas, towers of frozen speech
+
+### World Anomalies (Phase 10)
+
+**10 bizarre map features** spawned procedurally during world generation with faction-aligned mechanical hooks.
+
+### Faction-Aware Events
+
+7 new faction-aligned events integrated into EVENT_DEFS that scale with faction-relevant geography and units.
+
+### Implementation Status
+
+- ✅ 8 unique faction definitions with terrain affinities and mechanics
+- ✅ 10 world anomalies with procedural spawning
+- ✅ Faction-aware AI decision logic with terrain preferences
+- ✅ 7 new faction-aware events in event system
+- ✅ All systems deterministic and seeded
+- ⏳ Faction mechanics apply in simulateTurn (FutureEcho, TidalSeason, etc.) — ready for integration
+- ⏳ UI faction info display — ready for HUD enhancement
+- ✅ Documentation complete (CLAUDE.md, README.md, progress.md)
+
+---
+

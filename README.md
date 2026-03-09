@@ -40,11 +40,20 @@ bun server.js
 - **Combat system** — melee vs ranged, terrain modifiers, unit strength scaling
 - **Retreat mechanics** — damaged units can fall back to safety
 
-### 🤖 Rival Factions (Phase 4)
-- **4 AI opponents** — Orcs, Elves, Humans, Dwarves (or seeded variants)
-- **Deterministic AI** — reproducible decisions, no hidden RNG
-- **Expansion & settling** — rivals found cities and expand territory
-- **Strategic behavior** — prioritize threats, defend settlements, pursue tech
+### 🤖 Rival Factions (Phases 4 & 10)
+- **8 unique asymmetric factions** with distinct mechanics and identities:
+  - **Chrono Mycelium** — Fungal expansion with temporal echoes and future bonuses
+  - **Pelagic Marches** — Amphibious coastal civilization with tidal prosperity
+  - **Bone Oracle Republic** — Necromantic knowledge extraction from ruins
+  - **Gravity Nomads** — Mountain dwellers with defensive terrain mastery
+  - **Archive of Forgotten Gods** — Artifact-focused collectors of divine power
+  - **Billionfold Hive** — Biomass conversion with population clustering
+  - **Living Cartographers** — Explorers who reshape map reality
+  - **Sunken Language** — Magical efficiency through linguistic sorcery
+- **Deterministic AI** — reproducible decisions, faction-aware preferences
+- **Terrain affinity system** — each faction gravitates to preferred biomes
+- **Asymmetric mechanics** — unique bonuses, penalties, and playstyles per faction
+- **Faction expansion bias** — AI factions expand toward their preferred terrain
 
 ### 🔬 Research & Progress (Phase 6)
 - **30+ technologies** — Pottery, Agriculture, Writing, Bronze, Iron, Archery, Sailing, etc.
@@ -60,6 +69,15 @@ bun server.js
   - **Science victory** — research all technologies
   - **Diplomatic victory** — form alliance with all rivals
 - **Magic system** — spells (Heal, Fireball, Meteor Storm), artifacts, mystical rituals
+
+### 🌀 World Anomalies (Phase 10)
+- **10 bizarre map features** with mechanical and thematic hooks:
+  - Gravity Knots, Whispering Ruins, Fossil Storm Fields, Dream Forests
+  - Mirror Lakes, Relic Vaults, Hush Marshes, Glass Deserts, Choir Pits, Drowned Archives
+- **Biome-specific spawning** — anomalies tied to terrain types
+- **Mechanical bonuses** — each anomaly provides unique gameplay effects
+- **Faction discovery** — anomalies reward exploration and discovery
+- **Procedural placement** — seeded generation ensures reproducibility
 
 ### 📱 Phone Remote Control
 - **WebSocket relay server** — synchronizes game state across devices

@@ -2337,7 +2337,7 @@
           description: 'Reality bends inward here. Movement is unpredictable.',
           biomes: ['mountain', 'crystalForest'],
           rarity: 0.003,
-          effects: { movementCostBonus: 0.3, combatTerrain Bonus: 0.15 }
+          effects: { movementCostBonus: 0.3, combatTerrainBonus: 0.15 }
         },
         whisperingRuin: {
           name: 'Whispering Ruin',
@@ -6490,20 +6490,20 @@
                 try {
                   if (ws.readyState !== WebSocket.OPEN) return;
                   const s = latestStateRef.current;
-                  if (!s?.resources?.metrics) return;
+                  if (!s || s.status === "menu") return;
                   ws.send(JSON.stringify({
                     type: "state",
                     status: s.status,
                     turn: s.turn,
-                    population: s.resources.population,
-                    food: s.resources.food,
-                    industry: s.resources.industry,
-                    knowledge: s.resources.knowledge,
-                    happiness: s.metrics.happiness,
-                    stability: s.metrics.stability,
+                    population: s.population,
+                    food: s.food,
+                    industry: s.industry,
+                    knowledge: s.knowledge,
+                    happiness: s.happiness,
+                    stability: s.stability,
                     stage: s.developmentStage,
                     policies: s.policies,
-                    score: s.score,
+                    score: s.legacyScore,
                   }));
                 } catch (e) {
                   // silently ignore state serialization errors during initialization
