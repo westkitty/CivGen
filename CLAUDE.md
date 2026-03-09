@@ -183,3 +183,272 @@ After changes to `server.js`:
 ```json
 { "type": "hosts", "count": 1 }
 ```
+
+---
+
+## 4X Game Systems (Phases 1-8)
+
+### Phase 1: World Map & Fog of War
+
+**Functions:**
+- `generateWorldMap(width, height, seed)` → generates deterministic 128×128 tile grid
+- `getVisibleTiles(centerX, centerY, radius, worldMap)` → calculates sight radius for units
+- `seededRandom(seed)`, `mulberry32(a)`, `simplexNoise(x, y, seed)` → deterministic RNG/noise
+
+**Biomes:** water, coast, plains, forest, mountain, desert, tundra, swamp, crystalForest, ruins
+
+**Resources:** copper, iron, wood, wheat, aether, fish (tied to specific biomes)
+
+**State additions:**
+- `worldMap: Tile[][]` — full map state
+- `exploredTiles: Set<"x,y">` — discovered but not currently visible
+- `visibleTiles: Set<"x,y">` — in current sight range
+- `mapOverlay: 'none'|'terrain'|'resources'|'magic'`
+
+**Actions:** `EXPLORE_REGION`, `CYCLE_MAP_OVERLAY`
+
+---
+
+### Phase 2: Multi-City Empire System
+
+**Structure:**
+```js
+empire: {
+  name: "Your Civilization",
+  cities: [{ id, name, x, y, population, food, industry, ... }, ...],
+  selectedCityId: "city-capital-123",
+  units: [{ id, type, x, y, health, movement, ... }, ...],
+  selectedUnitId: "unit-scout-0",
+  factions: { player, faction-1, faction-2, faction-3 },
+  selectedFactionId: "player",
+}
+```
+
+**City Properties:** population, food, industry, knowledge, happiness, health, environment, stability, technologyLevel, developmentStage, policies, projectQueue, eventLog, history
+
+**Actions:** `FOUND_CITY { x, y, name }`, `SELECT_CITY { cityId }`
+
+**Key function:** `simulateTurn()` now syncs city data bidirectionally
+
+---
+
+### Phase 3: Units & Movement & Exploration
+
+**Unit Types:**
+| Type | Movement | Sight | Can Found | Cost |
+|------|----------|-------|-----------|------|
+| Scout | 4 | 4 | No | 25 |
+| Settler | 2 | 2 | Yes | 40 |
+| Warrior | 2 | 2 | No | 35 |
+| Archer | 2 | 3 | No | 40 |
+| Cavalry | 4 | 2 | No | 50 |
+
+**Functions:**
+- `createUnit(type, x, y, ownerId, id)` → creates unit instance
+- `findPath(startX, startY, endX, endY, worldMap)` → A* pathfinding
+- `getTerrainCost(tile)` → movement cost by biome
+
+**Actions:** `MOVE_UNIT { unitId, x, y }`, `SELECT_UNIT { unitId }`, `CREATE_UNIT { cityId, unitType }`
+
+**Mechanics:**
+- Scout/Settler auto-explore (reveal fog) when moving
+- Units have movement budget per turn
+- Terrain affects pathfinding (mountains/forests = higher cost)
+
+---
+
+### Phase 4: Rival Factions & AI
+
+**Factions:**
+- `player` — Your Civilization (blue)
+- `faction-1` — Shadowborn Empire (wine red)
+- `faction-2` — Luminaries (gold)
+- `faction-3` — Wildborn Tribes (forest green)
+
+**Structure:**
+```js
+factions: {
+  id: "faction-1",
+  name: "Shadowborn Empire",
+  color: "#7f3f35",
+  cities: [{ id, name, x, y, population, ... }, ...],
+  units: [{ id, type, x, y, ... }, ...],
+  research: { currentTech, points },
+  diplomacy: { player: "war", "faction-2": "peace", ... },
+  treasury: 50,
+}
+```
+
+**AI Decision System:** `makeAIDecision(faction, worldMap, allFactions, allUnits, turn, seed)`
+- 70% chance: attempt to found new city (if < 3 cities)
+- 80% chance: produce Scout unit (if > 30 industry)
+- 90% chance: move a unit autonomously
+
+Fully deterministic based on seed + turn + faction ID.
+
+**Actions:** Game now spawns AI turns after STEP_TURN
+
+---
+
+### Phase 5: Combat System
+
+**Combat Resolution:**
+```js
+resolveCombat(attacker, defender) → { attackerWins: bool, damage: number }
+```
+
+Odds calculated: `attackerStr / (attackerStr + defenderStr)` where strength = health × unit-type-multiplier
+
+**Actions:** `ATTACK_UNIT { attackerId, defenderId }`
+
+**Mechanics:**
+- Damage ranges 10-70 depending on outcome
+- Units die when health ≤ 0
+- Combat feedback logged to action feed
+
+---
+
+### Phase 6: Research & Civics Trees
+
+**Technologies (10 total):**
+| Tech | Cost | Era | Requires |
+|------|------|-----|----------|
+| Bronze | 50 | Ancient | — |
+| Archery | 60 | Ancient | — |
+| Writing | 70 | Ancient | — |
+| Iron | 75 | Classical | Bronze |
+| Mathematics | 80 | Classical | Writing |
+| Commerce | 85 | Classical | Writing |
+| Engineering | 100 | Medieval | Mathematics |
+| Military | 90 | Medieval | Archery |
+| Banking | 110 | Renaissance | Commerce |
+| Gunpowder | 120 | Renaissance | Iron |
+
+**Civics (4 types):**
+- Monarchy (cost: 40)
+- Republic (cost: 60)
+- Theocracy (cost: 50)
+- Democracy (cost: 70)
+
+**Actions:** `QUEUE_TECH { techId }`, `QUEUE_CIVIC { civicId }`
+
+**Mechanics:** Tech/civic research consumes knowledge/culture points; unlocks buildings, units, bonuses
+
+---
+
+### Phase 7: Diplomacy & Victory Conditions
+
+**Diplomatic Actions:** `DECLARE_WAR { factionId }`, `FORM_ALLIANCE { factionId }`
+
+**Victory Conditions:**
+| Type | Target | Tracking |
+|------|--------|----------|
+| Score | 5000 points | Accumulation |
+| Domination | Control 60% of world | City/tile count |
+| Science | Final tech: Space | Tech completion |
+| Diplomatic | World Congress vote | Influence/favor |
+
+**Grievance System Framework:**
+- Border disputes (random starting point)
+- Surprise war penalties
+- Territorial violations
+- Diplomatic consequences
+
+---
+
+### Phase 8: Magic Systems & Endgame
+
+**Magical Features:**
+- Ley lines on map (resource nodes for mana)
+- Crystal forests (magical terrain)
+- Ruins (exploration rewards)
+- Artifact discovery (5 total: Grail, Crown, Staff, Ring, Sword)
+
+**Actions:** `ACTIVATE_SPELL { spellId }`, `COLLECT_ARTIFACT { artifactId }`
+
+**Mechanics:**
+- Magic resources (aether/mana) regenerate per turn
+- Spells have cooldowns and mana costs
+- Artifacts provide permanent bonuses
+- Artifact victory: collect 5 artifacts to win
+
+**Late-Game Layers:**
+- Naval units unlock late-era
+- Sky/orbital units in final eras
+- Espionage actions
+- Ideological blocs
+- Climate/plague mechanics
+
+---
+
+## Reducer Action Summary
+
+| Action | Phase | Purpose |
+|--------|-------|---------|
+| START_GAME | Core | Begin simulation |
+| PAUSE_GAME | Core | Pause auto-resolve |
+| RESUME_GAME | Core | Resume auto-resolve |
+| STEP_TURN | Core | Advance 1 turn |
+| RESET_GAME | Core | New game with seed |
+| SET_POLICY | Core | Adjust policy slider |
+| EXPLORE_REGION | 1 | Reveal fog of war |
+| CYCLE_MAP_OVERLAY | 1 | Switch map view |
+| FOUND_CITY | 2 | Create new city |
+| SELECT_CITY | 2 | Switch active city |
+| MOVE_UNIT | 3 | Move unit, explore |
+| SELECT_UNIT | 3 | Select active unit |
+| CREATE_UNIT | 3 | Produce unit |
+| ATTACK_UNIT | 5 | Battle units |
+| QUEUE_TECH | 6 | Research technology |
+| QUEUE_CIVIC | 6 | Adopt government |
+| DECLARE_WAR | 7 | War declaration |
+| FORM_ALLIANCE | 7 | Alliance pact |
+| ACTIVATE_SPELL | 8 | Cast spell |
+| COLLECT_ARTIFACT | 8 | Find artifact |
+
+---
+
+## Testing & Verification Checklist
+
+**Per-phase verification:**
+1. ✅ World map generates identically with same seed
+2. ✅ Multiple cities can be founded at different coordinates
+3. ✅ Units move and explore, revealing fog of war
+4. ✅ AI factions autonomously settle and expand
+5. ✅ Combat resolves units correctly
+6. ✅ Tech/civic queuing tracks knowledge consumption
+7. ✅ Diplomacy actions log to action feed
+8. ✅ Spells and artifacts integrate with map features
+
+**Determinism hooks:**
+```js
+window.render_game_to_text() // → Full game state JSON
+window.advanceTime(1000)     // → Simulate 1000 game turns
+```
+
+Both must be identical across runs with same seed.
+
+---
+
+## Known Limitations & Future Work
+
+- **AI:** Deterministic but simple; no long-term strategy planning
+- **UI:** Mostly text-based action feedback; map visualization not yet integrated
+- **Multiplayer:** Single-player only; remote control is informational
+- **Balance:** Resource costs and tech trees not fully tuned
+- **Late-game:** Naval, sky, and espionage mechanics defined but not implemented
+- **Graphics:** No custom SVG assets yet; text-based game board
+
+---
+
+## Architecture Principles Maintained
+
+1. **Single HTML file** — All code in `index.html`, no build step
+2. **Pure reducer** — All state transitions deterministic
+3. **Deterministic seeding** — Every world/city/unit reproducible
+4. **Phone remote control** — State broadcasts every 1s, commands relay bidirectionally
+5. **Keyboard-first UI** — Full game playable via `Space`, `N`, `R`, `C`, `O`, `1-6`, `M`, `F`
+6. **Zero runtime errors** — Console clean except expected Babel warning
+7. **Elegant feedback** — Action feed explains what happened and why
+8. **Modular logic** — Each phase is self-contained; easy to extend
+
