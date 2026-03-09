@@ -3455,6 +3455,142 @@
               ),
             };
           }
+          // Phase 5: Combat
+          case "ATTACK_UNIT": {
+            const attacker = state.empire.units.find(u => u.id === action.attackerId);
+            const defender = state.empire.units.find(u => u.id === action.defenderId);
+            if (!attacker || !defender) return state;
+
+            const result = resolveCombat(attacker, defender);
+            const newUnits = state.empire.units.map(u => {
+              if (u.id === action.defenderId && result.attackerWins) {
+                return { ...u, health: Math.max(0, u.health - result.damage) };
+              }
+              if (u.id === action.attackerId && !result.attackerWins) {
+                return { ...u, health: Math.max(0, u.health - result.damage) };
+              }
+              return u;
+            }).filter(u => u.health > 0);
+
+            return {
+              ...state,
+              empire: { ...state.empire, units: newUnits },
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-combat-${state.turn}`,
+                  title: result.attackerWins ? "Combat victory" : "Combat defeat",
+                  detail: `${result.damage} damage dealt. ${result.attackerWins ? attacker.type + " prevails" : defender.type + " survives"}`,
+                  tone: result.attackerWins ? "good" : "bad",
+                  tag: "Combat",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Phase 6: Research & Civics
+          case "QUEUE_TECH": {
+            const tech = TECHS.find(t => t.id === action.techId);
+            if (!tech) return state;
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-tech-${action.techId}`,
+                  title: `Researching ${tech.name}`,
+                  detail: `Costs ${tech.cost} knowledge points. Era: ${tech.era}`,
+                  tone: "good",
+                  tag: "Research",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          case "QUEUE_CIVIC": {
+            const civic = CIVICS.find(c => c.id === action.civicId);
+            if (!civic) return state;
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-civic-${action.civicId}`,
+                  title: `Adopting ${civic.name}`,
+                  detail: `Changes government structure. Cost: ${civic.cost} culture points.`,
+                  tone: "good",
+                  tag: "Government",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Phase 7: Diplomacy & Victory
+          case "DECLARE_WAR": {
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-war-${action.factionId}`,
+                  title: `War declared!`,
+                  detail: `You are now at war with ${action.factionId}. Casus belli: border disputes.`,
+                  tone: "bad",
+                  tag: "Diplomacy",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          case "FORM_ALLIANCE": {
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-alliance-${action.factionId}`,
+                  title: `Alliance formed`,
+                  detail: `You are now allied with ${action.factionId}.`,
+                  tone: "good",
+                  tag: "Diplomacy",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Phase 8: Magic & Artifacts
+          case "ACTIVATE_SPELL": {
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-spell-${action.spellId}`,
+                  title: `Spell cast: ${action.spellId}`,
+                  detail: `Magical energies surge across the land.`,
+                  tone: "good",
+                  tag: "Magic",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          case "COLLECT_ARTIFACT": {
+            return {
+              ...state,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-artifact-${action.artifactId}`,
+                  title: `Artifact discovered: ${action.artifactId}`,
+                  detail: `A powerful relic has been found. Progress towards magical victory!`,
+                  tone: "good",
+                  tag: "Magic",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
           default:
             return state;
         }
