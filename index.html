@@ -2398,17 +2398,20 @@
         const exploredTiles = new Set();
         const visibleTiles = new Set();
 
-        return {
-          rngSeed: seed,
-          status: "menu",
-          assetsReady: false,
-          settlementName: generateSettlementName(seed),
-          turn: 0,
-          year: 1000,
+        // Phase 2: Initialize empire with capital city
+        const capitalCityId = 'city-capital-' + seed;
+        const capitalX = Math.floor(64 + Math.sin(seed) * 10);
+        const capitalY = Math.floor(64 + Math.cos(seed) * 10);
+
+        const capitalCity = {
+          id: capitalCityId,
+          name: generateSettlementName(seed),
+          x: capitalX,
+          y: capitalY,
+          population: 24,
           food: 88,
           industry: 54,
           knowledge: 32,
-          population: 24,
           happiness: 62,
           health: 64,
           environment: 60,
@@ -2422,22 +2425,7 @@
           projectQueue: makeInitialProjectQueue(),
           completedProjects: {},
           nextQueueId: 4,
-          // Phase 1: World Map & Fog of War
-          worldMap,
-          exploredTiles,
-          visibleTiles,
-          mapOverlay: 'none', // none, terrain, resources, magic
-          eventLog: [
-            {
-              id: "boot-1",
-              year: 1000,
-              turn: 0,
-              title: "Founding Settlement",
-              detail: "A modest society stands ready. Feed it, steady it, and try not to ruin the future immediately.",
-              icon: "iconLegacy",
-              tag: "System",
-            },
-          ],
+          eventLog: [],
           history: {
             food: [88],
             population: [24],
@@ -2450,6 +2438,56 @@
             knowledgeDelta: 0,
             populationDelta: 0,
           },
+        };
+
+        // Expose capital city data at root level for backward compatibility
+        return {
+          rngSeed: seed,
+          status: "menu",
+          assetsReady: false,
+          // Phase 2: Empire and cities
+          empire: {
+            name: "Your Civilization",
+            cities: [capitalCity],
+            selectedCityId: capitalCityId,
+          },
+          // Backward compat: expose capital city data at root
+          settlementName: capitalCity.name,
+          turn: 0,
+          year: 1000,
+          food: capitalCity.food,
+          industry: capitalCity.industry,
+          knowledge: capitalCity.knowledge,
+          population: capitalCity.population,
+          happiness: capitalCity.happiness,
+          health: capitalCity.health,
+          environment: capitalCity.environment,
+          stability: capitalCity.stability,
+          unrest: capitalCity.unrest,
+          technologyLevel: capitalCity.technologyLevel,
+          developmentStage: capitalCity.developmentStage,
+          legacyScore: capitalCity.legacyScore,
+          policies: capitalCity.policies,
+          activeEffects: capitalCity.activeEffects,
+          projectQueue: capitalCity.projectQueue,
+          completedProjects: capitalCity.completedProjects,
+          nextQueueId: capitalCity.nextQueueId,
+          // Phase 1: World Map & Fog of War
+          worldMap,
+          exploredTiles,
+          visibleTiles,
+          mapOverlay: 'none',
+          eventLog: [
+            {
+              id: "boot-1",
+              year: 1000,
+              turn: 0,
+              title: "Founding Settlement",
+              detail: "A modest society stands ready. Feed it, steady it, and try not to ruin the future immediately.",
+              icon: "iconLegacy",
+              tag: "System",
+            },
+          ],
           actionFeed: [
             makeActionFeedback({
               id: "feed-boot-1",
@@ -2832,6 +2870,30 @@
         );
         next.eventLog = [...logEntries, ...currentState.eventLog].slice(0, 18);
         next.rngSeed = rngSeed;
+
+        // Phase 2: Sync root-level data back to selected city in empire
+        if (next.empire && next.empire.cities) {
+          const selectedCity = next.empire.cities.find(c => c.id === next.empire.selectedCityId);
+          if (selectedCity) {
+            selectedCity.food = next.food;
+            selectedCity.industry = next.industry;
+            selectedCity.knowledge = next.knowledge;
+            selectedCity.population = next.population;
+            selectedCity.happiness = next.happiness;
+            selectedCity.health = next.health;
+            selectedCity.environment = next.environment;
+            selectedCity.stability = next.stability;
+            selectedCity.unrest = next.unrest;
+            selectedCity.technologyLevel = next.technologyLevel;
+            selectedCity.developmentStage = next.developmentStage;
+            selectedCity.legacyScore = next.legacyScore;
+            selectedCity.policies = next.policies;
+            selectedCity.eventLog = next.eventLog;
+            selectedCity.history = next.history;
+            selectedCity.lastBreakdown = next.lastBreakdown;
+          }
+        }
+
         return next;
       }
 
@@ -2994,6 +3056,77 @@
             return {
               ...state,
               mapOverlay: nextOverlay,
+            };
+          }
+          // Phase 2: Multi-City Empire System
+          case "FOUND_CITY": {
+            if (!action.x || !action.y) return state;
+            const newCity = {
+              id: 'city-' + action.x + '-' + action.y + '-' + state.turn,
+              name: action.name || 'New City',
+              x: action.x,
+              y: action.y,
+              population: 4,
+              food: 20,
+              industry: 8,
+              knowledge: 4,
+              happiness: 50,
+              health: 60,
+              environment: 60,
+              stability: 60,
+              unrest: 0,
+              technologyLevel: state.technologyLevel,
+              developmentStage: "Settlement",
+              legacyScore: 0,
+              policies: { ...state.policies },
+              activeEffects: [],
+              projectQueue: [],
+              completedProjects: {},
+              nextQueueId: 1,
+              eventLog: [],
+              history: { food: [20], population: [4], knowledge: [4], legacyScore: [0] },
+              lastBreakdown: { foodDelta: 0, industryDelta: 0, knowledgeDelta: 0, populationDelta: 0 },
+            };
+            return {
+              ...state,
+              empire: {
+                ...state.empire,
+                cities: [...state.empire.cities, newCity],
+              },
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-found-city-${state.turn}`,
+                  title: "New city founded",
+                  detail: `${newCity.name} established at (${action.x}, ${action.y}).`,
+                  tone: "good",
+                  tag: "Expansion",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          case "SELECT_CITY": {
+            const city = state.empire.cities.find(c => c.id === action.cityId);
+            if (!city) return state;
+            return {
+              ...state,
+              empire: { ...state.empire, selectedCityId: action.cityId },
+              // Sync root-level backward compat
+              settlementName: city.name,
+              food: city.food,
+              industry: city.industry,
+              knowledge: city.knowledge,
+              population: city.population,
+              happiness: city.happiness,
+              health: city.health,
+              environment: city.environment,
+              stability: city.stability,
+              unrest: city.unrest,
+              technologyLevel: city.technologyLevel,
+              developmentStage: city.developmentStage,
+              legacyScore: city.legacyScore,
+              policies: city.policies,
             };
           }
           default:
