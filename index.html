@@ -2260,6 +2260,83 @@
       }
 
       // Create world map with biomes inspired by Endless Legend
+      // ========== WORLD ANOMALIES (Phase 10) ==========
+
+      const WORLD_ANOMALIES = {
+        gravityKnot: {
+          name: 'Gravity Knot',
+          description: 'Reality bends inward here. Movement is unpredictable.',
+          biomes: ['mountain', 'crystalForest'],
+          rarity: 0.003,
+          effects: { movementCostBonus: 0.3, combatTerrain Bonus: 0.15 }
+        },
+        whisperingRuin: {
+          name: 'Whispering Ruin',
+          description: 'Ancient stones speak of forgotten ages. Knowledge can be heard.',
+          biomes: ['plains', 'forest'],
+          rarity: 0.004,
+          effects: { knowledgeBonus: 0.2 }
+        },
+        fossilStormField: {
+          name: 'Fossil Storm Field',
+          description: 'Winds of petrified time swirl here. Dangerous but rich in secrets.',
+          biomes: ['desert'],
+          rarity: 0.002,
+          effects: { artifactRarity: 0.3, foodPenalty: -0.15 }
+        },
+        dreamForest: {
+          name: 'Dream Forest',
+          description: 'Trees that exist partially elsewhere. Reality is thin.',
+          biomes: ['forest', 'swamp'],
+          rarity: 0.003,
+          effects: { magicBonus: 0.25, populationHappiness: 0.1 }
+        },
+        mirrorLake: {
+          name: 'Mirror Lake',
+          description: 'Water that reflects more than light. Temporal echoes swim here.',
+          biomes: ['water', 'coast', 'swamp'],
+          rarity: 0.002,
+          effects: { manaBonus: 0.2, tradeLandBonus: 0.15 }
+        },
+        relicVault: {
+          name: 'Relic Vault',
+          description: 'A sealed chamber of cosmic artifacts. The air hums with power.',
+          biomes: ['mountain', 'ruins'],
+          rarity: 0.001,
+          effects: { artifactChance: 0.5, industryBonus: 0.15 }
+        },
+        hushMarsh: {
+          name: 'Hush Marsh',
+          description: 'Sound dampens here. Perfect for contemplation or conspiracy.',
+          biomes: ['swamp'],
+          rarity: 0.003,
+          effects: { happinessBonus: 0.12, stabilityBonus: 0.15, diplomaticBonus: 0.1 }
+        },
+        glassDesert: {
+          name: 'Glass Desert',
+          description: 'Sand fused into crystal sheets. Treacherous, beautiful, alien.',
+          biomes: ['desert'],
+          rarity: 0.003,
+          effects: { industryBonus: 0.2, foodPenalty: -0.2, movementPenalty: 0.25 }
+        },
+        choirPit: {
+          name: 'Choir Pit',
+          description: 'Geological formations that resonate in harmony. Music made manifest.',
+          biomes: ['mountain', 'forest'],
+          rarity: 0.002,
+          effects: { spellPowerBonus: 0.2, culturalBonus: 0.15 }
+        },
+        drownedArchive: {
+          name: 'Drowned Archive',
+          description: 'Submerged ruins of countless libraries. Knowledge lies under water.',
+          biomes: ['water', 'swamp'],
+          rarity: 0.002,
+          effects: { knowledgeBonus: 0.25, foodBonus: 0.1, foodPenalty: -0.05 }
+        }
+      };
+
+      // ========== END WORLD ANOMALIES ==========
+
       function generateWorldMap(width, height, seed) {
         const rng = mulberry32(seed);
         const tiles = [];
@@ -2341,6 +2418,7 @@
               improvement: null,
               owner: null,
               visibility: 'unseen', // unseen, explored, visible
+              anomaly: null, // Phase 10: world anomalies
             };
           }
         }
@@ -2354,6 +2432,25 @@
               tiles[y][x].feature = 'ruin';
             } else {
               tiles[y][x].feature = 'leyLine';
+            }
+          }
+        }
+
+        // Phase 10: Add world anomalies
+        const anomalyKeys = Object.keys(WORLD_ANOMALIES);
+        for (const anomalyKey of anomalyKeys) {
+          const anomaly = WORLD_ANOMALIES[anomalyKey];
+          const targetCount = Math.max(1, Math.floor(width * height * anomaly.rarity));
+          for (let i = 0; i < targetCount; i++) {
+            let placed = false;
+            for (let attempt = 0; attempt < 20; attempt++) {
+              const x = Math.floor(rng() * width);
+              const y = Math.floor(rng() * height);
+              if (anomaly.biomes.includes(tiles[y][x].biome) && !tiles[y][x].anomaly) {
+                tiles[y][x].anomaly = anomalyKey;
+                placed = true;
+                break;
+              }
             }
           }
         }
@@ -2458,31 +2555,195 @@
 
       // ========== FACTIONS & AI (Phase 4: Rival Factions + Diplomacy + Combat) ==========
 
+      // ========== FACTION ROSTER & MECHANICS (Phase 10: Faction Identity Expansion) ==========
+
       const FACTIONS = [
         { id: 'player', name: 'Your Civilization', color: '#2f7f9d' },
-        { id: 'faction-1', name: 'Shadowborn Empire', color: '#7f3f35' },
-        { id: 'faction-2', name: 'Luminaries', color: '#f4d03f' },
-        { id: 'faction-3', name: 'Wildborn Tribes', color: '#42734f' },
+        { id: 'faction-chrono', name: 'Chrono Mycelium', color: '#8b6bb8' },
+        { id: 'faction-pelagic', name: 'Pelagic Marches', color: '#1e90ff' },
+        { id: 'faction-oracle', name: 'Bone Oracle Republic', color: '#d4af37' },
+        { id: 'faction-gravity', name: 'Gravity Nomads', color: '#696969' },
+        { id: 'faction-archive', name: 'Archive of Forgotten Gods', color: '#8b4513' },
+        { id: 'faction-hive', name: 'Billionfold Hive', color: '#ffa500' },
+        { id: 'faction-cartograph', name: 'Living Cartographers', color: '#2f4f4f' },
+        { id: 'faction-language', name: 'Sunken Language', color: '#4b0082' },
       ];
+
+      // Comprehensive faction mechanics definitions
+      const FACTION_DEFINITIONS = {
+        'player': {
+          name: 'Your Civilization',
+          description: 'A balanced faction with adaptable strengths.',
+          theme: 'balanced',
+          terrainAffinities: { grassland: 1.0, forest: 1.0, mountain: 1.0, desert: 1.0, coast: 1.0, tundra: 1.0 },
+          modifiers: { foodMultiplier: 1.0, industryMultiplier: 1.0, knowledgeMultiplier: 1.0, happinessBonus: 0 },
+          startBiasTag: 'balanced',
+          aiPreferences: { expandRate: 0.7, militaryFocus: 0.6, spellFocus: 0.5, scoutPriority: 0.6 },
+          mechanics: {},
+          lore: 'You are the steward of a young civilization finding its path in a strange world.'
+        },
+        'faction-chrono': {
+          name: 'Chrono Mycelium',
+          description: 'Fungal intelligence experiencing time fractured. Wide expansion, temporal bursts.',
+          theme: 'fungal',
+          terrainAffinities: { forest: 1.25, swamp: 1.25, crystal_forest: 1.3, grassland: 0.9, desert: 0.7 },
+          modifiers: { foodMultiplier: 1.15, populationGrowthBonus: 0.1, stabilityEarly: -0.15 },
+          startBiasTag: 'fertile',
+          aiPreferences: { expandRate: 0.85, settleSpeedBoost: 0.2, stabilityRecovery: 0.8 },
+          mechanics: {
+            futureEchoPeriod: 8,
+            futureEchoEffect: 'deterministic knowledge spike (+5 knowledge) every 8 turns',
+            newCityPopBonus: 1,
+            newCityStabilityPenalty: -20
+          },
+          lore: 'Pale root-cathedrals and ring-cap fungal towers rise from forest soil. Spores glow with temporal echoes.'
+        },
+        'faction-pelagic': {
+          name: 'Pelagic Marches',
+          description: 'Amphibious coral civilization built around wet edges and tidal prosperity.',
+          theme: 'aquatic',
+          terrainAffinities: { coast: 1.3, swamp: 1.2, river: 1.2, grassland: 0.85, mountain: 0.6, desert: 0.4 },
+          modifiers: { foodMultiplier: 1.2, manaCost: 0.9 },
+          startBiasTag: 'coastal',
+          aiPreferences: { expandRate: 0.65, coastalBias: 0.95, inlandPenalty: 0.4 },
+          mechanics: {
+            tidalSeasonPeriod: 10,
+            tidalSeasonEffect: 'food +15 in coastal cities every 10 turns',
+            coastalCityBonus: 0.15,
+            inlandCityPenalty: -0.15
+          },
+          lore: 'Shell citadels and coral breakwaters guard the tidal plazas. Whale-bone piers stretch into impossible depths.'
+        },
+        'faction-oracle': {
+          name: 'Bone Oracle Republic',
+          description: 'Ossuary state that calculates destiny from architecture of the dead.',
+          theme: 'necro-bureaucratic',
+          terrainAffinities: { mountain: 1.1, forest: 1.0, grassland: 1.0, ruins: 1.4, crystal_forest: 1.15 },
+          modifiers: { knowledgeMultiplier: 1.2, happinessBonus: -0.1 },
+          startBiasTag: 'ruin-adjacent',
+          aiPreferences: { expandRate: 0.65, ruinHunting: 0.9, militaryFocus: 0.6, scoutPriority: 0.8 },
+          mechanics: {
+            ruinKnowledgeBonus: 0.15,
+            cemeteryKnowledgeBonus: 0.08,
+            prophecyMilestones: [10, 20, 30],
+            civicOrderBonus: 0.1
+          },
+          lore: 'Rib vaults house polished bone abacuses. Vertebra observatories calculate the futures of dead civilizations.'
+        },
+        'faction-gravity': {
+          name: 'Gravity Nomads',
+          description: 'Mountain and anomaly culture adapted to strange weight fields and inverted geography.',
+          theme: 'mountain-mystic',
+          terrainAffinities: { mountain: 1.35, hill: 1.2, crystal_forest: 1.1, grassland: 0.8, swamp: 0.6 },
+          modifiers: { industryMultiplier: 1.15, foodMultiplier: 0.9 },
+          startBiasTag: 'mountain',
+          aiPreferences: { expandRate: 0.6, mountainBias: 0.95, flatlandAvoidance: 0.3, defensiveBias: 0.8 },
+          mechanics: {
+            mountainCombatBonus: 0.2,
+            mountainMovementBonus: 0.15,
+            flatlandIndustryPenalty: -0.15,
+            territorialDefenseAura: 0.1
+          },
+          lore: 'Hanging camps and suspended shrines defy gravity. Inverted banners stream upward from impossible mountains.'
+        },
+        'faction-archive': {
+          name: 'Archive of Forgotten Gods',
+          description: 'Civilization of archivists who catalog dead divinities and harvest relic power.',
+          theme: 'scholarly-arcane',
+          terrainAffinities: { ruins: 1.4, mountain: 1.1, crystal_forest: 1.15, grassland: 1.0, swamp: 0.8 },
+          modifiers: { manaGeneration: 1.25, knowledgeMultiplier: 1.1, diplomacy: -0.1 },
+          startBiasTag: 'relic-vault',
+          aiPreferences: { expandRate: 0.6, artifactHunting: 0.95, spellFocus: 0.85, scoutPriority: 0.85 },
+          mechanics: {
+            artifactBonusFirst: 0.3,
+            artifactBonusAfter: 0.08,
+            ruinManaBonus: 0.2,
+            diplomaticDistrust: -0.15
+          },
+          lore: 'Chained halos hang above reliquary vaults. Black-gold containment pylons preserve the remains of forgotten gods.'
+        },
+        'faction-hive': {
+          name: 'Billionfold Hive',
+          description: 'Distributed insect-swarm civilization with living nests and resin towers.',
+          theme: 'biomass-hive',
+          terrainAffinities: { forest: 1.3, swamp: 1.25, grassland: 1.1, mountain: 0.7, tundra: 0.5, desert: 0.6 },
+          modifiers: { populationGrowthBonus: 0.2, foodMultiplier: 1.15, happinessBonus: -0.05 },
+          startBiasTag: 'fertile-cluster',
+          aiPreferences: { expandRate: 0.8, clusterExpansion: 0.9, fertileBias: 0.85, harshClimateAvoidance: 0.2 },
+          mechanics: {
+            biomassRushPeriod: 12,
+            biomassRushEffect: 'food to industry conversion up to +10 every 12 turns',
+            clusterBonus: 0.12,
+            isolationPenalty: -0.2,
+            climateAdaptation: { desert: -0.15, tundra: -0.2 }
+          },
+          lore: 'Chitin terraces and resin cathedrals form from collective purpose. Brood vents pulse with larval vitality.'
+        },
+        'faction-cartograph': {
+          name: 'Living Cartographers',
+          description: 'Surveyor-mystics whose maps influence reality through disciplined revision.',
+          theme: 'explorer-reality',
+          terrainAffinities: { grassland: 1.1, all: 1.05 },
+          modifiers: { scoutSightBonus: 0.2, knowledgeMultiplier: 1.1, industryMultiplier: 0.95 },
+          startBiasTag: 'central',
+          aiPreferences: { expandRate: 0.7, scoutPriority: 1.0, explorationBias: 0.95, mapVision: 0.9 },
+          mechanics: {
+            exploredTerritoryBonus: 0.05,
+            terrainRevisionCooldown: 20,
+            terrainRevisionEffect: 'swap biome type once per 20 turns (bounded, no special tiles)',
+            underExploredPenalty: -0.1
+          },
+          lore: 'Compass fortresses and parchment pennants mark the boundaries of known reality. Maps stitch the world together.'
+        },
+        'faction-language': {
+          name: 'Sunken Language',
+          description: 'Civilization composed around living speech, dead syntax, and militant semantics.',
+          theme: 'linguistic-magic',
+          terrainAffinities: { swamp: 1.15, crystal_forest: 1.2, mountain: 1.0, grassland: 1.0 },
+          modifiers: { spellCostReduction: 0.2, spellEffectBonus: 0.15, diplomacy: -0.2 },
+          startBiasTag: 'mystical',
+          aiPreferences: { expandRate: 0.65, spellFocus: 0.95, militaryFocus: 0.75, magicalExpansion: 0.85 },
+          mechanics: {
+            battleManaGain: 0.15,
+            battleManaCapPerTurn: 5,
+            techCompletionStability: 0.12,
+            diplomaticDrift: -0.1
+          },
+          lore: 'Glyph storms rage through valleys. Script armor protects the speakers of the sunken language.'
+        }
+      };
+
+      // ========== END FACTION DEFINITIONS ==========
 
       function createFaction(factionId, capitalX, capitalY, seed) {
         const faction = FACTIONS.find(f => f.id === factionId);
+        const factionDef = FACTION_DEFINITIONS[factionId] || FACTION_DEFINITIONS['player'];
+
+        // Apply faction-specific modifiers to starting resources
+        const modifiers = factionDef.modifiers || {};
+        const basePopulation = 20 + (modifiers.populationGrowthBonus ? Math.round(modifiers.populationGrowthBonus * 5) : 0);
+        const baseFood = Math.round(60 * (modifiers.foodMultiplier || 1));
+        const baseIndustry = Math.round(40 * (modifiers.industryMultiplier || 1));
+        const baseKnowledge = Math.round(20 * (modifiers.knowledgeMultiplier || 1));
+        const baseStability = Math.round(60 + (modifiers.stabilityEarly || 0) * 2);
+
         return {
           id: factionId,
           name: faction.name,
           color: faction.color,
+          factionType: factionDef.theme,
           cities: [
             {
               id: `city-${factionId}-0`,
               name: faction.name + ' Capital',
               x: capitalX,
               y: capitalY,
-              population: 20,
-              food: 60,
-              industry: 40,
-              knowledge: 20,
-              happiness: 55,
-              stability: 60,
+              population: basePopulation,
+              food: baseFood,
+              industry: baseIndustry,
+              knowledge: baseKnowledge,
+              happiness: 55 + (modifiers.happinessBonus || 0) * 5,
+              stability: Math.max(20, baseStability),
               technologyLevel: 0,
             },
           ],
@@ -2493,38 +2754,73 @@
           research: { currentTech: null, points: 0 },
           diplomacy: {},
           treasury: 50,
+          factionMechanicsState: {
+            futureEchosTriggered: 0,
+            tidalSeasonTriggered: 0,
+            terrainRevisionsUsed: 0,
+            lastTerritoryCheck: -100,
+          }
         };
       }
 
-      // AI Decision Maker (deterministic)
+      // AI Decision Maker (deterministic, faction-aware)
       function makeAIDecision(faction, worldMap, allFactions, allUnits, turn, seed) {
         const rng = mulberry32(seed + turn + parseInt(faction.id.split('-')[1] || 0));
+        const factionDef = FACTION_DEFINITIONS[faction.id] || FACTION_DEFINITIONS['player'];
+        const aiPrefs = factionDef.aiPreferences || {};
 
-        if (rng() > 0.7 && faction.cities.length < 3) {
-          // Try to settle
+        // Phase 10: Faction-aware expansion rate
+        const expandThreshold = 0.7 + (1 - aiPrefs.expandRate) * 0.2; // Higher expandRate = lower threshold
+        if (rng() > expandThreshold && faction.cities.length < (faction.id === 'player' ? 10 : 5)) {
           const capitalCity = faction.cities[0];
-          const x = Math.floor(capitalCity.x + (rng() - 0.5) * 20);
-          const y = Math.floor(capitalCity.y + (rng() - 0.5) * 20);
-          if (x > 0 && x < worldMap[0].length && y > 0 && y < worldMap.length) {
-            const tile = worldMap[y][x];
-            if (tile.biome !== 'water' && tile.biome !== 'coast') {
-              return { type: 'FOUND_CITY', factionId: faction.id, x, y, name: faction.name + ' Settlement' };
+          let bestX = capitalCity.x, bestY = capitalCity.y, bestScore = -Infinity;
+
+          // Search for best settlement location based on faction terrain affinities
+          for (let attempt = 0; attempt < 5; attempt++) {
+            const x = Math.floor(capitalCity.x + (rng() - 0.5) * 25);
+            const y = Math.floor(capitalCity.y + (rng() - 0.5) * 25);
+            if (x > 5 && x < worldMap[0].length - 5 && y > 5 && y < worldMap.length - 5) {
+              const tile = worldMap[y][x];
+              if (tile.biome !== 'water' && tile.biome !== 'coast') {
+                const terrainAffinities = factionDef.terrainAffinities || {};
+                let score = (terrainAffinities[tile.biome] || 1) * 10;
+
+                // Faction-specific location preferences
+                if (aiPrefs.ruinHunting && tile.isRuin) score += 15;
+                if (aiPrefs.coastalBias && tile.biome === 'coast') score += 20;
+                if (aiPrefs.mountainBias && tile.biome === 'mountain') score += 20;
+
+                if (score > bestScore) {
+                  bestScore = score;
+                  bestX = x;
+                  bestY = y;
+                }
+              }
             }
+          }
+
+          if (bestScore > -Infinity) {
+            return { type: 'FOUND_CITY', factionId: faction.id, x: bestX, y: bestY, name: faction.name + ' Settlement' };
           }
         }
 
-        if (rng() > 0.8 && faction.cities[0]?.industry > 30) {
-          // Produce a unit
-          return { type: 'CREATE_UNIT', factionId: faction.id, cityId: faction.cities[0].id, unitType: 'SCOUT' };
+        // Phase 10: Faction-aware unit production
+        const unitProdThreshold = 0.8 - aiPrefs.militaryFocus * 0.1;
+        if (rng() > unitProdThreshold && faction.cities[0]?.industry > 30) {
+          const unitType = aiPrefs.spellFocus > 0.8 ? 'MAGE' : aiPrefs.mountainBias > 0.8 ? 'WARRIOR' : 'SCOUT';
+          return { type: 'CREATE_UNIT', factionId: faction.id, cityId: faction.cities[0].id, unitType };
         }
 
-        if (rng() > 0.9) {
-          // Move a unit
+        // Movement with faction-aware preferences
+        if (rng() > 0.9 && faction.units.length > 0) {
           const unit = faction.units[Math.floor(rng() * faction.units.length)];
           if (unit) {
-            const moveDir = Math.floor(rng() * 4);
-            const [dx, dy] = [[1, 0], [-1, 0], [0, 1], [0, -1]][moveDir];
-            return { type: 'MOVE_UNIT', factionId: faction.id, unitId: unit.id, x: unit.x + dx, y: unit.y + dy };
+            const moveDir = Math.floor(rng() * 6); // 6 hex directions
+            const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1]];
+            const [dx, dy] = dirs[Math.min(moveDir, dirs.length - 1)];
+            const newX = Math.max(0, Math.min(127, unit.x + dx));
+            const newY = Math.max(0, Math.min(127, unit.y + dy));
+            return { type: 'MOVE_UNIT', factionId: faction.id, unitId: unit.id, x: newX, y: newY };
           }
         }
 
@@ -2616,12 +2912,28 @@
         ];
 
         // Phase 4: Create rival factions
-        const factions = {
-          player: createFaction('player', capitalX, capitalY, seed),
-          'faction-1': createFaction('faction-1', 30, 30, seed + 1),
-          'faction-2': createFaction('faction-2', 100, 30, seed + 2),
-          'faction-3': createFaction('faction-3', 65, 95, seed + 3),
+        // Phase 10: Initialize 8 factions with faction-aware starting positions
+        const factionStartPositions = {
+          'player': { x: capitalX, y: capitalY }, // player at center
+          'faction-chrono': { x: 25, y: 25, tag: 'fertile' }, // forest/swamp region
+          'faction-pelagic': { x: 110, y: 50, tag: 'coastal' }, // coast region
+          'faction-oracle': { x: 30, y: 80, tag: 'ruin-adjacent' }, // ruin-rich region
+          'faction-gravity': { x: 75, y: 30, tag: 'mountain' }, // mountain region
+          'faction-archive': { x: 95, y: 100, tag: 'relic-vault' }, // vault region
+          'faction-hive': { x: 50, y: 60, tag: 'fertile-cluster' }, // fertile clustered
+          'faction-cartograph': { x: 65, y: 50, tag: 'central' }, // central map position
+          'faction-language': { x: 40, y: 100, tag: 'mystical' }, // mystical region
         };
+
+        const factions = {};
+        let seedCounter = 1;
+        for (const factionId of Object.keys(factionStartPositions)) {
+          const pos = factionStartPositions[factionId];
+          const x = (pos.x || capitalX) + Math.floor(Math.random() * 8 - 4); // Add jitter
+          const y = (pos.y || capitalY) + Math.floor(Math.random() * 8 - 4);
+          factions[factionId] = createFaction(factionId, Math.max(5, Math.min(120, x)), Math.max(5, Math.min(120, y)), seed + seedCounter);
+          seedCounter++;
+        }
 
         const capitalCity = {
           id: capitalCityId,
