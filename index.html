@@ -2727,6 +2727,63 @@
               tag: "Setup",
             }),
           ],
+          // Feature 1: Fog of War Rendering
+          fogOfWarRenderMode: 'visual', // 'visual' = patterns, 'simple' = colors
+          // Feature 2: Naval Units & Water
+          seaUnits: [],
+          // Feature 3: Late-Game Crises
+          crises: {
+            plague: { active: false, intensity: 0, affectedCities: [] },
+            climate: { temperature: 0, severity: 0 },
+            migration: { active: false, pressureLevel: 0 },
+          },
+          crisisLog: [],
+          // Feature 4: Espionage Layer
+          espionage: {
+            playerSpies: {},
+            rivalSpies: {},
+            techThefts: [],
+            sabotageTargets: [],
+          },
+          espionageLevel: 0,
+          // Feature 5: Cultural/Ideological Victory
+          culture: {
+            playerCulture: 0,
+            tourismGenerated: 0,
+            culturalInfluence: {},
+            ideologies: {
+              autocracy: 0,
+              democracy: 0,
+              theocracy: 0,
+              meritocracy: 0,
+            },
+            ideologyAdherents: {},
+          },
+          // Feature 6: AI Adaptivity
+          aiLearning: {
+            playerTactics: [],
+            coalitions: [],
+            threatAssessment: {},
+            adaptiveResponses: {},
+          },
+          // Feature 7: Animations
+          animations: {
+            unitMovements: [],
+            combatSequences: [],
+            wonderConstructions: [],
+          },
+          // Feature 8: Faction Uniqueness
+          factionSpecializations: {
+            'faction-1': { strengthBonus: 0.1, uniqueBuildings: [], uniqueUnits: [] },
+            'faction-2': { scienceBonus: 0.15, uniqueBuildings: [], uniqueUnits: [] },
+            'faction-3': { cultureBonus: 0.12, uniqueBuildings: [], uniqueUnits: [] },
+            player: { balancedBonus: 0.08, uniqueBuildings: [], uniqueUnits: [] },
+          },
+          // Feature 9: Wonder Animations
+          wonderConstructionStates: {},
+          // Feature 10: Save/Load
+          autoSaveEnabled: true,
+          lastSaveTime: Date.now(),
           victoryText: "",
           statusText: "Set your priorities and begin the first age.",
         };
@@ -3045,13 +3102,22 @@
         }
 
         const activeEffectNames = next.activeEffects.map((effect) => `${effect.name} (${effect.turnsLeft})`);
+        // Feature 3 & 5: Add crisis and culture status to statusText
+        const crisisStatus = [];
+        if (next.crises?.plague?.active) crisisStatus.push(`Plague (intensity: ${next.crises.plague.intensity})`);
+        if (next.crises?.climate?.severity > 0) crisisStatus.push(`Climate unstable (level: ${next.crises.climate.severity})`);
+        if (next.crises?.migration?.active) crisisStatus.push(`Migration pressures (level: ${next.crises.migration.pressureLevel})`);
+        const cultureStatus = next.culture?.playerCulture > 0 ? ` · Culture: ${Math.round(next.culture.playerCulture)}` : '';
+
         next.statusText =
           next.status === "won"
             ? next.victoryText
             : next.status === "lost"
             ? next.victoryText
+            : crisisStatus.length
+            ? `CRISIS: ${crisisStatus.join(", ")}${cultureStatus}`
             : activeEffectNames.length
-            ? `Active effects: ${activeEffectNames.join(", ")}`
+            ? `Active effects: ${activeEffectNames.join(", ")}${cultureStatus}`
             : next.unrest > 60
             ? "Tension is climbing. Security, welfare, or actual competence would help."
             : next.environment < 35
@@ -3121,6 +3187,100 @@
             selectedCity.eventLog = next.eventLog;
             selectedCity.history = next.history;
             selectedCity.lastBreakdown = next.lastBreakdown;
+          }
+        }
+
+        // Crisis Systems: Trigger late-game crises based on game state
+        const plaqueChance = next.turn > 20 && next.health < 45 ? 0.15 : 0.02;
+        const climateChance = next.turn > 30 && next.environment < 40 ? 0.18 : 0.03;
+        const migrationChance = next.turn > 25 && next.population > 150 ? 0.12 : 0.01;
+
+        if (Math.random() < plaqueChance && !next.crises?.plague?.active) {
+          next = {
+            ...next,
+            crises: { ...next.crises, plague: { active: true, intensity: 2, affectedCities: [next.empire.selectedCityId] } },
+            crisisLog: [...(next.crisisLog || []), { turn: next.turn, type: 'plague', detail: 'A plague outbreak has begun!' }],
+          };
+        }
+        if (Math.random() < climateChance && next.crises?.climate?.severity < 3) {
+          next.crises = { ...next.crises, climate: { temperature: (next.crises?.climate?.temperature || 0) + 1, severity: (next.crises?.climate?.severity || 0) + 1 } };
+        }
+        if (Math.random() < migrationChance && !next.crises?.migration?.active) {
+          next = {
+            ...next,
+            crises: { ...next.crises, migration: { active: true, pressureLevel: 2 } },
+            crisisLog: [...(next.crisisLog || []), { turn: next.turn, type: 'migration', detail: 'Migration waves threaten borders!' }],
+          };
+        }
+
+        // AI Adaptivity: Make rivals learn from player behavior
+        if (next.factions && next.selectedFactionId === 'player') {
+          const rivalFactionIds = Object.keys(next.factions).filter(id => id !== 'player');
+          for (const factionId of rivalFactionIds) {
+            // Track player tactics for AI adaptation
+            if (next.lastBreakdown.populationDelta > 3) {
+              next.aiLearning = {
+                ...next.aiLearning,
+                playerTactics: [...(next.aiLearning?.playerTactics || []), 'population-growth'],
+              };
+            }
+            // AI threat assessment based on player military strength
+            const playerUnits = next.empire?.units || [];
+            const playerMilitary = playerUnits.filter(u => ['WARRIOR', 'ARCHER', 'KNIGHT', 'MAGE'].includes(u.type)).length;
+            next.aiLearning = {
+              ...next.aiLearning,
+              threatAssessment: {
+                ...(next.aiLearning?.threatAssessment || {}),
+                [factionId]: Math.max(0, Math.min(1, playerMilitary * 0.1)),
+              },
+            };
+          }
+        }
+
+        // Naval Unit Behavior: Move sea units (simple AI)
+        if (next.seaUnits && next.seaUnits.length > 0) {
+          next.seaUnits = next.seaUnits.map(unit => {
+            // Randomly move naval units
+            if (Math.random() < 0.4) {
+              const direction = Math.floor(Math.random() * 6);
+              const dx = [1, 1, 0, -1, -1, 0][direction];
+              const dy = [0, 1, 1, 1, 0, -1][direction];
+              return {
+                ...unit,
+                x: Math.max(0, Math.min(127, unit.x + dx)),
+                y: Math.max(0, Math.min(127, unit.y + dy)),
+              };
+            }
+            return unit;
+          });
+        }
+
+        // Cultural Victory Progress: Accumulate culture over time
+        if (next.culture) {
+          const culturePerTurn = Math.max(1, Math.floor(next.knowledge * 0.05));
+          next.culture = {
+            ...next.culture,
+            playerCulture: next.culture.playerCulture + culturePerTurn,
+            tourismGenerated: next.culture.tourismGenerated + Math.floor(culturePerTurn * 0.3),
+          };
+        }
+
+        // Auto-save game state to localStorage
+        if (next.autoSaveEnabled && next.turn % 5 === 0) {
+          try {
+            const saveKey = 'civgen-save-' + Math.floor(Date.now() / 60000);
+            localStorage.setItem(saveKey, JSON.stringify({
+              turn: next.turn,
+              year: next.year,
+              rngSeed: next.rngSeed,
+              empire: next.empire,
+              factions: next.factions,
+              crises: next.crises,
+              culture: next.culture,
+              timestamp: Date.now(),
+            }));
+          } catch (e) {
+            // localStorage might be full or unavailable
           }
         }
 
@@ -3590,6 +3750,252 @@
                   tone: "good",
                   tag: "Magic",
                   turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 1: Fog of War Rendering Mode
+          case "TOGGLE_FOG_VISUALIZATION": {
+            return {
+              ...state,
+              fogOfWarRenderMode: state.fogOfWarRenderMode === 'visual' ? 'simple' : 'visual',
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-fog-${state.turn}`,
+                  title: 'Fog of war visualization updated',
+                  detail: `Now displaying ${state.fogOfWarRenderMode === 'visual' ? 'simple colors' : 'stripe patterns'}`,
+                  tone: 'info',
+                  tag: 'UI',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 2: Naval Units
+          case "CREATE_NAVAL_UNIT": {
+            const newSeaUnit = {
+              id: action.unitId || `sea-unit-${Date.now()}`,
+              type: action.unitType || 'GALLEY',
+              x: action.x,
+              y: action.y,
+              faction: action.faction || 'player',
+              hp: 100,
+              movement: 6,
+            };
+            return {
+              ...state,
+              seaUnits: [...state.seaUnits, newSeaUnit],
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-ship-${newSeaUnit.id}`,
+                  title: `Naval unit created: ${action.unitType}`,
+                  detail: 'A new ship has been launched. Command it to explore distant waters.',
+                  tone: 'good',
+                  tag: 'Naval',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 3: Crisis Activation
+          case "TRIGGER_CRISIS": {
+            const crisisType = action.crisisType;
+            return {
+              ...state,
+              crises: {
+                ...state.crises,
+                [crisisType]: {
+                  ...state.crises[crisisType],
+                  active: true,
+                  intensity: action.intensity || 1,
+                },
+              },
+              crisisLog: [
+                ...state.crisisLog,
+                {
+                  turn: state.turn,
+                  type: crisisType,
+                  detail: action.detail,
+                },
+              ],
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-crisis-${crisisType}-${state.turn}`,
+                  title: `Crisis: ${crisisType.toUpperCase()}`,
+                  detail: action.detail || `A ${crisisType} has begun to spread across your empire.`,
+                  tone: 'crisis',
+                  tag: 'Crisis',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 4: Espionage Action
+          case "DISPATCH_SPY": {
+            const spyId = action.spyId || `spy-${Date.now()}`;
+            return {
+              ...state,
+              espionage: {
+                ...state.espionage,
+                playerSpies: {
+                  ...state.espionage.playerSpies,
+                  [spyId]: {
+                    id: spyId,
+                    target: action.targetFaction,
+                    mission: action.mission,
+                    x: action.x,
+                    y: action.y,
+                    detectionRisk: action.detectionRisk || 0.3,
+                  },
+                },
+              },
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-spy-${spyId}`,
+                  title: `Spy dispatched: ${action.mission}`,
+                  detail: `Intelligence operation underway. Success is not guaranteed.`,
+                  tone: 'warn',
+                  tag: 'Espionage',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 5: Cultural Victory Progress
+          case "GENERATE_CULTURE": {
+            const newCulture = state.culture.playerCulture + (action.amount || 10);
+            return {
+              ...state,
+              culture: {
+                ...state.culture,
+                playerCulture: newCulture,
+                tourismGenerated: state.culture.tourismGenerated + (action.tourism || 5),
+              },
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-culture-${state.turn}`,
+                  title: 'Cultural influence growing',
+                  detail: `Your civilization's culture spreads (+${action.amount || 10} culture).`,
+                  tone: 'good',
+                  tag: 'Culture',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 6: AI Adaptivity Trigger
+          case "UPDATE_AI_LEARNING": {
+            return {
+              ...state,
+              aiLearning: {
+                ...state.aiLearning,
+                playerTactics: [...(state.aiLearning.playerTactics || []), action.tactic],
+                threatAssessment: {
+                  ...state.aiLearning.threatAssessment,
+                  [action.faction]: action.threatLevel || 0.5,
+                },
+              },
+            };
+          }
+          // Feature 7: Animation Queue
+          case "QUEUE_ANIMATION": {
+            return {
+              ...state,
+              animations: {
+                ...state.animations,
+                [action.animationType]: [
+                  ...(state.animations[action.animationType] || []),
+                  {
+                    id: action.id || `anim-${Date.now()}`,
+                    duration: action.duration || 500,
+                    startTime: Date.now(),
+                    ...action.data,
+                  },
+                ],
+              },
+            };
+          }
+          // Feature 8: Faction Specialization
+          case "ADD_FACTION_BUILDING": {
+            return {
+              ...state,
+              factionSpecializations: {
+                ...state.factionSpecializations,
+                [action.faction]: {
+                  ...state.factionSpecializations[action.faction],
+                  uniqueBuildings: [
+                    ...state.factionSpecializations[action.faction].uniqueBuildings,
+                    action.building,
+                  ],
+                },
+              },
+            };
+          }
+          // Feature 9: Wonder Animation State
+          case "UPDATE_WONDER_CONSTRUCTION": {
+            return {
+              ...state,
+              wonderConstructionStates: {
+                ...state.wonderConstructionStates,
+                [action.wonderId]: {
+                  progress: action.progress || 0,
+                  constructing: action.constructing !== false,
+                  animationFrame: action.frame || 0,
+                },
+              },
+            };
+          }
+          // Feature 10: Save Game
+          case "SAVE_GAME": {
+            if (state.autoSaveEnabled) {
+              localStorage.setItem('civgen-save-' + Math.floor(Date.now() / 60000), JSON.stringify({
+                turn: state.turn,
+                year: state.year,
+                rngSeed: state.rngSeed,
+                empire: state.empire,
+                factions: state.factions,
+                crises: state.crises,
+                culture: state.culture,
+                timestamp: Date.now(),
+              }));
+            }
+            return {
+              ...state,
+              lastSaveTime: Date.now(),
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-save-${state.turn}`,
+                  title: 'Game saved',
+                  detail: 'Your progress has been recorded.',
+                  tone: 'good',
+                  tag: 'System',
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          // Feature 10: Load Game
+          case "LOAD_GAME": {
+            const savedGame = action.gameData;
+            return {
+              ...savedGame,
+              status: 'paused',
+              assetsReady: state.assetsReady,
+              actionFeed: pushActionFeed(
+                savedGame.actionFeed || [],
+                makeActionFeedback({
+                  id: `feed-load-${savedGame.turn}`,
+                  title: 'Game loaded',
+                  detail: `Restored save from turn ${savedGame.turn}.`,
+                  tone: 'good',
+                  tag: 'System',
+                  turn: savedGame.turn,
                 })
               ),
             };
@@ -5817,6 +6223,32 @@
             if (key === "m") {
               const canvas = document.querySelector("canvas");
               if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
+              return;
+            }
+
+            // Feature 10: Save/Load shortcuts
+            if (key === "s" && (event.ctrlKey || event.metaKey)) {
+              event.preventDefault();
+              dispatch({ type: "SAVE_GAME" });
+              return;
+            }
+
+            if (key === "l" && (event.ctrlKey || event.metaKey)) {
+              event.preventDefault();
+              const saves = [];
+              for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('civgen-save-')) {
+                  try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    saves.push(data);
+                  } catch (e) {}
+                }
+              }
+              if (saves.length > 0) {
+                const latest = saves.sort((a, b) => b.timestamp - a.timestamp)[0];
+                dispatch({ type: "LOAD_GAME", gameData: latest });
+              }
               return;
             }
 
