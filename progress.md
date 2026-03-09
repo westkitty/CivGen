@@ -41,3 +41,18 @@ Original prompt: Build a complete single-file React Canvas game called Civilizat
     - visually inspected a full-page screenshot of the updated HUD, map, inspector, and compact mode layout
     - verified direct interactions in-browser: `Start`, `Space` pause, compact toggle, alert-center action jump (`Open Population`), and the resulting map/selection synchronization
     - attempted the `develop-web-game` Playwright client twice; the script launched but did not emit artifacts or a completion payload before control returned, so validation relied on direct Playwright browser checks instead
+- 2026-03-09 Phone remote control feature:
+  - original user request: control the game running on MacBook from a phone UI while mobile/walking
+  - built WebSocket relay server (`server.js`) in Bun on port 4321 serving game at `/` and remote at `/remote`
+  - integrated WebSocket host client in `index.html` to broadcast game state (turn, score, population, food, industry, knowledge, happiness, stability, stage, policies) every 1 second and receive dispatch commands from controllers
+  - created `remote.html` mobile-optimized controller UI (~375 lines vanilla JS) with:
+    - live game state display (status, turn, score, population, food, happiness, stability, stage)
+    - control buttons: Start, Next Turn, Pause, Resume, Reset
+    - policy adjustment controls with 14-point cap enforcement
+    - connection status indicator and auto-reconnect on disconnect
+  - fixed WebSocket initialization race condition with defensive state checks (`?.` optional chaining) and try-catch wrapper
+  - verification:
+    - served relay on `http://10.0.0.126:4321/` with game and remote URLs auto-detected
+    - tested Start button from remote → game advanced to turn 10, stage progression from Tribe→Town→City-State
+    - verified console: zero errors, only expected Babel warning
+    - confirmed bidirectional message flow: controller→host for commands, host→all controllers for state
