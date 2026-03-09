@@ -2211,6 +2211,75 @@
             effect: { name: "Cleanup Effort", turnsLeft: 2, icon: "eventAccident", modifiers: { industryMultiplier: 0.9 } },
           }),
         },
+        // Phase 10: Faction-aware and anomaly-aware events
+        relicDiscovery: {
+          label: "Relic Discovery",
+          icon: "eventDiscovery",
+          describe: () => "Explorers unearth an artifact of great power!",
+          weight: (state) => 0.05 + (state.culture?.playerCulture || 0) / 100 + (state.empire?.cities || []).length * 0.02,
+          apply: () => ({
+            immediate: { knowledge: 15, industry: 8 },
+            effect: { name: "Relic Study", turnsLeft: 4, icon: "eventDiscovery", modifiers: { knowledgeMultiplier: 1.15 } },
+          }),
+        },
+        tidalBloom: {
+          label: "Tidal Bloom",
+          icon: "eventTide",
+          describe: () => "Bioluminescent organisms bloom in the tides. Coastal prosperity rises.",
+          weight: (state) => 0.08 + ((state.empire?.cities || []).filter(c => state.worldMap?.[c.y]?.[c.x]?.biome === 'coast').length * 0.08),
+          apply: () => ({
+            immediate: { food: 18, industry: 10, happiness: 4 },
+          }),
+        },
+        prophecyScriven: {
+          label: "Prophecy Scriven",
+          icon: "eventProphecy",
+          describe: () => "The bones speak. Clarity descends upon the council.",
+          weight: (state) => 0.06 + state.knowledge / 300,
+          apply: () => ({
+            immediate: { knowledge: 20, stability: 8 },
+            effect: { name: "Prophetic Clarity", turnsLeft: 5, icon: "eventProphecy", modifiers: { knowledgeMultiplier: 1.2 } },
+          }),
+        },
+        mycelialInfestation: {
+          label: "Mycelial Infestation",
+          icon: "eventFungi",
+          describe: () => "Spores bloom in unseen places. The land dreams.",
+          weight: (state) => 0.06 + ((state.empire?.cities || []).filter(c => state.worldMap?.[c.y]?.[c.x]?.biome === 'forest' || state.worldMap?.[c.y]?.[c.x]?.biome === 'swamp').length * 0.06),
+          apply: () => ({
+            immediate: { food: 12, knowledge: 8, happiness: -3 },
+            effect: { name: "Spore Bloom", turnsLeft: 3, icon: "eventFungi", modifiers: { populationDelta: 2, knowledgeMultiplier: 1.1 } },
+          }),
+        },
+        gravityFluctuation: {
+          label: "Gravity Fluctuation",
+          icon: "eventAnomalies",
+          describe: () => "Reality hiccups. Mountains drift slightly. Navigation improves nearby.",
+          weight: (state) => 0.04 + ((state.empire?.cities || []).filter(c => state.worldMap?.[c.y]?.[c.x]?.biome === 'mountain').length * 0.06),
+          apply: () => ({
+            immediate: { industry: 15, stability: -5 },
+            effect: { name: "Gravitational Tide", turnsLeft: 3, icon: "eventAnomalies", modifiers: { industryMultiplier: 1.12 } },
+          }),
+        },
+        cartographicRevelation: {
+          label: "Cartographic Revelation",
+          icon: "eventMap",
+          describe: () => "Map-craft bears fruit. Unknown lands suddenly make sense.",
+          weight: (state) => 0.07 + (state.empire?.units?.filter(u => u.type === 'SCOUT').length || 0) * 0.05,
+          apply: () => ({
+            immediate: { knowledge: 12, industry: 8 },
+          }),
+        },
+        languageShift: {
+          label: "Language Shift",
+          icon: "eventMagic",
+          describe: () => "Words rearrange themselves. Meaning deepens. Spells resonate clearer.",
+          weight: (state) => 0.05 + (state.empire?.cities || []).length * 0.03,
+          apply: () => ({
+            immediate: { knowledge: 16, happiness: 3 },
+            effect: { name: "Semantic Bloom", turnsLeft: 4, icon: "eventMagic", modifiers: { knowledgeMultiplier: 1.18, spellCostReduction: 0.1 } },
+          }),
+        },
       };
 
       function stageIndexFromLabel(label) {
