@@ -2381,6 +2381,81 @@
 
       // ========== END WORLD GENERATION ==========
 
+      // ========== UNIT SYSTEM (Phase 3: Units + Movement + Exploration) ==========
+
+      const UNIT_TYPES = {
+        SCOUT: { name: 'Scout', movement: 4, sight: 4, canFound: false, cost: 25 },
+        SETTLER: { name: 'Settler', movement: 2, sight: 2, canFound: true, cost: 40 },
+        WARRIOR: { name: 'Warrior', movement: 2, sight: 2, canFound: false, cost: 35 },
+        ARCHER: { name: 'Archer', movement: 2, sight: 3, canFound: false, cost: 40 },
+        CAVALRY: { name: 'Cavalry', movement: 4, sight: 2, canFound: false, cost: 50 },
+      };
+
+      function createUnit(type, x, y, ownerId, id) {
+        return {
+          id: id || `unit-${x}-${y}-${Math.random()}`,
+          type,
+          x, y,
+          ownerId,
+          health: 100,
+          movement: UNIT_TYPES[type].movement,
+          canAct: true,
+          experience: 0,
+        };
+      }
+
+      // Simple pathfinding: A* with terrain costs
+      function getTerrainCost(tile) {
+        if (!tile) return Infinity;
+        switch (tile.biome) {
+          case 'water': return Infinity;
+          case 'coast': return 3;
+          case 'mountain': return 3;
+          case 'forest': return 2;
+          case 'plains': return 1;
+          case 'desert': return 2;
+          default: return 2;
+        }
+      }
+
+      function findPath(startX, startY, endX, endY, worldMap) {
+        // Simplified pathfinding: just go towards target
+        const path = [];
+        let x = startX, y = startY;
+        const maxSteps = Math.abs(endX - startX) + Math.abs(endY - startY) + 5;
+        let steps = 0;
+
+        while ((x !== endX || y !== endY) && steps < maxSteps) {
+          steps++;
+          const dx = endX > x ? 1 : endX < x ? -1 : 0;
+          const dy = endY > y ? 1 : endY < y ? -1 : 0;
+
+          // Try direct move
+          let nextX = x + dx, nextY = y + dy;
+          if (nextX >= 0 && nextX < worldMap[0].length && nextY >= 0 && nextY < worldMap.length) {
+            const terrain = getTerrainCost(worldMap[nextY][nextX]);
+            if (terrain < Infinity) {
+              x = nextX;
+              y = nextY;
+              path.push({ x, y });
+            } else {
+              // Try alternative
+              const altX = x + dx, altY = y;
+              if (altX >= 0 && altX < worldMap[0].length && getTerrainCost(worldMap[altY][altX]) < Infinity) {
+                x = altX;
+                path.push({ x, y });
+              } else {
+                break;
+              }
+            }
+          }
+        }
+
+        return path;
+      }
+
+      // ========== END UNIT SYSTEM ==========
+
       function createInitialState(seed = (Date.now() >>> 0) || 7) {
         const policies = {
           agriculture: 2,
@@ -2402,6 +2477,12 @@
         const capitalCityId = 'city-capital-' + seed;
         const capitalX = Math.floor(64 + Math.sin(seed) * 10);
         const capitalY = Math.floor(64 + Math.cos(seed) * 10);
+
+        // Phase 3: Create initial units
+        const initialUnits = [
+          createUnit('SCOUT', capitalX + 1, capitalY, 'player', 'unit-scout-0'),
+          createUnit('SETTLER', capitalX, capitalY + 1, 'player', 'unit-settler-0'),
+        ];
 
         const capitalCity = {
           id: capitalCityId,
@@ -2446,10 +2527,13 @@
           status: "menu",
           assetsReady: false,
           // Phase 2: Empire and cities
+          // Phase 3: Empire with units
           empire: {
             name: "Your Civilization",
             cities: [capitalCity],
             selectedCityId: capitalCityId,
+            units: initialUnits,
+            selectedUnitId: 'unit-scout-0',
           },
           // Backward compat: expose capital city data at root
           settlementName: capitalCity.name,
@@ -3127,6 +3211,90 @@
               developmentStage: city.developmentStage,
               legacyScore: city.legacyScore,
               policies: city.policies,
+            };
+          }
+          // Phase 3: Units + Movement + Exploration
+          case "MOVE_UNIT": {
+            const unitIndex = state.empire.units.findIndex(u => u.id === action.unitId);
+            if (unitIndex === -1) return state;
+
+            const unit = state.empire.units[unitIndex];
+            const path = findPath(unit.x, unit.y, action.x, action.y, state.worldMap);
+
+            if (path.length === 0) return state;
+
+            const newUnits = [...state.empire.units];
+            const nextPosition = path[0];
+            newUnits[unitIndex] = { ...unit, x: nextPosition.x, y: nextPosition.y, movement: Math.max(0, unit.movement - 1) };
+
+            // Scout automatically explores
+            let newExplored = new Set(state.exploredTiles);
+            let newVisible = new Set(state.visibleTiles);
+            if (unit.type === 'SCOUT' || unit.type === 'SETTLER') {
+              const sightRadius = UNIT_TYPES[unit.type].sight;
+              const tileVisibility = getVisibleTiles(nextPosition.x, nextPosition.y, sightRadius, state.worldMap);
+              tileVisibility.forEach(key => {
+                newExplored.add(key);
+                newVisible.add(key);
+              });
+            }
+
+            return {
+              ...state,
+              empire: { ...state.empire, units: newUnits, selectedUnitId: action.unitId },
+              exploredTiles: newExplored,
+              visibleTiles: newVisible,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-move-${action.unitId}-${state.turn}`,
+                  title: `${unit.type} moved`,
+                  detail: `Unit at (${nextPosition.x}, ${nextPosition.y}). ${unit.movement - 1} movement remaining.`,
+                  tone: "good",
+                  tag: "Movement",
+                  turn: state.turn,
+                })
+              ),
+            };
+          }
+          case "SELECT_UNIT": {
+            const unit = state.empire.units.find(u => u.id === action.unitId);
+            if (!unit) return state;
+            return {
+              ...state,
+              empire: { ...state.empire, selectedUnitId: action.unitId },
+            };
+          }
+          case "CREATE_UNIT": {
+            const city = state.empire.cities.find(c => c.id === action.cityId);
+            if (!city || city.industry < UNIT_TYPES[action.unitType].cost) return state;
+
+            const newUnit = createUnit(action.unitType, city.x, city.y, 'player');
+            const newCities = state.empire.cities.map(c =>
+              c.id === action.cityId
+                ? { ...c, industry: c.industry - UNIT_TYPES[action.unitType].cost }
+                : c
+            );
+
+            return {
+              ...state,
+              empire: {
+                ...state.empire,
+                units: [...state.empire.units, newUnit],
+                cities: newCities,
+              },
+              industry: state.industry - UNIT_TYPES[action.unitType].cost,
+              actionFeed: pushActionFeed(
+                state.actionFeed,
+                makeActionFeedback({
+                  id: `feed-unit-${newUnit.id}`,
+                  title: `${action.unitType} produced`,
+                  detail: `A new unit is ready to explore or defend.`,
+                  tone: "good",
+                  tag: "Production",
+                  turn: state.turn,
+                })
+              ),
             };
           }
           default:
