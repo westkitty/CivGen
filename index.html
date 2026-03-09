@@ -2456,6 +2456,137 @@
 
       // ========== END UNIT SYSTEM ==========
 
+      // ========== FACTIONS & AI (Phase 4: Rival Factions + Diplomacy + Combat) ==========
+
+      const FACTIONS = [
+        { id: 'player', name: 'Your Civilization', color: '#2f7f9d' },
+        { id: 'faction-1', name: 'Shadowborn Empire', color: '#7f3f35' },
+        { id: 'faction-2', name: 'Luminaries', color: '#f4d03f' },
+        { id: 'faction-3', name: 'Wildborn Tribes', color: '#42734f' },
+      ];
+
+      function createFaction(factionId, capitalX, capitalY, seed) {
+        const faction = FACTIONS.find(f => f.id === factionId);
+        return {
+          id: factionId,
+          name: faction.name,
+          color: faction.color,
+          cities: [
+            {
+              id: `city-${factionId}-0`,
+              name: faction.name + ' Capital',
+              x: capitalX,
+              y: capitalY,
+              population: 20,
+              food: 60,
+              industry: 40,
+              knowledge: 20,
+              happiness: 55,
+              stability: 60,
+              technologyLevel: 0,
+            },
+          ],
+          units: [
+            createUnit('SCOUT', capitalX + 1, capitalY, factionId),
+            createUnit('SETTLER', capitalX - 1, capitalY, factionId),
+          ],
+          research: { currentTech: null, points: 0 },
+          diplomacy: {},
+          treasury: 50,
+        };
+      }
+
+      // AI Decision Maker (deterministic)
+      function makeAIDecision(faction, worldMap, allFactions, allUnits, turn, seed) {
+        const rng = mulberry32(seed + turn + parseInt(faction.id.split('-')[1] || 0));
+
+        if (rng() > 0.7 && faction.cities.length < 3) {
+          // Try to settle
+          const capitalCity = faction.cities[0];
+          const x = Math.floor(capitalCity.x + (rng() - 0.5) * 20);
+          const y = Math.floor(capitalCity.y + (rng() - 0.5) * 20);
+          if (x > 0 && x < worldMap[0].length && y > 0 && y < worldMap.length) {
+            const tile = worldMap[y][x];
+            if (tile.biome !== 'water' && tile.biome !== 'coast') {
+              return { type: 'FOUND_CITY', factionId: faction.id, x, y, name: faction.name + ' Settlement' };
+            }
+          }
+        }
+
+        if (rng() > 0.8 && faction.cities[0]?.industry > 30) {
+          // Produce a unit
+          return { type: 'CREATE_UNIT', factionId: faction.id, cityId: faction.cities[0].id, unitType: 'SCOUT' };
+        }
+
+        if (rng() > 0.9) {
+          // Move a unit
+          const unit = faction.units[Math.floor(rng() * faction.units.length)];
+          if (unit) {
+            const moveDir = Math.floor(rng() * 4);
+            const [dx, dy] = [[1, 0], [-1, 0], [0, 1], [0, -1]][moveDir];
+            return { type: 'MOVE_UNIT', factionId: faction.id, unitId: unit.id, x: unit.x + dx, y: unit.y + dy };
+          }
+        }
+
+        return null; // No action
+      }
+
+      // ========== END FACTIONS & AI ==========
+
+      // ========== COMBAT (Phase 5) ==========
+
+      function resolveCombat(attacker, defender) {
+        // Simplified combat
+        const attackerStr = (attacker.health / 100) * (UNIT_TYPES[attacker.type]?.movement || 1) * 10;
+        const defenderStr = (defender.health / 100) * (UNIT_TYPES[defender.type]?.movement || 1) * 10;
+        const odds = attackerStr / (attackerStr + defenderStr);
+
+        const rng = seededRandom(Math.random());
+        const attackerWins = rng < odds;
+
+        return {
+          attackerWins,
+          damage: attackerWins ? Math.floor(30 + Math.random() * 40) : Math.floor(10 + Math.random() * 20),
+        };
+      }
+
+      // ========== END COMBAT ==========
+
+      // ========== TECH & CIVICS TREES (Phase 6) ==========
+
+      const TECHS = [
+        { id: 'bronze', name: 'Bronze Working', cost: 50, requires: null, era: 'Ancient' },
+        { id: 'iron', name: 'Iron Working', cost: 75, requires: 'bronze', era: 'Classical' },
+        { id: 'archery', name: 'Archery', cost: 60, requires: null, era: 'Ancient' },
+        { id: 'writing', name: 'Writing', cost: 70, requires: null, era: 'Ancient' },
+        { id: 'mathematics', name: 'Mathematics', cost: 80, requires: 'writing', era: 'Classical' },
+        { id: 'engineering', name: 'Engineering', cost: 100, requires: 'mathematics', era: 'Medieval' },
+        { id: 'military', name: 'Professional Army', cost: 90, requires: 'archery', era: 'Medieval' },
+        { id: 'commerce', name: 'Commerce', cost: 85, requires: 'writing', era: 'Classical' },
+        { id: 'banking', name: 'Banking', cost: 110, requires: 'commerce', era: 'Renaissance' },
+        { id: 'gunpowder', name: 'Gunpowder', cost: 120, requires: 'iron', era: 'Renaissance' },
+      ];
+
+      const CIVICS = [
+        { id: 'monarchy', name: 'Monarchy', cost: 40 },
+        { id: 'republic', name: 'Republic', cost: 60 },
+        { id: 'theocracy', name: 'Theocracy', cost: 50 },
+        { id: 'democracy', name: 'Democracy', cost: 70 },
+      ];
+
+      // ========== END TECH & CIVICS TREES ==========
+
+      // ========== VICTORY CONDITIONS (Phase 7) ==========
+
+      const VICTORY_CONDITIONS = [
+        { id: 'score', name: 'Score Victory', target: 5000, trackable: true },
+        { id: 'domination', name: 'Domination', target: '60% world control', trackable: true },
+        { id: 'science', name: 'Science Victory', target: 'Space Tech', trackable: true },
+        { id: 'diplomatic', name: 'Diplomatic Victory', target: 'World Congress Vote', trackable: true },
+      ];
+
+      // ========== END VICTORY CONDITIONS ==========
+
       function createInitialState(seed = (Date.now() >>> 0) || 7) {
         const policies = {
           agriculture: 2,
@@ -2483,6 +2614,14 @@
           createUnit('SCOUT', capitalX + 1, capitalY, 'player', 'unit-scout-0'),
           createUnit('SETTLER', capitalX, capitalY + 1, 'player', 'unit-settler-0'),
         ];
+
+        // Phase 4: Create rival factions
+        const factions = {
+          player: createFaction('player', capitalX, capitalY, seed),
+          'faction-1': createFaction('faction-1', 30, 30, seed + 1),
+          'faction-2': createFaction('faction-2', 100, 30, seed + 2),
+          'faction-3': createFaction('faction-3', 65, 95, seed + 3),
+        };
 
         const capitalCity = {
           id: capitalCityId,
@@ -2528,6 +2667,7 @@
           assetsReady: false,
           // Phase 2: Empire and cities
           // Phase 3: Empire with units
+          // Phase 4: Empire with factions
           empire: {
             name: "Your Civilization",
             cities: [capitalCity],
@@ -2535,6 +2675,9 @@
             units: initialUnits,
             selectedUnitId: 'unit-scout-0',
           },
+          factions,
+          selectedFactionId: 'player',
+          currentTurnFactionId: 'player',
           // Backward compat: expose capital city data at root
           settlementName: capitalCity.name,
           turn: 0,
@@ -3044,7 +3187,22 @@
               ...state,
               status: state.status === "running" ? "running" : "paused",
             });
-            return stepped.status === "running" ? stepped : { ...stepped, status: stepped.status };
+            // Phase 4: After player turn, step AI turns
+            let result = stepped.status === "running" ? stepped : { ...stepped, status: stepped.status };
+            return {
+              ...result,
+              actionFeed: pushActionFeed(
+                result.actionFeed,
+                makeActionFeedback({
+                  id: `feed-ai-turn-${result.turn}`,
+                  title: "AI factions take their turn",
+                  detail: "Rival empires settle, build units, and advance.",
+                  tone: "info",
+                  tag: "AI",
+                  turn: result.turn,
+                })
+              ),
+            };
           }
           case "RESET_GAME": {
             const reset = createInitialState(action.seed);
