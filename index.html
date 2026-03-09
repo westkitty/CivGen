@@ -2235,6 +2235,152 @@
         return [...history, round1(value)].slice(-MAX_HISTORY);
       }
 
+      // ========== WORLD GENERATION (Phase 1: World Map + Fog of War) ==========
+
+      // Seeded pseudo-random number generator (deterministic)
+      function seededRandom(seed) {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      }
+
+      function mulberry32(a) {
+        return function() {
+          a |= 0;
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        }
+      }
+
+      // Simplex-like noise for terrain generation (using hash-based approach)
+      function simplexNoise(x, y, seed) {
+        const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 43758.5453) * 43758.5453;
+        return n - Math.floor(n);
+      }
+
+      // Create world map with biomes inspired by Endless Legend
+      function generateWorldMap(width, height, seed) {
+        const rng = mulberry32(seed);
+        const tiles = [];
+
+        // Biome types: plains, forest, mountain, desert, water, coast, tundra, swamp, crystal forest, ley line
+        const biomes = {
+          WATER: 'water',
+          COAST: 'coast',
+          PLAINS: 'plains',
+          FOREST: 'forest',
+          MOUNTAIN: 'mountain',
+          DESERT: 'desert',
+          TUNDRA: 'tundra',
+          SWAMP: 'swamp',
+          CRYSTAL_FOREST: 'crystalForest',
+          RUINS: 'ruins',
+        };
+
+        for (let y = 0; y < height; y++) {
+          tiles[y] = [];
+          for (let x = 0; x < width; x++) {
+            const heightVal = simplexNoise(x * 0.05, y * 0.05, seed);
+            const moistureVal = simplexNoise(x * 0.03 + 100, y * 0.03 + 100, seed);
+            const magicVal = simplexNoise(x * 0.02 + 200, y * 0.02 + 200, seed);
+
+            let biome = biomes.PLAINS;
+
+            if (heightVal < 0.35) {
+              biome = biomes.WATER;
+            } else if (heightVal < 0.42) {
+              biome = biomes.COAST;
+            } else if (heightVal > 0.65) {
+              biome = biomes.MOUNTAIN;
+            } else if (heightVal > 0.55) {
+              biome = biomes.TUNDRA;
+            } else if (moistureVal < 0.3) {
+              biome = biomes.DESERT;
+            } else if (moistureVal > 0.7) {
+              if (biome === biomes.PLAINS) {
+                biome = biomes.SWAMP;
+              } else if (biome === biomes.FOREST) {
+                biome = biomes.SWAMP;
+              }
+            } else if (moistureVal > 0.5) {
+              biome = biomes.FOREST;
+            }
+
+            // Add magical terrain
+            if (magicVal > 0.85 && biome === biomes.FOREST) {
+              biome = biomes.CRYSTAL_FOREST;
+            } else if (magicVal > 0.9 && biome === biomes.PLAINS && rng() > 0.95) {
+              biome = biomes.RUINS;
+            }
+
+            // Resources: placed on specific biomes
+            const resources = [];
+            if (biome === biomes.MOUNTAIN && rng() > 0.7) {
+              resources.push(rng() > 0.5 ? 'copper' : 'iron');
+            }
+            if (biome === biomes.FOREST && rng() > 0.8) {
+              resources.push('wood');
+            }
+            if (biome === biomes.PLAINS && rng() > 0.85) {
+              resources.push('wheat');
+            }
+            if (biome === biomes.CRYSTAL_FOREST && rng() > 0.6) {
+              resources.push('aether');
+            }
+            if (biome === biomes.WATER && rng() > 0.8) {
+              resources.push('fish');
+            }
+
+            tiles[y][x] = {
+              x,
+              y,
+              biome,
+              resources,
+              feature: null,
+              improvement: null,
+              owner: null,
+              visibility: 'unseen', // unseen, explored, visible
+            };
+          }
+        }
+
+        // Add some scattered features (ruins, ley lines)
+        for (let i = 0; i < Math.floor(width * height * 0.02); i++) {
+          const x = Math.floor(rng() * width);
+          const y = Math.floor(rng() * height);
+          if (tiles[y][x].biome !== 'water' && tiles[y][x].biome !== 'coast') {
+            if (rng() > 0.5) {
+              tiles[y][x].feature = 'ruin';
+            } else {
+              tiles[y][x].feature = 'leyLine';
+            }
+          }
+        }
+
+        return tiles;
+      }
+
+      // Calculate tile visibility from a position (sight radius)
+      function getVisibleTiles(centerX, centerY, radius, worldMap) {
+        const visible = new Set();
+        const height = worldMap.length;
+        const width = worldMap[0].length;
+
+        for (let y = Math.max(0, centerY - radius); y <= Math.min(height - 1, centerY + radius); y++) {
+          for (let x = Math.max(0, centerX - radius); x <= Math.min(width - 1, centerX + radius); x++) {
+            const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+            if (dist <= radius) {
+              visible.add(`${x},${y}`);
+            }
+          }
+        }
+
+        return visible;
+      }
+
+      // ========== END WORLD GENERATION ==========
+
       function createInitialState(seed = (Date.now() >>> 0) || 7) {
         const policies = {
           agriculture: 2,
@@ -2246,6 +2392,11 @@
           welfare: 1,
           research: 1,
         };
+
+        // Generate world map
+        const worldMap = generateWorldMap(128, 128, seed);
+        const exploredTiles = new Set();
+        const visibleTiles = new Set();
 
         return {
           rngSeed: seed,
@@ -2271,6 +2422,11 @@
           projectQueue: makeInitialProjectQueue(),
           completedProjects: {},
           nextQueueId: 4,
+          // Phase 1: World Map & Fog of War
+          worldMap,
+          exploredTiles,
+          visibleTiles,
+          mapOverlay: 'none', // none, terrain, resources, magic
           eventLog: [
             {
               id: "boot-1",
@@ -2820,6 +2976,26 @@
                   ),
                 }
               : state;
+          // Phase 1: World Map & Fog of War
+          case "EXPLORE_REGION": {
+            const newExplored = new Set(state.exploredTiles);
+            const newVisible = getVisibleTiles(action.centerX, action.centerY, action.radius || 3, state.worldMap);
+            newVisible.forEach(key => newExplored.add(key));
+            return {
+              ...state,
+              exploredTiles: newExplored,
+              visibleTiles: newVisible,
+            };
+          }
+          case "CYCLE_MAP_OVERLAY": {
+            const overlays = ['none', 'terrain', 'resources', 'magic'];
+            const currentIdx = overlays.indexOf(state.mapOverlay);
+            const nextOverlay = overlays[(currentIdx + 1) % overlays.length];
+            return {
+              ...state,
+              mapOverlay: nextOverlay,
+            };
+          }
           default:
             return state;
         }
@@ -5036,6 +5212,7 @@
                 const currentIndex = OVERLAY_OPTIONS.findIndex((entry) => entry.key === mode);
                 return OVERLAY_OPTIONS[(currentIndex + 1) % OVERLAY_OPTIONS.length].key;
               });
+              dispatch({ type: "CYCLE_MAP_OVERLAY" }); // Phase 1: Cycle world map overlay
               return;
             }
 
